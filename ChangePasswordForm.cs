@@ -1,0 +1,60 @@
+namespace AMBAR.Semana4;
+
+internal sealed class ChangePasswordForm : Form
+{
+    private readonly Session user;
+    private readonly TextBox previous=Theme.Input(150,true);
+    private readonly TextBox newer=Theme.Input(150,true);
+    private readonly TextBox confirm=Theme.Input(150,true);
+    private readonly Button save=Theme.Button("Guardar contraseña");
+    private readonly bool mandatory;
+
+    public ChangePasswordForm(Session session,bool required)
+    {
+        user=session;mandatory=required;
+        Theme.Setup(this,"Cambiar contraseña",650,480);
+        MaximizeBox=false;
+        var rows=Theme.Fields(600);
+        Controls.Add(rows);
+        Theme.Row(rows,"Contraseña actual",previous);
+        Theme.Row(rows,"Contraseña nueva",newer);
+        Theme.Row(rows,"Confirmar nueva contraseña",confirm);
+        var label=Theme.Text("Mínimo 10 caracteres, con letras y números.",9,false,Theme.Gray);
+        Theme.Row(rows,"Condiciones",label);
+        var line=new FlowLayoutPanel{Dock=DockStyle.Bottom,Height=72,FlowDirection=FlowDirection.RightToLeft,Padding=new Padding(10)};
+        line.Controls.Add(save);Controls.Add(line);
+        Controls.Add(Theme.Heading("Seguridad de la cuenta"));
+        save.Click+=Save;
+        if(mandatory)FormClosing+=(_,e)=>
+        {
+            if(DialogResult!=DialogResult.OK)
+                MessageBox.Show("No podrás acceder a los módulos sin cambiar la contraseña temporal.","AMBAR");
+        };
+    }
+
+    private void Save(object? sender,EventArgs args)
+    {
+        try
+        {
+            if(!Validation.Password(newer.Text))
+                throw new ArgumentException("Contraseña nueva inválida: requiere al menos 10 caracteres, letras y números.");
+            if(newer.Text!=confirm.Text)throw new ArgumentException("La confirmación no coincide.");
+            using var c=Db.Connect();using var tx=c.BeginTransaction();
+            string hash;
+            using(var get=Db.Sql(c,"SELECT password_hash FROM Usuario WHERE Id_usuario=@id FOR UPDATE",tx))
+            {Db.Param(get,"@id",user.Id);hash=Convert.ToString(get.ExecuteScalar())??"";}
+            if(!PasswordHasher.Verify(previous.Text,hash))throw new ArgumentException("La contraseña actual es incorrecta.");
+            if(PasswordHasher.Verify(newer.Text,hash))throw new ArgumentException("Utiliza una contraseña diferente a la anterior.");
+            using(var update=Db.Sql(c,"""
+                UPDATE Usuario SET password_hash=@hash,debe_cambiar_password=0 WHERE Id_usuario=@id
+                """,tx))
+            {Db.Param(update,"@hash",PasswordHasher.Hash(newer.Text));Db.Param(update,"@id",user.Id);update.ExecuteNonQuery();}
+            Db.Audit(c,tx,user.Id,"CAMBIO_PASSWORD","USUARIOS","Cambio de contraseña del usuario",user.Username);
+            tx.Commit();
+            MessageBox.Show("Contraseña actualizada.","AMBAR");
+            DialogResult=DialogResult.OK;
+            Close();
+        }
+        catch(Exception ex){Problems.Show(ex);}
+    }
+}
