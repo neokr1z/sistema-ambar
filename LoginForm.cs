@@ -9,30 +9,31 @@ internal sealed class LoginForm : Form
 
     public LoginForm()
     {
-        Theme.Setup(this,"Acceso",880,630);
+        Theme.Setup(this,"Acceso",460,660);
+        MinimumSize=Size;
         MaximizeBox=false;
-        var centered=new TableLayoutPanel { Dock=DockStyle.Fill, ColumnCount=3, RowCount=1 };
-        centered.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,25));
-        centered.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,50));
-        centered.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,25));
-        Controls.Add(centered);
-        var panel=new FlowLayoutPanel { FlowDirection=FlowDirection.TopDown,WrapContents=false,
-            AutoScroll=true,BackColor=Color.White, Dock=DockStyle.Fill,Padding=new Padding(30),
-            Margin=new Padding(0,35,0,35) };
-        centered.Controls.Add(panel,1,0);
-        var logo=Theme.Logo(320,160); logo.Margin=new Padding(25,0,10,0);
-        panel.Controls.Add(logo);
-        panel.Controls.Add(Theme.Text("AMBAR · Control Escolar",18,true,Theme.Blue));
-        panel.Controls.Add(Theme.Text("Instituto Tecnológico de Acapulco",10,false,Theme.Gray));
-        panel.Controls.Add(Theme.Text("Usuario",10,true));
-        panel.Controls.Add(username);
-        panel.Controls.Add(Theme.Text("Contraseña",10,true));
-        panel.Controls.Add(password);
-        enter.Width=350;
-        enter.Click += TryLogin;
-        panel.Controls.Add(enter);
-        status.MaximumSize=new Size(360,90);
-        panel.Controls.Add(status);
+        FormBorderStyle=FormBorderStyle.FixedSingle;
+        var card=new RoundedPanel { Bounds=new Rectangle(18,12,424,632), Radius=32,
+            BorderColor=Theme.Blue, BackColor=Color.White };
+        Controls.Add(card);
+        var logo=Theme.Logo(345,145); logo.Location=new Point(35,15);
+        card.Controls.Add(logo);
+        ReferenceUi.Label(card,"Control escolar",70,154,284,34,17,true,ContentAlignment.MiddleCenter);
+        ReferenceUi.Label(card,"Usuario:",38,228,330,26,12,true);
+        ReferenceUi.Input(card,username,38,262,330);
+        ReferenceUi.Label(card,"Contraseña:",38,337,330,26,12,true);
+        ReferenceUi.Input(card,password,38,372,330);
+        var register=new LinkLabel { Text="Registrarse",Bounds=new Rectangle(295,446,104,28),
+            LinkColor=Theme.Gray,Font=new Font("Segoe UI",11),TabIndex=2 };
+        register.Click+=(_,_)=>MessageBox.Show("Solicita tu cuenta al administrador. El alta de personal requiere una sesión autorizada.","Registro de personal");
+        card.Controls.Add(register);
+        enter.AutoSize=false; enter.Bounds=new Rectangle(80,494,270,50);
+        ReferenceUi.Round(enter); enter.Font=new Font("Segoe UI",16,FontStyle.Bold);
+        enter.Click+=TryLogin; enter.TabIndex=3; card.Controls.Add(enter);
+        status.AutoSize=false; status.Bounds=new Rectangle(35,554,355,60);
+        status.Text="El sistema detecta si eres docente o\npersonal administrativo.";
+        status.TextAlign=ContentAlignment.MiddleCenter; card.Controls.Add(status);
+        username.TabIndex=0;password.TabIndex=1;
         AcceptButton=enter;
     }
 

@@ -4,12 +4,12 @@ namespace AMBAR.Semana4;
 
 internal static class Theme
 {
-    public static readonly Color Blue = Color.FromArgb(27,57,106);
-    public static readonly Color Gray = Color.FromArgb(128,126,130);
-    public static readonly Color Light = Color.FromArgb(242,246,252);
-    public static readonly Color Sky = Color.FromArgb(221,233,246);
+    public static readonly Color Blue = Color.FromArgb(6,55,99);
+    public static readonly Color Gray = Color.FromArgb(61,107,134);
+    public static readonly Color Light = Color.White;
+    public static readonly Color Sky = Color.FromArgb(180,213,234);
     public static readonly Color Ink = Color.FromArgb(34,49,71);
-    public static readonly Color Green = Color.FromArgb(16,111,91);
+    public static readonly Color Green = Color.FromArgb(53,151,128);
 
     public static void Setup(Form f, string title, int width=1100, int height=760)
     {

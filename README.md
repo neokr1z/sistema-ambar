@@ -66,7 +66,7 @@ El fichero se copia junto al `.exe`. **No compartas un `appsettings.json` con un
 
 ## 5. Guía breve de uso y validaciones
 
-**Administrador:** inicia sesión, usa **Alta de personal** y registra a un docente (RFC de 13 caracteres) o secretaria (número administrativo único), su nombre, correo institucional, usuario y contraseña. Cada operación crea los registros de empleado y cuenta dentro de una misma transacción y guarda una entrada de bitácora. El docente sólo recibe acceso a sus menús académicos (todavía pendientes); la secretaria accede a los módulos administrativos.
+**Administrador:** inicia sesión, usa **Alta de personal** y registra a un docente (RFC de 13 caracteres) o secretaria (RFC de 13 caracteres y número administrativo único), su nombre, correo institucional, usuario y contraseña. Cada operación crea los registros de empleado y cuenta dentro de una misma transacción y guarda una entrada de bitácora. El docente sólo recibe acceso a sus menús académicos (todavía pendientes); la secretaria accede a los módulos administrativos.
 
 **Secretaría:** entra a **Alta e inscripción**. Primero busca una ficha cargada en `Aspirante`. El sistema sólo permite continuar si `resultado_examen` es `APROBADO`, `ACEPTADO` o `ACREDITADO` y el `estatus` está habilitado; no inventa un puntaje mínimo, que todavía no fue establecido formalmente en los reportes. Completa nombres, apellidos, fecha de nacimiento, teléfono de emergencia, domicilio y correo institucional. Selecciona un plan vigente y un grupo de primer semestre con cupo. Guarda para crear, en una transacción, las filas correspondientes a `Alumno`, `Domicilio`, `Inscripcion`, la actualización de `Aspirante` y `Bitacora`.
 
@@ -111,3 +111,22 @@ Las siguientes pruebas se deben realizar en Windows y guardar captura de pantall
 `Program.cs` contiene configuración, conexión, autenticación, PBKDF2 y validaciones. `LoginForm.cs`, `MainForm.cs`, `UsersForm.cs`, `EnrollmentForm.cs`, `StudentsForm.cs`, `EditStudentForm.cs`, `ChangePasswordForm.cs` contienen las interfaces. `StudentModels.cs` y `StudentRepository.cs` manejan datos de alumnos con consultas parametrizadas y transacciones. `PdfService.cs` genera el PDF. `Theme.cs` define los colores y componentes visuales. `Assets/` conserva los dos recursos de identidad visual extraídos de los documentos proporcionados.
 
 **Nota de seguridad:** los datos de estudiantes son información personal; para una instalación real se requieren controles adicionales de operación, copias de seguridad, cifrado en tránsito para servidores remotos, auditoría de accesos fallidos, límites de intentos, revisión de permisos e infraestructura antes de operar con alumnos reales.
+
+
+## Actualización: RFC de Secretaría e interfaces de referencia
+
+**Antes de usar esta versión**, ejecutar `Sql/05_rfc_secretarias.sql` después del script 02, también en instalaciones nuevas. Agrega el RFC único de Personal_Administrativo conservando su número administrativo y sus relaciones. En registros anteriores el RFC queda NULL; todas las altas nuevas de Secretaría exigen RFC. No es necesario volver a ejecutar el script 01.
+
+- Alta de personal: RFC independiente del número administrativo; misma validación de formato para docentes y secretarias, normalización a mayúsculas y bloqueo antes de abrir la transacción. Esta validación no consulta registros fiscales externos.
+- Acceso: tarjeta vertical blanca, logo TecNM, campos redondeados y botón azul. Registrarse indica que el administrador debe crear la cuenta; no habilita altas sin autorización.
+- Inicio: menú lateral celeste, perfil, indicadores acumulados y últimas diez actividades leídos desde MySQL. Si no se pueden consultar, se informa el error sin mostrar cifras ficticias.
+- Captura e historial de calificaciones: ventanas accesibles para docentes con distribución basada en las imágenes proporcionadas. Son interfaces preparadas para una entrega posterior: no hay alumnos ficticios, búsquedas ni guardados simulados; Guardar y Buscar permanecen deshabilitados.
+
+Verificación pendiente en Windows: compilar la solución y revisar las cuatro pantallas con escala de pantalla de 100 % y 125 %. No se ejecutó Windows Forms ni MySQL en el entorno de edición.
+
+Pruebas de aceptación para el RFC:
+1. Ejecutar la migración 05 dos veces: la segunda ejecución no debe modificar cuentas ni recrear el índice.
+2. Seleccionar Secretaría, completar número administrativo y dejar RFC vacío o con formato incorrecto: impedir el alta.
+3. Usar un RFC con formato correcto y un número administrativo diferente: guardar cada valor en su columna, manteniendo la relación de Usuario por número administrativo.
+4. Repetir RFC con otra secretaria: rechazar el duplicado y revertir la transacción completa.
+5. Cambiar el rol a Docente: deshabilitar el número administrativo y seguir exigiendo RFC.
