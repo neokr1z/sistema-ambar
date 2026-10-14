@@ -1,0 +1,18 @@
+# Visual Studio y compilación
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Credenciales y configuración privada
+credenciales_iniciales.txt
+appsettings.*.local.json
+.env
+.env.*
+
+# Archivos temporales
+*.log
+*.tmp
