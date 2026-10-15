@@ -1,0 +1,5 @@
+Cuenta temporal ADMINISTRADOR (solo primer acceso)
+Usuario: admin
+Contraseña temporal: IULsGHTpWvGtUPc0cnZmmEWE
+
+Cambiar contraseña tras el primer ingreso y eliminar este archivo.
