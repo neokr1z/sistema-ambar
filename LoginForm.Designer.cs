@@ -12,7 +12,6 @@ partial class LoginForm
 
     private void InitializeComponent()
     {
-        components = new System.ComponentModel.Container();
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
         card = new RoundedPanel();
         logo = new PictureBox();
@@ -26,125 +25,188 @@ partial class LoginForm
         register = new LinkLabel();
         enter = new RoundedButton();
         status = new Label();
-        SuspendLayout();
         card.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
         usernameBorder.SuspendLayout();
         passwordBorder.SuspendLayout();
-        card.Name = "card";
-        card.Location = new Point(18, 12);
-        card.Size = new Size(424, 632);
-        card.Radius = 32;
+        SuspendLayout();
+        // 
+        // card
+        // 
         card.BorderColor = Color.FromArgb(6, 55, 99);
-        logo.Name = "logo";
-        logo.Location = new Point(35, 15);
-        logo.Size = new Size(345, 145);
-        logo.SizeMode = PictureBoxSizeMode.Zoom;
-        logo.Image = ((System.Drawing.Image)(resources.GetObject("logo.Image")));
-        title.Name = "title";
-        title.Location = new Point(70, 154);
-        title.Size = new Size(284, 34);
-        title.Text = "Control escolar";
-        title.ForeColor = Color.FromArgb(61, 107, 134);
-        title.TextAlign = ContentAlignment.MiddleLeft;
-        title.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
-        usernameLabel.Name = "usernameLabel";
-        usernameLabel.Location = new Point(38, 228);
-        usernameLabel.Size = new Size(330, 26);
-        usernameLabel.Text = "Usuario:";
-        usernameLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        usernameLabel.TextAlign = ContentAlignment.MiddleLeft;
-        usernameLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-        usernameBorder.Name = "usernameBorder";
-        usernameBorder.Location = new Point(38, 262);
-        usernameBorder.Size = new Size(330, 48);
-        usernameBorder.Radius = 16;
-        usernameBorder.BorderColor = Color.FromArgb(6, 55, 99);
-        username.Name = "username";
-        username.Location = new Point(13, 13);
-        username.Size = new Size(304, 25);
-        username.Font = new Font("Segoe UI", 11F);
-        username.TabIndex = 6;
-        username.BorderStyle = BorderStyle.None;
-        username.MaxLength = 50;
-        username.UseSystemPasswordChar = false;
-        passwordLabel.Name = "passwordLabel";
-        passwordLabel.Location = new Point(38, 337);
-        passwordLabel.Size = new Size(330, 26);
-        passwordLabel.Text = "Contraseña:";
-        passwordLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        passwordLabel.TextAlign = ContentAlignment.MiddleLeft;
-        passwordLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-        passwordBorder.Name = "passwordBorder";
-        passwordBorder.Location = new Point(38, 371);
-        passwordBorder.Size = new Size(330, 48);
-        passwordBorder.Radius = 16;
-        passwordBorder.BorderColor = Color.FromArgb(6, 55, 99);
-        password.Name = "password";
-        password.Location = new Point(13, 13);
-        password.Size = new Size(304, 25);
-        password.Font = new Font("Segoe UI", 11F);
-        password.TabIndex = 9;
-        password.BorderStyle = BorderStyle.None;
-        password.MaxLength = 200;
-        password.UseSystemPasswordChar = true;
-        register.Name = "register";
-        register.Location = new Point(295, 446);
-        register.Size = new Size(104, 28);
-        register.Text = "Registrarse";
-        enter.Name = "enter";
-        enter.Location = new Point(80, 494);
-        enter.Size = new Size(270, 50);
-        enter.Text = "Iniciar sesión";
-        enter.BackColor = Color.FromArgb(6, 55, 99);
-        enter.ForeColor = Color.White;
-        enter.FlatStyle = FlatStyle.Flat;
-        enter.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        enter.Cursor = Cursors.Hand;
-        status.Name = "status";
-        status.Location = new Point(35, 554);
-        status.Size = new Size(355, 60);
-        status.Text = "El sistema detecta si eres docente o\npersonal administrativo.";
-        status.ForeColor = Color.FromArgb(61, 107, 134);
-        status.TextAlign = ContentAlignment.MiddleLeft;
-        status.Font = new Font("Segoe UI", 10F);
-        status.TextAlign = ContentAlignment.MiddleCenter;
-        enter.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-        this.Controls.Add(card);
         card.Controls.Add(logo);
         card.Controls.Add(title);
         card.Controls.Add(usernameLabel);
         card.Controls.Add(usernameBorder);
-        usernameBorder.Controls.Add(username);
         card.Controls.Add(passwordLabel);
         card.Controls.Add(passwordBorder);
-        passwordBorder.Controls.Add(password);
         card.Controls.Add(register);
         card.Controls.Add(enter);
         card.Controls.Add(status);
+        card.Location = new Point(22, 15);
+        card.Margin = new Padding(4);
+        card.Name = "card";
+        card.Padding = new Padding(2);
+        card.Radius = 32;
+        card.Size = new Size(530, 790);
+        card.TabIndex = 0;
+        // 
+        // logo
+        // 
+        logo.Image = (Image)resources.GetObject("logo.Image");
+        logo.Location = new Point(6, 20);
+        logo.Margin = new Padding(4);
+        logo.Name = "logo";
+        logo.Size = new Size(431, 181);
+        logo.SizeMode = PictureBoxSizeMode.Zoom;
+        logo.TabIndex = 0;
+        logo.TabStop = false;
+        // 
+        // title
+        // 
+        title.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
+        title.ForeColor = Color.FromArgb(61, 107, 134);
+        title.Location = new Point(161, 193);
+        title.Margin = new Padding(4, 0, 4, 0);
+        title.Name = "title";
+        title.Size = new Size(227, 42);
+        title.TabIndex = 1;
+        title.Text = "Control escolar";
+        title.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // usernameLabel
+        // 
+        usernameLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        usernameLabel.ForeColor = Color.FromArgb(61, 107, 134);
+        usernameLabel.Location = new Point(48, 285);
+        usernameLabel.Margin = new Padding(4, 0, 4, 0);
+        usernameLabel.Name = "usernameLabel";
+        usernameLabel.Size = new Size(412, 32);
+        usernameLabel.TabIndex = 2;
+        usernameLabel.Text = "Usuario:";
+        usernameLabel.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // usernameBorder
+        // 
+        usernameBorder.BorderColor = Color.FromArgb(6, 55, 99);
+        usernameBorder.Controls.Add(username);
+        usernameBorder.Location = new Point(48, 328);
+        usernameBorder.Margin = new Padding(4);
+        usernameBorder.Name = "usernameBorder";
+        usernameBorder.Padding = new Padding(2);
+        usernameBorder.Radius = 16;
+        usernameBorder.Size = new Size(412, 60);
+        usernameBorder.TabIndex = 3;
+        // 
+        // username
+        // 
+        username.BorderStyle = BorderStyle.None;
+        username.Font = new Font("Segoe UI", 11F);
+        username.Location = new Point(16, 16);
+        username.Margin = new Padding(4);
+        username.MaxLength = 50;
+        username.Name = "username";
+        username.Size = new Size(380, 25);
+        username.TabIndex = 6;
+        // 
+        // passwordLabel
+        // 
+        passwordLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        passwordLabel.ForeColor = Color.FromArgb(61, 107, 134);
+        passwordLabel.Location = new Point(48, 421);
+        passwordLabel.Margin = new Padding(4, 0, 4, 0);
+        passwordLabel.Name = "passwordLabel";
+        passwordLabel.Size = new Size(412, 32);
+        passwordLabel.TabIndex = 4;
+        passwordLabel.Text = "Contraseña:";
+        passwordLabel.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // passwordBorder
+        // 
+        passwordBorder.BorderColor = Color.FromArgb(6, 55, 99);
+        passwordBorder.Controls.Add(password);
+        passwordBorder.Location = new Point(48, 464);
+        passwordBorder.Margin = new Padding(4);
+        passwordBorder.Name = "passwordBorder";
+        passwordBorder.Padding = new Padding(2);
+        passwordBorder.Radius = 16;
+        passwordBorder.Size = new Size(412, 60);
+        passwordBorder.TabIndex = 5;
+        // 
+        // password
+        // 
+        password.BorderStyle = BorderStyle.None;
+        password.Font = new Font("Segoe UI", 11F);
+        password.Location = new Point(16, 16);
+        password.Margin = new Padding(4);
+        password.MaxLength = 200;
+        password.Name = "password";
+        password.Size = new Size(380, 25);
+        password.TabIndex = 9;
+        password.UseSystemPasswordChar = true;
+        // 
+        // register
+        // 
+        register.Location = new Point(369, 558);
+        register.Margin = new Padding(4, 0, 4, 0);
+        register.Name = "register";
+        register.Size = new Size(130, 35);
+        register.TabIndex = 6;
+        register.TabStop = true;
+        register.Text = "Registrarse";
         register.LinkClicked += RegisterClick;
+        // 
+        // enter
+        // 
+        enter.BackColor = Color.FromArgb(6, 55, 99);
+        enter.Cursor = Cursors.Hand;
+        enter.FlatStyle = FlatStyle.Flat;
+        enter.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+        enter.ForeColor = Color.White;
+        enter.Location = new Point(148, 597);
+        enter.Margin = new Padding(4);
+        enter.Name = "enter";
+        enter.Size = new Size(221, 62);
+        enter.TabIndex = 7;
+        enter.Text = "Iniciar sesión";
+        enter.UseVisualStyleBackColor = false;
         enter.Click += TryLogin;
-        Text = "AMBAR | Acceso";
-        ClientSize = new Size(460, 660);
-        MinimumSize = new Size(460, 650);
-        BackColor = Color.White;
-        Font = new Font("Segoe UI", 10F);
-        AutoScaleDimensions = new SizeF(96F, 96F);
-        AutoScaleMode = AutoScaleMode.Dpi;
-        StartPosition = FormStartPosition.CenterScreen;
-        MaximizeBox = false;
-        FormBorderStyle = FormBorderStyle.FixedSingle;
+        // 
+        // status
+        // 
+        status.Font = new Font("Segoe UI", 10F);
+        status.ForeColor = Color.FromArgb(61, 107, 134);
+        status.Location = new Point(44, 692);
+        status.Margin = new Padding(4, 0, 4, 0);
+        status.Name = "status";
+        status.Size = new Size(444, 75);
+        status.TabIndex = 8;
+        status.Text = "El sistema detecta si eres docente o\npersonal administrativo.";
+        status.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // LoginForm
+        // 
         AcceptButton = enter;
+        AutoScaleDimensions = new SizeF(120F, 120F);
+        AutoScaleMode = AutoScaleMode.Dpi;
+        BackColor = Color.White;
+        ClientSize = new Size(575, 825);
+        Controls.Add(card);
+        Font = new Font("Segoe UI", 10F);
+        FormBorderStyle = FormBorderStyle.FixedSingle;
+        Margin = new Padding(4);
+        MaximizeBox = false;
+        MinimumSize = new Size(570, 801);
         Name = "LoginForm";
-        passwordBorder.ResumeLayout(false);
-        passwordBorder.PerformLayout();
+        StartPosition = FormStartPosition.CenterScreen;
+        Text = "AMBAR | Acceso";
+        card.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)logo).EndInit();
         usernameBorder.ResumeLayout(false);
         usernameBorder.PerformLayout();
-        ((System.ComponentModel.ISupportInitialize)logo).EndInit();
-        card.ResumeLayout(false);
-        card.PerformLayout();
+        passwordBorder.ResumeLayout(false);
+        passwordBorder.PerformLayout();
         ResumeLayout(false);
-        PerformLayout();
     }
 
     private RoundedPanel card;

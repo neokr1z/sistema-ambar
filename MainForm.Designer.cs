@@ -12,54 +12,10 @@ partial class MainForm
 
     private void InitializeComponent()
     {
-        components = new System.ComponentModel.Container();
+        DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
         content = new Panel();
-        sidebar = new Panel();
-        nav = new FlowLayoutPanel();
-        logout = new Button();
-        brand = new Panel();
-        logo = new PictureBox();
-        hamburger = new Button();
-        homeRow = new RoundedPanel();
-        homeIcon = new Label();
-        homeButton = new Button();
-        enrollRow = new RoundedPanel();
-        enrollIcon = new Label();
-        enrollButton = new Button();
-        renewRow = new RoundedPanel();
-        renewIcon = new Label();
-        renewButton = new Button();
-        reportsRow = new RoundedPanel();
-        reportsIcon = new Label();
-        reportsButton = new Button();
-        documentsRow = new RoundedPanel();
-        documentsIcon = new Label();
-        documentsButton = new Button();
-        studentsRow = new RoundedPanel();
-        studentsIcon = new Label();
-        studentsButton = new Button();
-        sendRow = new RoundedPanel();
-        sendIcon = new Label();
-        sendButton = new Button();
-        subjectsRow = new RoundedPanel();
-        subjectsIcon = new Label();
-        subjectsButton = new Button();
-        captureRow = new RoundedPanel();
-        captureIcon = new Label();
-        captureButton = new Button();
-        historyRow = new RoundedPanel();
-        historyIcon = new Label();
-        historyButton = new Button();
-        usersRow = new RoundedPanel();
-        usersIcon = new Label();
-        usersButton = new Button();
-        auditRow = new RoundedPanel();
-        auditIcon = new Label();
-        auditButton = new Button();
-        passwordRow = new RoundedPanel();
-        passwordIcon = new Label();
-        passwordButton = new Button();
         dashboard = new Panel();
         title = new Label();
         profile = new RoundedPanel();
@@ -88,25 +44,43 @@ partial class MainForm
         pending = new Panel();
         pendingTitle = new Label();
         pendingMessage = new Label();
-        SuspendLayout();
+        sidebar = new Panel();
+        nav = new FlowLayoutPanel();
+        homeRow = new RoundedPanel();
+        homeIcon = new Label();
+        homeButton = new Button();
+        enrollRow = new RoundedPanel();
+        enrollIcon = new Label();
+        enrollButton = new Button();
+        renewRow = new RoundedPanel();
+        renewIcon = new Label();
+        renewButton = new Button();
+        reportsRow = new RoundedPanel();
+        reportsIcon = new Label();
+        reportsButton = new Button();
+        documentsRow = new RoundedPanel();
+        documentsIcon = new Label();
+        documentsButton = new Button();
+        studentsRow = new RoundedPanel();
+        studentsIcon = new Label();
+        studentsButton = new Button();
+        sendRow = new RoundedPanel();
+        sendIcon = new Label();
+        sendButton = new Button();
+        usersRow = new RoundedPanel();
+        usersIcon = new Label();
+        usersButton = new Button();
+        auditRow = new RoundedPanel();
+        auditIcon = new Label();
+        auditButton = new Button();
+        passwordRow = new RoundedPanel();
+        passwordIcon = new Label();
+        passwordButton = new Button();
+        logout = new Button();
+        brand = new Panel();
+        logo = new PictureBox();
+        hamburger = new Button();
         content.SuspendLayout();
-        sidebar.SuspendLayout();
-        nav.SuspendLayout();
-        brand.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
-        homeRow.SuspendLayout();
-        enrollRow.SuspendLayout();
-        renewRow.SuspendLayout();
-        reportsRow.SuspendLayout();
-        documentsRow.SuspendLayout();
-        studentsRow.SuspendLayout();
-        sendRow.SuspendLayout();
-        subjectsRow.SuspendLayout();
-        captureRow.SuspendLayout();
-        historyRow.SuspendLayout();
-        usersRow.SuspendLayout();
-        auditRow.SuspendLayout();
-        passwordRow.SuspendLayout();
         dashboard.SuspendLayout();
         profile.SuspendLayout();
         statistics.SuspendLayout();
@@ -115,770 +89,951 @@ partial class MainForm
         renewalsCard.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)grid).BeginInit();
         pending.SuspendLayout();
-        content.Name = "content";
-        content.Dock = DockStyle.Fill;
+        sidebar.SuspendLayout();
+        nav.SuspendLayout();
+        homeRow.SuspendLayout();
+        enrollRow.SuspendLayout();
+        renewRow.SuspendLayout();
+        reportsRow.SuspendLayout();
+        documentsRow.SuspendLayout();
+        studentsRow.SuspendLayout();
+        sendRow.SuspendLayout();
+        usersRow.SuspendLayout();
+        auditRow.SuspendLayout();
+        passwordRow.SuspendLayout();
+        brand.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
+        SuspendLayout();
+        // 
+        // content
+        // 
         content.AutoScroll = true;
-        sidebar.Name = "sidebar";
-        sidebar.Dock = DockStyle.Left;
-        sidebar.Width = 290;
-        nav.Name = "nav";
-        nav.Dock = DockStyle.Fill;
-        nav.FlowDirection = FlowDirection.TopDown;
-        nav.WrapContents = false;
-        nav.AutoScroll = true;
-        nav.Padding = new Padding(10, 24, 6, 8);
-        logout.Name = "logout";
-        logout.Text = "⇥  Cerrar sesión";
-        logout.BackColor = Color.FromArgb(6, 55, 99);
-        logout.ForeColor = Color.White;
-        logout.FlatStyle = FlatStyle.Flat;
-        logout.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        logout.Cursor = Cursors.Hand;
-        logout.Dock = DockStyle.Bottom;
-        logout.Height = 46;
-        logout.BackColor = Color.FromArgb(180, 213, 234);
-        logout.ForeColor = Color.FromArgb(6, 55, 99);
-        brand.Name = "brand";
-        brand.Dock = DockStyle.Top;
-        brand.Height = 110;
-        logo.Name = "logo";
-        logo.Location = new Point(63, 6);
-        logo.Size = new Size(205, 94);
-        logo.SizeMode = PictureBoxSizeMode.Zoom;
-        logo.Image = ((System.Drawing.Image)(resources.GetObject("logo.Image")));
-        hamburger.Name = "hamburger";
-        hamburger.Location = new Point(14, 26);
-        hamburger.Size = new Size(44, 44);
-        hamburger.Text = "☰";
-        hamburger.BackColor = Color.FromArgb(6, 55, 99);
-        hamburger.ForeColor = Color.White;
-        hamburger.FlatStyle = FlatStyle.Flat;
-        hamburger.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        hamburger.Cursor = Cursors.Hand;
-        hamburger.BackColor = Color.White;
-        hamburger.ForeColor = Color.Black;
-        hamburger.FlatAppearance.BorderSize = 0;
-        homeRow.Name = "homeRow";
-        homeRow.Location = new Point(0, 0);
-        homeRow.Size = new Size(258, 44);
-        homeRow.BackColor = Color.FromArgb(180, 213, 234);
-        homeRow.Margin = new Padding(0, 0, 0, 15);
-        homeIcon.Name = "homeIcon";
-        homeIcon.Location = new Point(5, 4);
-        homeIcon.Size = new Size(36, 36);
-        homeIcon.Text = "";
-        homeIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        homeIcon.TextAlign = ContentAlignment.MiddleLeft;
-        homeIcon.Font = new Font("Segoe UI", 10F);
-        homeIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        homeIcon.ForeColor = Color.Black;
-        homeIcon.TextAlign = ContentAlignment.MiddleCenter;
-        homeButton.Name = "homeButton";
-        homeButton.Location = new Point(42, 2);
-        homeButton.Size = new Size(212, 40);
-        homeButton.Text = "Inicio";
-        homeButton.BackColor = Color.FromArgb(6, 55, 99);
-        homeButton.ForeColor = Color.White;
-        homeButton.FlatStyle = FlatStyle.Flat;
-        homeButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        homeButton.Cursor = Cursors.Hand;
-        homeButton.BackColor = Color.FromArgb(180, 213, 234);
-        homeButton.ForeColor = Color.FromArgb(61, 107, 134);
-        homeButton.FlatAppearance.BorderSize = 0;
-        homeButton.TextAlign = ContentAlignment.MiddleLeft;
-        enrollRow.Name = "enrollRow";
-        enrollRow.Location = new Point(0, 0);
-        enrollRow.Size = new Size(258, 44);
-        enrollRow.BackColor = Color.FromArgb(180, 213, 234);
-        enrollRow.Margin = new Padding(0, 0, 0, 15);
-        enrollIcon.Name = "enrollIcon";
-        enrollIcon.Location = new Point(5, 4);
-        enrollIcon.Size = new Size(36, 36);
-        enrollIcon.Text = "";
-        enrollIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        enrollIcon.TextAlign = ContentAlignment.MiddleLeft;
-        enrollIcon.Font = new Font("Segoe UI", 10F);
-        enrollIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        enrollIcon.ForeColor = Color.Black;
-        enrollIcon.TextAlign = ContentAlignment.MiddleCenter;
-        enrollButton.Name = "enrollButton";
-        enrollButton.Location = new Point(42, 2);
-        enrollButton.Size = new Size(212, 40);
-        enrollButton.Text = "Alta e inscripción";
-        enrollButton.BackColor = Color.FromArgb(6, 55, 99);
-        enrollButton.ForeColor = Color.White;
-        enrollButton.FlatStyle = FlatStyle.Flat;
-        enrollButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        enrollButton.Cursor = Cursors.Hand;
-        enrollButton.BackColor = Color.FromArgb(180, 213, 234);
-        enrollButton.ForeColor = Color.FromArgb(61, 107, 134);
-        enrollButton.FlatAppearance.BorderSize = 0;
-        enrollButton.TextAlign = ContentAlignment.MiddleLeft;
-        renewRow.Name = "renewRow";
-        renewRow.Location = new Point(0, 0);
-        renewRow.Size = new Size(258, 44);
-        renewRow.BackColor = Color.FromArgb(180, 213, 234);
-        renewRow.Margin = new Padding(0, 0, 0, 15);
-        renewIcon.Name = "renewIcon";
-        renewIcon.Location = new Point(5, 4);
-        renewIcon.Size = new Size(36, 36);
-        renewIcon.Text = "";
-        renewIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        renewIcon.TextAlign = ContentAlignment.MiddleLeft;
-        renewIcon.Font = new Font("Segoe UI", 10F);
-        renewIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        renewIcon.ForeColor = Color.Black;
-        renewIcon.TextAlign = ContentAlignment.MiddleCenter;
-        renewButton.Name = "renewButton";
-        renewButton.Location = new Point(42, 2);
-        renewButton.Size = new Size(212, 40);
-        renewButton.Text = "Reinscripción";
-        renewButton.BackColor = Color.FromArgb(6, 55, 99);
-        renewButton.ForeColor = Color.White;
-        renewButton.FlatStyle = FlatStyle.Flat;
-        renewButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        renewButton.Cursor = Cursors.Hand;
-        renewButton.BackColor = Color.FromArgb(180, 213, 234);
-        renewButton.ForeColor = Color.FromArgb(61, 107, 134);
-        renewButton.FlatAppearance.BorderSize = 0;
-        renewButton.TextAlign = ContentAlignment.MiddleLeft;
-        reportsRow.Name = "reportsRow";
-        reportsRow.Location = new Point(0, 0);
-        reportsRow.Size = new Size(258, 44);
-        reportsRow.BackColor = Color.FromArgb(180, 213, 234);
-        reportsRow.Margin = new Padding(0, 0, 0, 15);
-        reportsIcon.Name = "reportsIcon";
-        reportsIcon.Location = new Point(5, 4);
-        reportsIcon.Size = new Size(36, 36);
-        reportsIcon.Text = "";
-        reportsIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        reportsIcon.TextAlign = ContentAlignment.MiddleLeft;
-        reportsIcon.Font = new Font("Segoe UI", 10F);
-        reportsIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        reportsIcon.ForeColor = Color.Black;
-        reportsIcon.TextAlign = ContentAlignment.MiddleCenter;
-        reportsButton.Name = "reportsButton";
-        reportsButton.Location = new Point(42, 2);
-        reportsButton.Size = new Size(212, 40);
-        reportsButton.Text = "Reportes";
-        reportsButton.BackColor = Color.FromArgb(6, 55, 99);
-        reportsButton.ForeColor = Color.White;
-        reportsButton.FlatStyle = FlatStyle.Flat;
-        reportsButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        reportsButton.Cursor = Cursors.Hand;
-        reportsButton.BackColor = Color.FromArgb(180, 213, 234);
-        reportsButton.ForeColor = Color.FromArgb(61, 107, 134);
-        reportsButton.FlatAppearance.BorderSize = 0;
-        reportsButton.TextAlign = ContentAlignment.MiddleLeft;
-        documentsRow.Name = "documentsRow";
-        documentsRow.Location = new Point(0, 0);
-        documentsRow.Size = new Size(258, 44);
-        documentsRow.BackColor = Color.FromArgb(180, 213, 234);
-        documentsRow.Margin = new Padding(0, 0, 0, 15);
-        documentsIcon.Name = "documentsIcon";
-        documentsIcon.Location = new Point(5, 4);
-        documentsIcon.Size = new Size(36, 36);
-        documentsIcon.Text = "";
-        documentsIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        documentsIcon.TextAlign = ContentAlignment.MiddleLeft;
-        documentsIcon.Font = new Font("Segoe UI", 10F);
-        documentsIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        documentsIcon.ForeColor = Color.Black;
-        documentsIcon.TextAlign = ContentAlignment.MiddleCenter;
-        documentsButton.Name = "documentsButton";
-        documentsButton.Location = new Point(42, 2);
-        documentsButton.Size = new Size(212, 40);
-        documentsButton.Text = "Documentos";
-        documentsButton.BackColor = Color.FromArgb(6, 55, 99);
-        documentsButton.ForeColor = Color.White;
-        documentsButton.FlatStyle = FlatStyle.Flat;
-        documentsButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        documentsButton.Cursor = Cursors.Hand;
-        documentsButton.BackColor = Color.FromArgb(180, 213, 234);
-        documentsButton.ForeColor = Color.FromArgb(61, 107, 134);
-        documentsButton.FlatAppearance.BorderSize = 0;
-        documentsButton.TextAlign = ContentAlignment.MiddleLeft;
-        studentsRow.Name = "studentsRow";
-        studentsRow.Location = new Point(0, 0);
-        studentsRow.Size = new Size(258, 44);
-        studentsRow.BackColor = Color.FromArgb(180, 213, 234);
-        studentsRow.Margin = new Padding(0, 0, 0, 15);
-        studentsIcon.Name = "studentsIcon";
-        studentsIcon.Location = new Point(5, 4);
-        studentsIcon.Size = new Size(36, 36);
-        studentsIcon.Text = "";
-        studentsIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        studentsIcon.TextAlign = ContentAlignment.MiddleLeft;
-        studentsIcon.Font = new Font("Segoe UI", 10F);
-        studentsIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        studentsIcon.ForeColor = Color.Black;
-        studentsIcon.TextAlign = ContentAlignment.MiddleCenter;
-        studentsButton.Name = "studentsButton";
-        studentsButton.Location = new Point(42, 2);
-        studentsButton.Size = new Size(212, 40);
-        studentsButton.Text = "Consulta de alumnos";
-        studentsButton.BackColor = Color.FromArgb(6, 55, 99);
-        studentsButton.ForeColor = Color.White;
-        studentsButton.FlatStyle = FlatStyle.Flat;
-        studentsButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        studentsButton.Cursor = Cursors.Hand;
-        studentsButton.BackColor = Color.FromArgb(180, 213, 234);
-        studentsButton.ForeColor = Color.FromArgb(61, 107, 134);
-        studentsButton.FlatAppearance.BorderSize = 0;
-        studentsButton.TextAlign = ContentAlignment.MiddleLeft;
-        sendRow.Name = "sendRow";
-        sendRow.Location = new Point(0, 0);
-        sendRow.Size = new Size(258, 44);
-        sendRow.BackColor = Color.FromArgb(180, 213, 234);
-        sendRow.Margin = new Padding(0, 0, 0, 15);
-        sendIcon.Name = "sendIcon";
-        sendIcon.Location = new Point(5, 4);
-        sendIcon.Size = new Size(36, 36);
-        sendIcon.Text = "";
-        sendIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        sendIcon.TextAlign = ContentAlignment.MiddleLeft;
-        sendIcon.Font = new Font("Segoe UI", 10F);
-        sendIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        sendIcon.ForeColor = Color.Black;
-        sendIcon.TextAlign = ContentAlignment.MiddleCenter;
-        sendButton.Name = "sendButton";
-        sendButton.Location = new Point(42, 2);
-        sendButton.Size = new Size(212, 40);
-        sendButton.Text = "Enviar documentos";
-        sendButton.BackColor = Color.FromArgb(6, 55, 99);
-        sendButton.ForeColor = Color.White;
-        sendButton.FlatStyle = FlatStyle.Flat;
-        sendButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        sendButton.Cursor = Cursors.Hand;
-        sendButton.BackColor = Color.FromArgb(180, 213, 234);
-        sendButton.ForeColor = Color.FromArgb(61, 107, 134);
-        sendButton.FlatAppearance.BorderSize = 0;
-        sendButton.TextAlign = ContentAlignment.MiddleLeft;
-        subjectsRow.Name = "subjectsRow";
-        subjectsRow.Location = new Point(0, 0);
-        subjectsRow.Size = new Size(258, 44);
-        subjectsRow.BackColor = Color.FromArgb(180, 213, 234);
-        subjectsRow.Margin = new Padding(0, 0, 0, 15);
-        subjectsIcon.Name = "subjectsIcon";
-        subjectsIcon.Location = new Point(5, 4);
-        subjectsIcon.Size = new Size(36, 36);
-        subjectsIcon.Text = "";
-        subjectsIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        subjectsIcon.TextAlign = ContentAlignment.MiddleLeft;
-        subjectsIcon.Font = new Font("Segoe UI", 10F);
-        subjectsIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        subjectsIcon.ForeColor = Color.Black;
-        subjectsIcon.TextAlign = ContentAlignment.MiddleCenter;
-        subjectsButton.Name = "subjectsButton";
-        subjectsButton.Location = new Point(42, 2);
-        subjectsButton.Size = new Size(212, 40);
-        subjectsButton.Text = "Mis materias y grupos";
-        subjectsButton.BackColor = Color.FromArgb(6, 55, 99);
-        subjectsButton.ForeColor = Color.White;
-        subjectsButton.FlatStyle = FlatStyle.Flat;
-        subjectsButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        subjectsButton.Cursor = Cursors.Hand;
-        subjectsButton.BackColor = Color.FromArgb(180, 213, 234);
-        subjectsButton.ForeColor = Color.FromArgb(61, 107, 134);
-        subjectsButton.FlatAppearance.BorderSize = 0;
-        subjectsButton.TextAlign = ContentAlignment.MiddleLeft;
-        captureRow.Name = "captureRow";
-        captureRow.Location = new Point(0, 0);
-        captureRow.Size = new Size(258, 44);
-        captureRow.BackColor = Color.FromArgb(180, 213, 234);
-        captureRow.Margin = new Padding(0, 0, 0, 15);
-        captureIcon.Name = "captureIcon";
-        captureIcon.Location = new Point(5, 4);
-        captureIcon.Size = new Size(36, 36);
-        captureIcon.Text = "";
-        captureIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        captureIcon.TextAlign = ContentAlignment.MiddleLeft;
-        captureIcon.Font = new Font("Segoe UI", 10F);
-        captureIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        captureIcon.ForeColor = Color.Black;
-        captureIcon.TextAlign = ContentAlignment.MiddleCenter;
-        captureButton.Name = "captureButton";
-        captureButton.Location = new Point(42, 2);
-        captureButton.Size = new Size(212, 40);
-        captureButton.Text = "Captura de calificaciones";
-        captureButton.BackColor = Color.FromArgb(6, 55, 99);
-        captureButton.ForeColor = Color.White;
-        captureButton.FlatStyle = FlatStyle.Flat;
-        captureButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        captureButton.Cursor = Cursors.Hand;
-        captureButton.BackColor = Color.FromArgb(180, 213, 234);
-        captureButton.ForeColor = Color.FromArgb(61, 107, 134);
-        captureButton.FlatAppearance.BorderSize = 0;
-        captureButton.TextAlign = ContentAlignment.MiddleLeft;
-        historyRow.Name = "historyRow";
-        historyRow.Location = new Point(0, 0);
-        historyRow.Size = new Size(258, 44);
-        historyRow.BackColor = Color.FromArgb(180, 213, 234);
-        historyRow.Margin = new Padding(0, 0, 0, 15);
-        historyIcon.Name = "historyIcon";
-        historyIcon.Location = new Point(5, 4);
-        historyIcon.Size = new Size(36, 36);
-        historyIcon.Text = "";
-        historyIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        historyIcon.TextAlign = ContentAlignment.MiddleLeft;
-        historyIcon.Font = new Font("Segoe UI", 10F);
-        historyIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        historyIcon.ForeColor = Color.Black;
-        historyIcon.TextAlign = ContentAlignment.MiddleCenter;
-        historyButton.Name = "historyButton";
-        historyButton.Location = new Point(42, 2);
-        historyButton.Size = new Size(212, 40);
-        historyButton.Text = "Historial de calificaciones";
-        historyButton.BackColor = Color.FromArgb(6, 55, 99);
-        historyButton.ForeColor = Color.White;
-        historyButton.FlatStyle = FlatStyle.Flat;
-        historyButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        historyButton.Cursor = Cursors.Hand;
-        historyButton.BackColor = Color.FromArgb(180, 213, 234);
-        historyButton.ForeColor = Color.FromArgb(61, 107, 134);
-        historyButton.FlatAppearance.BorderSize = 0;
-        historyButton.TextAlign = ContentAlignment.MiddleLeft;
-        usersRow.Name = "usersRow";
-        usersRow.Location = new Point(0, 0);
-        usersRow.Size = new Size(258, 44);
-        usersRow.BackColor = Color.FromArgb(180, 213, 234);
-        usersRow.Margin = new Padding(0, 0, 0, 15);
-        usersIcon.Name = "usersIcon";
-        usersIcon.Location = new Point(5, 4);
-        usersIcon.Size = new Size(36, 36);
-        usersIcon.Text = "";
-        usersIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        usersIcon.TextAlign = ContentAlignment.MiddleLeft;
-        usersIcon.Font = new Font("Segoe UI", 10F);
-        usersIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        usersIcon.ForeColor = Color.Black;
-        usersIcon.TextAlign = ContentAlignment.MiddleCenter;
-        usersButton.Name = "usersButton";
-        usersButton.Location = new Point(42, 2);
-        usersButton.Size = new Size(212, 40);
-        usersButton.Text = "Alta de personal";
-        usersButton.BackColor = Color.FromArgb(6, 55, 99);
-        usersButton.ForeColor = Color.White;
-        usersButton.FlatStyle = FlatStyle.Flat;
-        usersButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        usersButton.Cursor = Cursors.Hand;
-        usersButton.BackColor = Color.FromArgb(180, 213, 234);
-        usersButton.ForeColor = Color.FromArgb(61, 107, 134);
-        usersButton.FlatAppearance.BorderSize = 0;
-        usersButton.TextAlign = ContentAlignment.MiddleLeft;
-        auditRow.Name = "auditRow";
-        auditRow.Location = new Point(0, 0);
-        auditRow.Size = new Size(258, 44);
-        auditRow.BackColor = Color.FromArgb(180, 213, 234);
-        auditRow.Margin = new Padding(0, 0, 0, 15);
-        auditIcon.Name = "auditIcon";
-        auditIcon.Location = new Point(5, 4);
-        auditIcon.Size = new Size(36, 36);
-        auditIcon.Text = "";
-        auditIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        auditIcon.TextAlign = ContentAlignment.MiddleLeft;
-        auditIcon.Font = new Font("Segoe UI", 10F);
-        auditIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        auditIcon.ForeColor = Color.Black;
-        auditIcon.TextAlign = ContentAlignment.MiddleCenter;
-        auditButton.Name = "auditButton";
-        auditButton.Location = new Point(42, 2);
-        auditButton.Size = new Size(212, 40);
-        auditButton.Text = "Bitácora";
-        auditButton.BackColor = Color.FromArgb(6, 55, 99);
-        auditButton.ForeColor = Color.White;
-        auditButton.FlatStyle = FlatStyle.Flat;
-        auditButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        auditButton.Cursor = Cursors.Hand;
-        auditButton.BackColor = Color.FromArgb(180, 213, 234);
-        auditButton.ForeColor = Color.FromArgb(61, 107, 134);
-        auditButton.FlatAppearance.BorderSize = 0;
-        auditButton.TextAlign = ContentAlignment.MiddleLeft;
-        passwordRow.Name = "passwordRow";
-        passwordRow.Location = new Point(0, 0);
-        passwordRow.Size = new Size(258, 44);
-        passwordRow.BackColor = Color.FromArgb(180, 213, 234);
-        passwordRow.Margin = new Padding(0, 0, 0, 15);
-        passwordIcon.Name = "passwordIcon";
-        passwordIcon.Location = new Point(5, 4);
-        passwordIcon.Size = new Size(36, 36);
-        passwordIcon.Text = "";
-        passwordIcon.ForeColor = Color.FromArgb(61, 107, 134);
-        passwordIcon.TextAlign = ContentAlignment.MiddleLeft;
-        passwordIcon.Font = new Font("Segoe UI", 10F);
-        passwordIcon.Font = new Font("Segoe MDL2 Assets", 19F);
-        passwordIcon.ForeColor = Color.Black;
-        passwordIcon.TextAlign = ContentAlignment.MiddleCenter;
-        passwordButton.Name = "passwordButton";
-        passwordButton.Location = new Point(42, 2);
-        passwordButton.Size = new Size(212, 40);
-        passwordButton.Text = "Cambiar contraseña";
-        passwordButton.BackColor = Color.FromArgb(6, 55, 99);
-        passwordButton.ForeColor = Color.White;
-        passwordButton.FlatStyle = FlatStyle.Flat;
-        passwordButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        passwordButton.Cursor = Cursors.Hand;
-        passwordButton.BackColor = Color.FromArgb(180, 213, 234);
-        passwordButton.ForeColor = Color.FromArgb(61, 107, 134);
-        passwordButton.FlatAppearance.BorderSize = 0;
-        passwordButton.TextAlign = ContentAlignment.MiddleLeft;
-        dashboard.Name = "dashboard";
-        dashboard.Location = new Point(0, 0);
-        dashboard.Size = new Size(690, 690);
-        dashboard.Dock = DockStyle.Top;
-        title.Name = "title";
-        title.Location = new Point(22, 18);
-        title.Size = new Size(655, 52);
-        title.Text = "Secretaría - Control escolar";
-        title.ForeColor = Color.FromArgb(61, 107, 134);
-        title.TextAlign = ContentAlignment.MiddleLeft;
-        title.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-        title.TextAlign = ContentAlignment.MiddleRight;
-        title.ForeColor = Color.FromArgb(6, 55, 99);
-        profile.Name = "profile";
-        profile.Location = new Point(28, 105);
-        profile.Size = new Size(650, 174);
-        profile.BorderColor = Color.FromArgb(6, 55, 99);
-        avatar.Name = "avatar";
-        avatar.Location = new Point(16, 18);
-        avatar.Size = new Size(144, 138);
-        avatar.Text = "";
-        avatar.ForeColor = Color.FromArgb(61, 107, 134);
-        avatar.TextAlign = ContentAlignment.MiddleLeft;
-        avatar.Font = new Font("Segoe UI", 10F);
-        avatar.Font = new Font("Segoe MDL2 Assets", 70F);
-        avatar.ForeColor = Color.Black;
-        avatar.TextAlign = ContentAlignment.MiddleCenter;
-        profileName.Name = "profileName";
-        profileName.Location = new Point(177, 18);
-        profileName.Size = new Size(457, 32);
-        profileName.Text = "Nombre";
-        profileName.ForeColor = Color.FromArgb(61, 107, 134);
-        profileName.TextAlign = ContentAlignment.MiddleLeft;
-        profileName.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-        profileMail.Name = "profileMail";
-        profileMail.Location = new Point(177, 55);
-        profileMail.Size = new Size(457, 44);
-        profileMail.Text = "Clave · Correo institucional";
-        profileMail.ForeColor = Color.FromArgb(61, 107, 134);
-        profileMail.TextAlign = ContentAlignment.MiddleLeft;
-        profileMail.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-        profileRole.Name = "profileRole";
-        profileRole.Location = new Point(177, 105);
-        profileRole.Size = new Size(185, 58);
-        profileRole.Text = "Rol\nSecretaría";
-        profileRole.ForeColor = Color.FromArgb(61, 107, 134);
-        profileRole.TextAlign = ContentAlignment.MiddleLeft;
-        profileRole.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-        profileArea.Name = "profileArea";
-        profileArea.Location = new Point(382, 105);
-        profileArea.Size = new Size(240, 58);
-        profileArea.Text = "Área\nControl escolar";
-        profileArea.ForeColor = Color.FromArgb(61, 107, 134);
-        profileArea.TextAlign = ContentAlignment.MiddleLeft;
-        profileArea.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-        statistics.Name = "statistics";
-        statistics.Location = new Point(0, 300);
-        statistics.Size = new Size(690, 390);
-        enrolledCard.Name = "enrolledCard";
-        enrolledCard.Location = new Point(45, 7);
-        enrolledCard.Size = new Size(182, 104);
-        enrolledCard.BackColor = Color.FromArgb(61, 107, 134);
-        enrolledCard.BorderColor = Color.FromArgb(53, 151, 128);
-        enrolledCaption.Name = "enrolledCaption";
-        enrolledCaption.Location = new Point(8, 6);
-        enrolledCaption.Size = new Size(166, 62);
-        enrolledCaption.Text = "Alumnos\ninscritos";
-        enrolledCaption.ForeColor = Color.FromArgb(61, 107, 134);
-        enrolledCaption.TextAlign = ContentAlignment.MiddleLeft;
-        enrolledCaption.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-        enrolledCaption.ForeColor = Color.White;
-        enrolledCaption.TextAlign = ContentAlignment.MiddleCenter;
-        enrolled.Name = "enrolled";
-        enrolled.Location = new Point(8, 68);
-        enrolled.Size = new Size(166, 30);
-        enrolled.Text = "—";
-        enrolled.ForeColor = Color.FromArgb(61, 107, 134);
-        enrolled.TextAlign = ContentAlignment.MiddleLeft;
-        enrolled.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-        enrolled.ForeColor = Color.White;
-        enrolled.TextAlign = ContentAlignment.MiddleCenter;
-        applicantsCard.Name = "applicantsCard";
-        applicantsCard.Location = new Point(251, 7);
-        applicantsCard.Size = new Size(182, 104);
-        applicantsCard.BackColor = Color.FromArgb(61, 107, 134);
-        applicantsCard.BorderColor = Color.FromArgb(53, 151, 128);
-        applicantsCaption.Name = "applicantsCaption";
-        applicantsCaption.Location = new Point(8, 6);
-        applicantsCaption.Size = new Size(166, 62);
-        applicantsCaption.Text = "Aspirantes\npendientes";
-        applicantsCaption.ForeColor = Color.FromArgb(61, 107, 134);
-        applicantsCaption.TextAlign = ContentAlignment.MiddleLeft;
-        applicantsCaption.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-        applicantsCaption.ForeColor = Color.White;
-        applicantsCaption.TextAlign = ContentAlignment.MiddleCenter;
-        applicants.Name = "applicants";
-        applicants.Location = new Point(8, 68);
-        applicants.Size = new Size(166, 30);
-        applicants.Text = "—";
-        applicants.ForeColor = Color.FromArgb(61, 107, 134);
-        applicants.TextAlign = ContentAlignment.MiddleLeft;
-        applicants.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-        applicants.ForeColor = Color.White;
-        applicants.TextAlign = ContentAlignment.MiddleCenter;
-        renewalsCard.Name = "renewalsCard";
-        renewalsCard.Location = new Point(457, 7);
-        renewalsCard.Size = new Size(182, 104);
-        renewalsCard.BackColor = Color.FromArgb(61, 107, 134);
-        renewalsCard.BorderColor = Color.FromArgb(53, 151, 128);
-        renewalsCaption.Name = "renewalsCaption";
-        renewalsCaption.Location = new Point(8, 6);
-        renewalsCaption.Size = new Size(166, 62);
-        renewalsCaption.Text = "Reinscripciones";
-        renewalsCaption.ForeColor = Color.FromArgb(61, 107, 134);
-        renewalsCaption.TextAlign = ContentAlignment.MiddleLeft;
-        renewalsCaption.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-        renewalsCaption.ForeColor = Color.White;
-        renewalsCaption.TextAlign = ContentAlignment.MiddleCenter;
-        renewals.Name = "renewals";
-        renewals.Location = new Point(8, 68);
-        renewals.Size = new Size(166, 30);
-        renewals.Text = "—";
-        renewals.ForeColor = Color.FromArgb(61, 107, 134);
-        renewals.TextAlign = ContentAlignment.MiddleLeft;
-        renewals.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-        renewals.ForeColor = Color.White;
-        renewals.TextAlign = ContentAlignment.MiddleCenter;
-        activityTitle.Name = "activityTitle";
-        activityTitle.Location = new Point(18, 123);
-        activityTitle.Size = new Size(640, 35);
-        activityTitle.Text = "Actividad reciente";
-        activityTitle.ForeColor = Color.FromArgb(61, 107, 134);
-        activityTitle.TextAlign = ContentAlignment.MiddleLeft;
-        activityTitle.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
-        grid.Name = "grid";
-        grid.Location = new Point(18, 167);
-        grid.Size = new Size(660, 160);
-        grid.ReadOnly = true;
-        grid.AllowUserToAddRows = false;
-        grid.AllowUserToDeleteRows = false;
-        grid.RowHeadersVisible = false;
-        grid.MultiSelect = false;
-        grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        grid.BackgroundColor = Color.White;
-        grid.BorderStyle = BorderStyle.None;
-        grid.EnableHeadersVisualStyles = false;
-        grid.ColumnHeadersHeight = 36;
-        grid.RowTemplate.Height = 36;
-        grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(6, 55, 99);
-        grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-        grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(180, 213, 234);
-        grid.DefaultCellStyle.SelectionForeColor = Color.Black;
-        grid.AutoGenerateColumns = false;
-        gridColumn0.Name = "gridColumn0";
-        gridColumn0.HeaderText = "Fecha";
-        gridColumn1.Name = "gridColumn1";
-        gridColumn1.HeaderText = "Usuario";
-        gridColumn2.Name = "gridColumn2";
-        gridColumn2.HeaderText = "Acción";
-        status.Name = "status";
-        status.Location = new Point(18, 332);
-        status.Size = new Size(660, 48);
-        status.Text = "";
-        status.ForeColor = Color.FromArgb(61, 107, 134);
-        status.TextAlign = ContentAlignment.MiddleLeft;
-        status.Font = new Font("Segoe UI", 10F);
-        teacherNote.Name = "teacherNote";
-        teacherNote.Location = new Point(28, 315);
-        teacherNote.Size = new Size(640, 70);
-        teacherNote.Text = "Selecciona Captura o Historial de calificaciones en el menú.";
-        teacherNote.ForeColor = Color.FromArgb(61, 107, 134);
-        teacherNote.TextAlign = ContentAlignment.MiddleLeft;
-        teacherNote.Font = new Font("Segoe UI", 13F);
-        teacherNote.Visible = false;
-        pending.Name = "pending";
-        pending.Dock = DockStyle.Fill;
-        pending.Visible = false;
-        pendingTitle.Name = "pendingTitle";
-        pendingTitle.Location = new Point(18, 15);
-        pendingTitle.Size = new Size(640, 60);
-        pendingTitle.Text = "Módulo pendiente";
-        pendingTitle.ForeColor = Color.FromArgb(61, 107, 134);
-        pendingTitle.TextAlign = ContentAlignment.MiddleLeft;
-        pendingTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-        pendingMessage.Name = "pendingMessage";
-        pendingMessage.Location = new Point(28, 150);
-        pendingMessage.Size = new Size(640, 150);
-        pendingMessage.Text = "Este módulo estará disponible en una próxima entrega.";
-        pendingMessage.ForeColor = Color.FromArgb(61, 107, 134);
-        pendingMessage.TextAlign = ContentAlignment.MiddleLeft;
-        pendingMessage.Font = new Font("Segoe UI", 13F);
-        this.Controls.Add(content);
-        this.Controls.Add(sidebar);
-        sidebar.Controls.Add(nav);
-        sidebar.Controls.Add(logout);
-        sidebar.Controls.Add(brand);
-        brand.Controls.Add(logo);
-        brand.Controls.Add(hamburger);
-        nav.Controls.Add(homeRow);
-        homeRow.Controls.Add(homeIcon);
-        homeRow.Controls.Add(homeButton);
-        nav.Controls.Add(enrollRow);
-        enrollRow.Controls.Add(enrollIcon);
-        enrollRow.Controls.Add(enrollButton);
-        nav.Controls.Add(renewRow);
-        renewRow.Controls.Add(renewIcon);
-        renewRow.Controls.Add(renewButton);
-        nav.Controls.Add(reportsRow);
-        reportsRow.Controls.Add(reportsIcon);
-        reportsRow.Controls.Add(reportsButton);
-        nav.Controls.Add(documentsRow);
-        documentsRow.Controls.Add(documentsIcon);
-        documentsRow.Controls.Add(documentsButton);
-        nav.Controls.Add(studentsRow);
-        studentsRow.Controls.Add(studentsIcon);
-        studentsRow.Controls.Add(studentsButton);
-        nav.Controls.Add(sendRow);
-        sendRow.Controls.Add(sendIcon);
-        sendRow.Controls.Add(sendButton);
-        nav.Controls.Add(subjectsRow);
-        subjectsRow.Controls.Add(subjectsIcon);
-        subjectsRow.Controls.Add(subjectsButton);
-        nav.Controls.Add(captureRow);
-        captureRow.Controls.Add(captureIcon);
-        captureRow.Controls.Add(captureButton);
-        nav.Controls.Add(historyRow);
-        historyRow.Controls.Add(historyIcon);
-        historyRow.Controls.Add(historyButton);
-        nav.Controls.Add(usersRow);
-        usersRow.Controls.Add(usersIcon);
-        usersRow.Controls.Add(usersButton);
-        nav.Controls.Add(auditRow);
-        auditRow.Controls.Add(auditIcon);
-        auditRow.Controls.Add(auditButton);
-        nav.Controls.Add(passwordRow);
-        passwordRow.Controls.Add(passwordIcon);
-        passwordRow.Controls.Add(passwordButton);
         content.Controls.Add(dashboard);
+        content.Controls.Add(pending);
+        content.Dock = DockStyle.Fill;
+        content.Location = new Point(362, 0);
+        content.Margin = new Padding(4);
+        content.Name = "content";
+        content.Size = new Size(888, 888);
+        content.TabIndex = 0;
+        // 
+        // dashboard
+        // 
         dashboard.Controls.Add(title);
         dashboard.Controls.Add(profile);
+        dashboard.Controls.Add(statistics);
+        dashboard.Controls.Add(teacherNote);
+        dashboard.Dock = DockStyle.Top;
+        dashboard.Location = new Point(0, 0);
+        dashboard.Margin = new Padding(4);
+        dashboard.Name = "dashboard";
+        dashboard.Size = new Size(888, 862);
+        dashboard.TabIndex = 0;
+        // 
+        // title
+        // 
+        title.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+        title.ForeColor = Color.FromArgb(6, 55, 99);
+        title.Location = new Point(28, 22);
+        title.Margin = new Padding(4, 0, 4, 0);
+        title.Name = "title";
+        title.Size = new Size(819, 65);
+        title.TabIndex = 0;
+        title.Text = "Administrador - Control escolar";
+        title.TextAlign = ContentAlignment.MiddleRight;
+        title.Click += title_Click;
+        // 
+        // profile
+        // 
+        profile.BorderColor = Color.FromArgb(6, 55, 99);
         profile.Controls.Add(avatar);
         profile.Controls.Add(profileName);
         profile.Controls.Add(profileMail);
         profile.Controls.Add(profileRole);
         profile.Controls.Add(profileArea);
-        dashboard.Controls.Add(statistics);
+        profile.Location = new Point(35, 131);
+        profile.Margin = new Padding(4);
+        profile.Name = "profile";
+        profile.Padding = new Padding(2);
+        profile.Size = new Size(812, 218);
+        profile.TabIndex = 1;
+        // 
+        // avatar
+        // 
+        avatar.Font = new Font("Segoe MDL2 Assets", 70F);
+        avatar.ForeColor = Color.Black;
+        avatar.Location = new Point(20, 22);
+        avatar.Margin = new Padding(4, 0, 4, 0);
+        avatar.Name = "avatar";
+        avatar.Size = new Size(180, 172);
+        avatar.TabIndex = 0;
+        avatar.Text = "";
+        avatar.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // profileName
+        // 
+        profileName.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+        profileName.ForeColor = Color.FromArgb(61, 107, 134);
+        profileName.Location = new Point(221, 22);
+        profileName.Margin = new Padding(4, 0, 4, 0);
+        profileName.Name = "profileName";
+        profileName.Size = new Size(571, 40);
+        profileName.TabIndex = 1;
+        profileName.Text = "Nombre";
+        profileName.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // profileMail
+        // 
+        profileMail.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+        profileMail.ForeColor = Color.FromArgb(61, 107, 134);
+        profileMail.Location = new Point(221, 69);
+        profileMail.Margin = new Padding(4, 0, 4, 0);
+        profileMail.Name = "profileMail";
+        profileMail.Size = new Size(571, 55);
+        profileMail.TabIndex = 2;
+        profileMail.Text = "Clave · Correo institucional";
+        profileMail.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // profileRole
+        // 
+        profileRole.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        profileRole.ForeColor = Color.FromArgb(61, 107, 134);
+        profileRole.Location = new Point(221, 131);
+        profileRole.Margin = new Padding(4, 0, 4, 0);
+        profileRole.Name = "profileRole";
+        profileRole.Size = new Size(231, 72);
+        profileRole.TabIndex = 3;
+        profileRole.Text = "Rol\nSecretaría";
+        profileRole.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // profileArea
+        // 
+        profileArea.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        profileArea.ForeColor = Color.FromArgb(61, 107, 134);
+        profileArea.Location = new Point(478, 131);
+        profileArea.Margin = new Padding(4, 0, 4, 0);
+        profileArea.Name = "profileArea";
+        profileArea.Size = new Size(300, 72);
+        profileArea.TabIndex = 4;
+        profileArea.Text = "Área\nControl escolar";
+        profileArea.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // statistics
+        // 
         statistics.Controls.Add(enrolledCard);
-        enrolledCard.Controls.Add(enrolledCaption);
-        enrolledCard.Controls.Add(enrolled);
         statistics.Controls.Add(applicantsCard);
-        applicantsCard.Controls.Add(applicantsCaption);
-        applicantsCard.Controls.Add(applicants);
         statistics.Controls.Add(renewalsCard);
-        renewalsCard.Controls.Add(renewalsCaption);
-        renewalsCard.Controls.Add(renewals);
         statistics.Controls.Add(activityTitle);
         statistics.Controls.Add(grid);
-        grid.Columns.Add(gridColumn0);
-        grid.Columns.Add(gridColumn1);
-        grid.Columns.Add(gridColumn2);
         statistics.Controls.Add(status);
-        dashboard.Controls.Add(teacherNote);
-        content.Controls.Add(pending);
+        statistics.Location = new Point(0, 375);
+        statistics.Margin = new Padding(4);
+        statistics.Name = "statistics";
+        statistics.Size = new Size(862, 488);
+        statistics.TabIndex = 2;
+        // 
+        // enrolledCard
+        // 
+        enrolledCard.BackColor = Color.FromArgb(61, 107, 134);
+        enrolledCard.BorderColor = Color.FromArgb(53, 151, 128);
+        enrolledCard.Controls.Add(enrolledCaption);
+        enrolledCard.Controls.Add(enrolled);
+        enrolledCard.Location = new Point(56, 9);
+        enrolledCard.Margin = new Padding(4);
+        enrolledCard.Name = "enrolledCard";
+        enrolledCard.Padding = new Padding(2);
+        enrolledCard.Size = new Size(228, 130);
+        enrolledCard.TabIndex = 0;
+        // 
+        // enrolledCaption
+        // 
+        enrolledCaption.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        enrolledCaption.ForeColor = Color.White;
+        enrolledCaption.Location = new Point(10, 8);
+        enrolledCaption.Margin = new Padding(4, 0, 4, 0);
+        enrolledCaption.Name = "enrolledCaption";
+        enrolledCaption.Size = new Size(208, 78);
+        enrolledCaption.TabIndex = 0;
+        enrolledCaption.Text = "Alumnos\ninscritos";
+        enrolledCaption.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // enrolled
+        // 
+        enrolled.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+        enrolled.ForeColor = Color.White;
+        enrolled.Location = new Point(10, 85);
+        enrolled.Margin = new Padding(4, 0, 4, 0);
+        enrolled.Name = "enrolled";
+        enrolled.Size = new Size(208, 38);
+        enrolled.TabIndex = 1;
+        enrolled.Text = "—";
+        enrolled.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // applicantsCard
+        // 
+        applicantsCard.BackColor = Color.FromArgb(61, 107, 134);
+        applicantsCard.BorderColor = Color.FromArgb(53, 151, 128);
+        applicantsCard.Controls.Add(applicantsCaption);
+        applicantsCard.Controls.Add(applicants);
+        applicantsCard.Location = new Point(314, 9);
+        applicantsCard.Margin = new Padding(4);
+        applicantsCard.Name = "applicantsCard";
+        applicantsCard.Padding = new Padding(2);
+        applicantsCard.Size = new Size(228, 130);
+        applicantsCard.TabIndex = 1;
+        // 
+        // applicantsCaption
+        // 
+        applicantsCaption.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        applicantsCaption.ForeColor = Color.White;
+        applicantsCaption.Location = new Point(10, 8);
+        applicantsCaption.Margin = new Padding(4, 0, 4, 0);
+        applicantsCaption.Name = "applicantsCaption";
+        applicantsCaption.Size = new Size(208, 78);
+        applicantsCaption.TabIndex = 0;
+        applicantsCaption.Text = "Aspirantes\npendientes";
+        applicantsCaption.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // applicants
+        // 
+        applicants.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+        applicants.ForeColor = Color.White;
+        applicants.Location = new Point(10, 85);
+        applicants.Margin = new Padding(4, 0, 4, 0);
+        applicants.Name = "applicants";
+        applicants.Size = new Size(208, 38);
+        applicants.TabIndex = 1;
+        applicants.Text = "—";
+        applicants.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // renewalsCard
+        // 
+        renewalsCard.BackColor = Color.FromArgb(61, 107, 134);
+        renewalsCard.BorderColor = Color.FromArgb(53, 151, 128);
+        renewalsCard.Controls.Add(renewalsCaption);
+        renewalsCard.Controls.Add(renewals);
+        renewalsCard.Location = new Point(571, 9);
+        renewalsCard.Margin = new Padding(4);
+        renewalsCard.Name = "renewalsCard";
+        renewalsCard.Padding = new Padding(2);
+        renewalsCard.Size = new Size(228, 130);
+        renewalsCard.TabIndex = 2;
+        // 
+        // renewalsCaption
+        // 
+        renewalsCaption.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        renewalsCaption.ForeColor = Color.White;
+        renewalsCaption.Location = new Point(10, 8);
+        renewalsCaption.Margin = new Padding(4, 0, 4, 0);
+        renewalsCaption.Name = "renewalsCaption";
+        renewalsCaption.Size = new Size(208, 78);
+        renewalsCaption.TabIndex = 0;
+        renewalsCaption.Text = "Reinscripciones";
+        renewalsCaption.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // renewals
+        // 
+        renewals.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+        renewals.ForeColor = Color.White;
+        renewals.Location = new Point(10, 85);
+        renewals.Margin = new Padding(4, 0, 4, 0);
+        renewals.Name = "renewals";
+        renewals.Size = new Size(208, 38);
+        renewals.TabIndex = 1;
+        renewals.Text = "—";
+        renewals.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // activityTitle
+        // 
+        activityTitle.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+        activityTitle.ForeColor = Color.FromArgb(61, 107, 134);
+        activityTitle.Location = new Point(22, 154);
+        activityTitle.Margin = new Padding(4, 0, 4, 0);
+        activityTitle.Name = "activityTitle";
+        activityTitle.Size = new Size(800, 44);
+        activityTitle.TabIndex = 3;
+        activityTitle.Text = "Actividad reciente";
+        activityTitle.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // grid
+        // 
+        grid.AllowUserToAddRows = false;
+        grid.AllowUserToDeleteRows = false;
+        grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        grid.BackgroundColor = Color.White;
+        grid.BorderStyle = BorderStyle.None;
+        dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        dataGridViewCellStyle1.BackColor = Color.FromArgb(6, 55, 99);
+        dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F);
+        dataGridViewCellStyle1.ForeColor = Color.White;
+        dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+        dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+        dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+        grid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+        grid.ColumnHeadersHeight = 36;
+        grid.Columns.AddRange(new DataGridViewColumn[] { gridColumn0, gridColumn1, gridColumn2 });
+        dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        dataGridViewCellStyle2.BackColor = SystemColors.Window;
+        dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F);
+        dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+        dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(180, 213, 234);
+        dataGridViewCellStyle2.SelectionForeColor = Color.Black;
+        dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+        grid.DefaultCellStyle = dataGridViewCellStyle2;
+        grid.EnableHeadersVisualStyles = false;
+        grid.Location = new Point(22, 209);
+        grid.Margin = new Padding(4);
+        grid.MultiSelect = false;
+        grid.Name = "grid";
+        grid.ReadOnly = true;
+        grid.RowHeadersVisible = false;
+        grid.RowHeadersWidth = 51;
+        grid.RowTemplate.Height = 36;
+        grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        grid.Size = new Size(825, 200);
+        grid.TabIndex = 4;
+        // 
+        // gridColumn0
+        // 
+        gridColumn0.HeaderText = "Fecha";
+        gridColumn0.MinimumWidth = 6;
+        gridColumn0.Name = "gridColumn0";
+        gridColumn0.ReadOnly = true;
+        // 
+        // gridColumn1
+        // 
+        gridColumn1.HeaderText = "Usuario";
+        gridColumn1.MinimumWidth = 6;
+        gridColumn1.Name = "gridColumn1";
+        gridColumn1.ReadOnly = true;
+        // 
+        // gridColumn2
+        // 
+        gridColumn2.HeaderText = "Acción";
+        gridColumn2.MinimumWidth = 6;
+        gridColumn2.Name = "gridColumn2";
+        gridColumn2.ReadOnly = true;
+        // 
+        // status
+        // 
+        status.Font = new Font("Segoe UI", 10F);
+        status.ForeColor = Color.FromArgb(61, 107, 134);
+        status.Location = new Point(22, 415);
+        status.Margin = new Padding(4, 0, 4, 0);
+        status.Name = "status";
+        status.Size = new Size(825, 60);
+        status.TabIndex = 5;
+        status.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // teacherNote
+        // 
+        teacherNote.Font = new Font("Segoe UI", 13F);
+        teacherNote.ForeColor = Color.FromArgb(61, 107, 134);
+        teacherNote.Location = new Point(35, 394);
+        teacherNote.Margin = new Padding(4, 0, 4, 0);
+        teacherNote.Name = "teacherNote";
+        teacherNote.Size = new Size(800, 88);
+        teacherNote.TabIndex = 3;
+        teacherNote.Text = "Selecciona Captura o Historial de calificaciones en el menú.";
+        teacherNote.TextAlign = ContentAlignment.MiddleLeft;
+        teacherNote.Visible = false;
+        // 
+        // pending
+        // 
         pending.Controls.Add(pendingTitle);
         pending.Controls.Add(pendingMessage);
+        pending.Dock = DockStyle.Fill;
+        pending.Location = new Point(0, 0);
+        pending.Margin = new Padding(4);
+        pending.Name = "pending";
+        pending.Size = new Size(888, 888);
+        pending.TabIndex = 1;
+        pending.Visible = false;
+        // 
+        // pendingTitle
+        // 
+        pendingTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+        pendingTitle.ForeColor = Color.FromArgb(61, 107, 134);
+        pendingTitle.Location = new Point(22, 19);
+        pendingTitle.Margin = new Padding(4, 0, 4, 0);
+        pendingTitle.Name = "pendingTitle";
+        pendingTitle.Size = new Size(800, 75);
+        pendingTitle.TabIndex = 0;
+        pendingTitle.Text = "Módulo pendiente";
+        pendingTitle.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // pendingMessage
+        // 
+        pendingMessage.Font = new Font("Segoe UI", 13F);
+        pendingMessage.ForeColor = Color.FromArgb(61, 107, 134);
+        pendingMessage.Location = new Point(35, 188);
+        pendingMessage.Margin = new Padding(4, 0, 4, 0);
+        pendingMessage.Name = "pendingMessage";
+        pendingMessage.Size = new Size(800, 188);
+        pendingMessage.TabIndex = 1;
+        pendingMessage.Text = "Este módulo estará disponible en una próxima entrega.";
+        pendingMessage.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // sidebar
+        // 
+        sidebar.Controls.Add(nav);
+        sidebar.Controls.Add(logout);
+        sidebar.Controls.Add(brand);
+        sidebar.Dock = DockStyle.Left;
+        sidebar.Location = new Point(0, 0);
+        sidebar.Margin = new Padding(4);
+        sidebar.Name = "sidebar";
+        sidebar.Size = new Size(362, 888);
+        sidebar.TabIndex = 1;
         sidebar.Paint += SidebarPaint;
-        logout.Click += LogoutClick;
-        hamburger.Click += ToggleMenu;
+        // 
+        // nav
+        // 
+        nav.AutoScroll = true;
+        nav.Controls.Add(homeRow);
+        nav.Controls.Add(enrollRow);
+        nav.Controls.Add(renewRow);
+        nav.Controls.Add(reportsRow);
+        nav.Controls.Add(documentsRow);
+        nav.Controls.Add(studentsRow);
+        nav.Controls.Add(sendRow);
+        nav.Controls.Add(usersRow);
+        nav.Controls.Add(auditRow);
+        nav.Controls.Add(passwordRow);
+        nav.Dock = DockStyle.Fill;
+        nav.FlowDirection = FlowDirection.TopDown;
+        nav.Location = new Point(0, 138);
+        nav.Margin = new Padding(4);
+        nav.Name = "nav";
+        nav.Padding = new Padding(12, 30, 8, 35);
+        nav.Size = new Size(362, 692);
+        nav.TabIndex = 0;
+        nav.WrapContents = false;
+        // 
+        // homeRow
+        // 
+        homeRow.BackColor = Color.FromArgb(180, 213, 234);
+        homeRow.Controls.Add(homeIcon);
+        homeRow.Controls.Add(homeButton);
+        homeRow.Location = new Point(12, 30);
+        homeRow.Margin = new Padding(0, 0, 0, 19);
+        homeRow.Name = "homeRow";
+        homeRow.Padding = new Padding(2);
+        homeRow.Size = new Size(322, 55);
+        homeRow.TabIndex = 0;
+        // 
+        // homeIcon
+        // 
+        homeIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        homeIcon.ForeColor = Color.Black;
+        homeIcon.Location = new Point(6, 5);
+        homeIcon.Margin = new Padding(4, 0, 4, 0);
+        homeIcon.Name = "homeIcon";
+        homeIcon.Size = new Size(45, 45);
+        homeIcon.TabIndex = 0;
+        homeIcon.Text = "";
+        homeIcon.TextAlign = ContentAlignment.MiddleCenter;
         homeIcon.Click += HomeClick;
+        // 
+        // homeButton
+        // 
+        homeButton.BackColor = Color.FromArgb(180, 213, 234);
+        homeButton.Cursor = Cursors.Hand;
+        homeButton.FlatAppearance.BorderSize = 0;
+        homeButton.FlatStyle = FlatStyle.Flat;
+        homeButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        homeButton.ForeColor = Color.FromArgb(61, 107, 134);
+        homeButton.Location = new Point(52, 2);
+        homeButton.Margin = new Padding(4);
+        homeButton.Name = "homeButton";
+        homeButton.Size = new Size(265, 50);
+        homeButton.TabIndex = 1;
+        homeButton.Text = "Inicio";
+        homeButton.TextAlign = ContentAlignment.MiddleLeft;
+        homeButton.UseVisualStyleBackColor = false;
         homeButton.Click += HomeClick;
+        // 
+        // enrollRow
+        // 
+        enrollRow.BackColor = Color.FromArgb(180, 213, 234);
+        enrollRow.Controls.Add(enrollIcon);
+        enrollRow.Controls.Add(enrollButton);
+        enrollRow.Location = new Point(12, 104);
+        enrollRow.Margin = new Padding(0, 0, 0, 19);
+        enrollRow.Name = "enrollRow";
+        enrollRow.Padding = new Padding(2);
+        enrollRow.Size = new Size(322, 55);
+        enrollRow.TabIndex = 1;
+        // 
+        // enrollIcon
+        // 
+        enrollIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        enrollIcon.ForeColor = Color.Black;
+        enrollIcon.Location = new Point(6, 5);
+        enrollIcon.Margin = new Padding(4, 0, 4, 0);
+        enrollIcon.Name = "enrollIcon";
+        enrollIcon.Size = new Size(45, 45);
+        enrollIcon.TabIndex = 0;
+        enrollIcon.Text = "";
+        enrollIcon.TextAlign = ContentAlignment.MiddleCenter;
         enrollIcon.Click += EnrollClick;
+        // 
+        // enrollButton
+        // 
+        enrollButton.BackColor = Color.FromArgb(180, 213, 234);
+        enrollButton.Cursor = Cursors.Hand;
+        enrollButton.FlatAppearance.BorderSize = 0;
+        enrollButton.FlatStyle = FlatStyle.Flat;
+        enrollButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        enrollButton.ForeColor = Color.FromArgb(61, 107, 134);
+        enrollButton.Location = new Point(52, 2);
+        enrollButton.Margin = new Padding(4);
+        enrollButton.Name = "enrollButton";
+        enrollButton.Size = new Size(265, 50);
+        enrollButton.TabIndex = 1;
+        enrollButton.Text = "Alta e inscripción";
+        enrollButton.TextAlign = ContentAlignment.MiddleLeft;
+        enrollButton.UseVisualStyleBackColor = false;
         enrollButton.Click += EnrollClick;
+        // 
+        // renewRow
+        // 
+        renewRow.BackColor = Color.FromArgb(180, 213, 234);
+        renewRow.Controls.Add(renewIcon);
+        renewRow.Controls.Add(renewButton);
+        renewRow.Location = new Point(12, 178);
+        renewRow.Margin = new Padding(0, 0, 0, 19);
+        renewRow.Name = "renewRow";
+        renewRow.Padding = new Padding(2);
+        renewRow.Size = new Size(322, 55);
+        renewRow.TabIndex = 2;
+        // 
+        // renewIcon
+        // 
+        renewIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        renewIcon.ForeColor = Color.Black;
+        renewIcon.Location = new Point(6, 5);
+        renewIcon.Margin = new Padding(4, 0, 4, 0);
+        renewIcon.Name = "renewIcon";
+        renewIcon.Size = new Size(45, 45);
+        renewIcon.TabIndex = 0;
+        renewIcon.Text = "";
+        renewIcon.TextAlign = ContentAlignment.MiddleCenter;
         renewIcon.Click += RenewClick;
+        // 
+        // renewButton
+        // 
+        renewButton.BackColor = Color.FromArgb(180, 213, 234);
+        renewButton.Cursor = Cursors.Hand;
+        renewButton.FlatAppearance.BorderSize = 0;
+        renewButton.FlatStyle = FlatStyle.Flat;
+        renewButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        renewButton.ForeColor = Color.FromArgb(61, 107, 134);
+        renewButton.Location = new Point(52, 2);
+        renewButton.Margin = new Padding(4);
+        renewButton.Name = "renewButton";
+        renewButton.Size = new Size(265, 50);
+        renewButton.TabIndex = 1;
+        renewButton.Text = "Reinscripción";
+        renewButton.TextAlign = ContentAlignment.MiddleLeft;
+        renewButton.UseVisualStyleBackColor = false;
         renewButton.Click += RenewClick;
+        // 
+        // reportsRow
+        // 
+        reportsRow.BackColor = Color.FromArgb(180, 213, 234);
+        reportsRow.Controls.Add(reportsIcon);
+        reportsRow.Controls.Add(reportsButton);
+        reportsRow.Location = new Point(12, 252);
+        reportsRow.Margin = new Padding(0, 0, 0, 19);
+        reportsRow.Name = "reportsRow";
+        reportsRow.Padding = new Padding(2);
+        reportsRow.Size = new Size(322, 55);
+        reportsRow.TabIndex = 3;
+        // 
+        // reportsIcon
+        // 
+        reportsIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        reportsIcon.ForeColor = Color.Black;
+        reportsIcon.Location = new Point(6, 5);
+        reportsIcon.Margin = new Padding(4, 0, 4, 0);
+        reportsIcon.Name = "reportsIcon";
+        reportsIcon.Size = new Size(45, 45);
+        reportsIcon.TabIndex = 0;
+        reportsIcon.Text = "";
+        reportsIcon.TextAlign = ContentAlignment.MiddleCenter;
         reportsIcon.Click += ReportsClick;
+        // 
+        // reportsButton
+        // 
+        reportsButton.BackColor = Color.FromArgb(180, 213, 234);
+        reportsButton.Cursor = Cursors.Hand;
+        reportsButton.FlatAppearance.BorderSize = 0;
+        reportsButton.FlatStyle = FlatStyle.Flat;
+        reportsButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        reportsButton.ForeColor = Color.FromArgb(61, 107, 134);
+        reportsButton.Location = new Point(52, 2);
+        reportsButton.Margin = new Padding(4);
+        reportsButton.Name = "reportsButton";
+        reportsButton.Size = new Size(265, 50);
+        reportsButton.TabIndex = 1;
+        reportsButton.Text = "Reportes";
+        reportsButton.TextAlign = ContentAlignment.MiddleLeft;
+        reportsButton.UseVisualStyleBackColor = false;
         reportsButton.Click += ReportsClick;
+        // 
+        // documentsRow
+        // 
+        documentsRow.BackColor = Color.FromArgb(180, 213, 234);
+        documentsRow.Controls.Add(documentsIcon);
+        documentsRow.Controls.Add(documentsButton);
+        documentsRow.Location = new Point(12, 326);
+        documentsRow.Margin = new Padding(0, 0, 0, 19);
+        documentsRow.Name = "documentsRow";
+        documentsRow.Padding = new Padding(2);
+        documentsRow.Size = new Size(322, 55);
+        documentsRow.TabIndex = 4;
+        // 
+        // documentsIcon
+        // 
+        documentsIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        documentsIcon.ForeColor = Color.Black;
+        documentsIcon.Location = new Point(6, 5);
+        documentsIcon.Margin = new Padding(4, 0, 4, 0);
+        documentsIcon.Name = "documentsIcon";
+        documentsIcon.Size = new Size(45, 45);
+        documentsIcon.TabIndex = 0;
+        documentsIcon.Text = "";
+        documentsIcon.TextAlign = ContentAlignment.MiddleCenter;
         documentsIcon.Click += DocumentsClick;
+        // 
+        // documentsButton
+        // 
+        documentsButton.BackColor = Color.FromArgb(180, 213, 234);
+        documentsButton.Cursor = Cursors.Hand;
+        documentsButton.FlatAppearance.BorderSize = 0;
+        documentsButton.FlatStyle = FlatStyle.Flat;
+        documentsButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        documentsButton.ForeColor = Color.FromArgb(61, 107, 134);
+        documentsButton.Location = new Point(52, 2);
+        documentsButton.Margin = new Padding(4);
+        documentsButton.Name = "documentsButton";
+        documentsButton.Size = new Size(265, 50);
+        documentsButton.TabIndex = 1;
+        documentsButton.Text = "Documentos";
+        documentsButton.TextAlign = ContentAlignment.MiddleLeft;
+        documentsButton.UseVisualStyleBackColor = false;
         documentsButton.Click += DocumentsClick;
+        // 
+        // studentsRow
+        // 
+        studentsRow.BackColor = Color.FromArgb(180, 213, 234);
+        studentsRow.Controls.Add(studentsIcon);
+        studentsRow.Controls.Add(studentsButton);
+        studentsRow.Location = new Point(12, 400);
+        studentsRow.Margin = new Padding(0, 0, 0, 19);
+        studentsRow.Name = "studentsRow";
+        studentsRow.Padding = new Padding(2);
+        studentsRow.Size = new Size(322, 55);
+        studentsRow.TabIndex = 5;
+        // 
+        // studentsIcon
+        // 
+        studentsIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        studentsIcon.ForeColor = Color.Black;
+        studentsIcon.Location = new Point(6, 5);
+        studentsIcon.Margin = new Padding(4, 0, 4, 0);
+        studentsIcon.Name = "studentsIcon";
+        studentsIcon.Size = new Size(45, 45);
+        studentsIcon.TabIndex = 0;
+        studentsIcon.Text = "";
+        studentsIcon.TextAlign = ContentAlignment.MiddleCenter;
         studentsIcon.Click += StudentsClick;
+        // 
+        // studentsButton
+        // 
+        studentsButton.BackColor = Color.FromArgb(180, 213, 234);
+        studentsButton.Cursor = Cursors.Hand;
+        studentsButton.FlatAppearance.BorderSize = 0;
+        studentsButton.FlatStyle = FlatStyle.Flat;
+        studentsButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        studentsButton.ForeColor = Color.FromArgb(61, 107, 134);
+        studentsButton.Location = new Point(52, 2);
+        studentsButton.Margin = new Padding(4);
+        studentsButton.Name = "studentsButton";
+        studentsButton.Size = new Size(265, 50);
+        studentsButton.TabIndex = 1;
+        studentsButton.Text = "Consulta de alumnos";
+        studentsButton.TextAlign = ContentAlignment.MiddleLeft;
+        studentsButton.UseVisualStyleBackColor = false;
         studentsButton.Click += StudentsClick;
+        // 
+        // sendRow
+        // 
+        sendRow.BackColor = Color.FromArgb(180, 213, 234);
+        sendRow.Controls.Add(sendIcon);
+        sendRow.Controls.Add(sendButton);
+        sendRow.Location = new Point(12, 474);
+        sendRow.Margin = new Padding(0, 0, 0, 19);
+        sendRow.Name = "sendRow";
+        sendRow.Padding = new Padding(2);
+        sendRow.Size = new Size(322, 55);
+        sendRow.TabIndex = 6;
+        // 
+        // sendIcon
+        // 
+        sendIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        sendIcon.ForeColor = Color.Black;
+        sendIcon.Location = new Point(6, 5);
+        sendIcon.Margin = new Padding(4, 0, 4, 0);
+        sendIcon.Name = "sendIcon";
+        sendIcon.Size = new Size(45, 45);
+        sendIcon.TabIndex = 0;
+        sendIcon.Text = "";
+        sendIcon.TextAlign = ContentAlignment.MiddleCenter;
         sendIcon.Click += SendClick;
+        // 
+        // sendButton
+        // 
+        sendButton.BackColor = Color.FromArgb(180, 213, 234);
+        sendButton.Cursor = Cursors.Hand;
+        sendButton.FlatAppearance.BorderSize = 0;
+        sendButton.FlatStyle = FlatStyle.Flat;
+        sendButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        sendButton.ForeColor = Color.FromArgb(61, 107, 134);
+        sendButton.Location = new Point(52, 2);
+        sendButton.Margin = new Padding(4);
+        sendButton.Name = "sendButton";
+        sendButton.Size = new Size(265, 50);
+        sendButton.TabIndex = 1;
+        sendButton.Text = "Enviar documentos";
+        sendButton.TextAlign = ContentAlignment.MiddleLeft;
+        sendButton.UseVisualStyleBackColor = false;
         sendButton.Click += SendClick;
-        subjectsIcon.Click += SubjectsClick;
-        subjectsButton.Click += SubjectsClick;
-        captureIcon.Click += CaptureClick;
-        captureButton.Click += CaptureClick;
-        historyIcon.Click += HistoryClick;
-        historyButton.Click += HistoryClick;
+        // 
+        // usersRow
+        // 
+        usersRow.BackColor = Color.FromArgb(180, 213, 234);
+        usersRow.Controls.Add(usersIcon);
+        usersRow.Controls.Add(usersButton);
+        usersRow.Location = new Point(12, 548);
+        usersRow.Margin = new Padding(0, 0, 0, 19);
+        usersRow.Name = "usersRow";
+        usersRow.Padding = new Padding(2);
+        usersRow.Size = new Size(322, 55);
+        usersRow.TabIndex = 10;
+        // 
+        // usersIcon
+        // 
+        usersIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        usersIcon.ForeColor = Color.Black;
+        usersIcon.Location = new Point(6, 5);
+        usersIcon.Margin = new Padding(4, 0, 4, 0);
+        usersIcon.Name = "usersIcon";
+        usersIcon.Size = new Size(45, 45);
+        usersIcon.TabIndex = 0;
+        usersIcon.Text = "";
+        usersIcon.TextAlign = ContentAlignment.MiddleCenter;
         usersIcon.Click += UsersClick;
+        // 
+        // usersButton
+        // 
+        usersButton.BackColor = Color.FromArgb(180, 213, 234);
+        usersButton.Cursor = Cursors.Hand;
+        usersButton.FlatAppearance.BorderSize = 0;
+        usersButton.FlatStyle = FlatStyle.Flat;
+        usersButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        usersButton.ForeColor = Color.FromArgb(61, 107, 134);
+        usersButton.Location = new Point(52, 2);
+        usersButton.Margin = new Padding(4);
+        usersButton.Name = "usersButton";
+        usersButton.Size = new Size(265, 50);
+        usersButton.TabIndex = 1;
+        usersButton.Text = "Alta de personal";
+        usersButton.TextAlign = ContentAlignment.MiddleLeft;
+        usersButton.UseVisualStyleBackColor = false;
         usersButton.Click += UsersClick;
+        // 
+        // auditRow
+        // 
+        auditRow.BackColor = Color.FromArgb(180, 213, 234);
+        auditRow.Controls.Add(auditIcon);
+        auditRow.Controls.Add(auditButton);
+        auditRow.Location = new Point(12, 622);
+        auditRow.Margin = new Padding(0, 0, 0, 19);
+        auditRow.Name = "auditRow";
+        auditRow.Padding = new Padding(2);
+        auditRow.Size = new Size(322, 55);
+        auditRow.TabIndex = 11;
+        // 
+        // auditIcon
+        // 
+        auditIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        auditIcon.ForeColor = Color.Black;
+        auditIcon.Location = new Point(6, 5);
+        auditIcon.Margin = new Padding(4, 0, 4, 0);
+        auditIcon.Name = "auditIcon";
+        auditIcon.Size = new Size(45, 45);
+        auditIcon.TabIndex = 0;
+        auditIcon.Text = "";
+        auditIcon.TextAlign = ContentAlignment.MiddleCenter;
         auditIcon.Click += AuditClick;
+        // 
+        // auditButton
+        // 
+        auditButton.BackColor = Color.FromArgb(180, 213, 234);
+        auditButton.Cursor = Cursors.Hand;
+        auditButton.FlatAppearance.BorderSize = 0;
+        auditButton.FlatStyle = FlatStyle.Flat;
+        auditButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        auditButton.ForeColor = Color.FromArgb(61, 107, 134);
+        auditButton.Location = new Point(52, 2);
+        auditButton.Margin = new Padding(4);
+        auditButton.Name = "auditButton";
+        auditButton.Size = new Size(265, 50);
+        auditButton.TabIndex = 1;
+        auditButton.Text = "Bitácora";
+        auditButton.TextAlign = ContentAlignment.MiddleLeft;
+        auditButton.UseVisualStyleBackColor = false;
         auditButton.Click += AuditClick;
+        // 
+        // passwordRow
+        // 
+        passwordRow.BackColor = Color.FromArgb(180, 213, 234);
+        passwordRow.Controls.Add(passwordIcon);
+        passwordRow.Controls.Add(passwordButton);
+        passwordRow.Location = new Point(12, 696);
+        passwordRow.Margin = new Padding(0, 0, 0, 45);
+        passwordRow.Name = "passwordRow";
+        passwordRow.Padding = new Padding(2);
+        passwordRow.Size = new Size(322, 55);
+        passwordRow.TabIndex = 12;
+        // 
+        // passwordIcon
+        // 
+        passwordIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        passwordIcon.ForeColor = Color.Black;
+        passwordIcon.Location = new Point(6, 5);
+        passwordIcon.Margin = new Padding(4, 0, 4, 0);
+        passwordIcon.Name = "passwordIcon";
+        passwordIcon.Size = new Size(45, 45);
+        passwordIcon.TabIndex = 0;
+        passwordIcon.Text = "";
+        passwordIcon.TextAlign = ContentAlignment.MiddleCenter;
         passwordIcon.Click += PasswordClick;
+        // 
+        // passwordButton
+        // 
+        passwordButton.BackColor = Color.FromArgb(180, 213, 234);
+        passwordButton.Cursor = Cursors.Hand;
+        passwordButton.FlatAppearance.BorderSize = 0;
+        passwordButton.FlatStyle = FlatStyle.Flat;
+        passwordButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        passwordButton.ForeColor = Color.FromArgb(61, 107, 134);
+        passwordButton.Location = new Point(52, 2);
+        passwordButton.Margin = new Padding(4);
+        passwordButton.Name = "passwordButton";
+        passwordButton.Size = new Size(265, 50);
+        passwordButton.TabIndex = 1;
+        passwordButton.Text = "Cambiar contraseña";
+        passwordButton.TextAlign = ContentAlignment.MiddleLeft;
+        passwordButton.UseVisualStyleBackColor = false;
         passwordButton.Click += PasswordClick;
-        Text = "AMBAR | Panel principal";
-        ClientSize = new Size(1000, 710);
-        MinimumSize = new Size(900, 650);
-        BackColor = Color.White;
-        Font = new Font("Segoe UI", 10F);
-        AutoScaleDimensions = new SizeF(96F, 96F);
+        // 
+        // logout
+        // 
+        logout.BackColor = Color.FromArgb(180, 213, 234);
+        logout.Cursor = Cursors.Hand;
+        logout.Dock = DockStyle.Bottom;
+        logout.FlatStyle = FlatStyle.Flat;
+        logout.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        logout.ForeColor = Color.FromArgb(6, 55, 99);
+        logout.Location = new Point(0, 830);
+        logout.Margin = new Padding(4);
+        logout.Name = "logout";
+        logout.Size = new Size(362, 58);
+        logout.TabIndex = 1;
+        logout.Text = "⇥  Cerrar sesión";
+        logout.UseVisualStyleBackColor = false;
+        logout.Click += LogoutClick;
+        // 
+        // brand
+        // 
+        brand.Controls.Add(logo);
+        brand.Controls.Add(hamburger);
+        brand.Dock = DockStyle.Top;
+        brand.Location = new Point(0, 0);
+        brand.Margin = new Padding(4);
+        brand.Name = "brand";
+        brand.Size = new Size(362, 138);
+        brand.TabIndex = 2;
+        // 
+        // logo
+        // 
+        logo.Image = (Image)resources.GetObject("logo.Image");
+        logo.Location = new Point(64, 4);
+        logo.Margin = new Padding(4);
+        logo.Name = "logo";
+        logo.Size = new Size(256, 118);
+        logo.SizeMode = PictureBoxSizeMode.Zoom;
+        logo.TabIndex = 0;
+        logo.TabStop = false;
+        // 
+        // hamburger
+        // 
+        hamburger.BackColor = Color.White;
+        hamburger.Cursor = Cursors.Hand;
+        hamburger.FlatAppearance.BorderSize = 0;
+        hamburger.FlatStyle = FlatStyle.Flat;
+        hamburger.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        hamburger.ForeColor = Color.Black;
+        hamburger.Location = new Point(4, 11);
+        hamburger.Margin = new Padding(4);
+        hamburger.Name = "hamburger";
+        hamburger.Size = new Size(86, 99);
+        hamburger.TabIndex = 1;
+        hamburger.Text = "☰";
+        hamburger.UseVisualStyleBackColor = false;
+        hamburger.Click += ToggleMenu;
+        // 
+        // MainForm
+        // 
+        AutoScaleDimensions = new SizeF(120F, 120F);
         AutoScaleMode = AutoScaleMode.Dpi;
-        StartPosition = FormStartPosition.CenterScreen;
-        MinimumSize = new Size(1016, 749);
+        BackColor = Color.White;
+        ClientSize = new Size(1250, 888);
+        Controls.Add(content);
+        Controls.Add(sidebar);
+        Font = new Font("Segoe UI", 10F);
+        Margin = new Padding(4);
+        MinimumSize = new Size(1266, 925);
         Name = "MainForm";
-        pending.ResumeLayout(false);
-        pending.PerformLayout();
-        ((System.ComponentModel.ISupportInitialize)grid).EndInit();
-        renewalsCard.ResumeLayout(false);
-        renewalsCard.PerformLayout();
-        applicantsCard.ResumeLayout(false);
-        applicantsCard.PerformLayout();
-        enrolledCard.ResumeLayout(false);
-        enrolledCard.PerformLayout();
-        statistics.ResumeLayout(false);
-        statistics.PerformLayout();
-        profile.ResumeLayout(false);
-        profile.PerformLayout();
-        dashboard.ResumeLayout(false);
-        dashboard.PerformLayout();
-        passwordRow.ResumeLayout(false);
-        passwordRow.PerformLayout();
-        auditRow.ResumeLayout(false);
-        auditRow.PerformLayout();
-        usersRow.ResumeLayout(false);
-        usersRow.PerformLayout();
-        historyRow.ResumeLayout(false);
-        historyRow.PerformLayout();
-        captureRow.ResumeLayout(false);
-        captureRow.PerformLayout();
-        subjectsRow.ResumeLayout(false);
-        subjectsRow.PerformLayout();
-        sendRow.ResumeLayout(false);
-        sendRow.PerformLayout();
-        studentsRow.ResumeLayout(false);
-        studentsRow.PerformLayout();
-        documentsRow.ResumeLayout(false);
-        documentsRow.PerformLayout();
-        reportsRow.ResumeLayout(false);
-        reportsRow.PerformLayout();
-        renewRow.ResumeLayout(false);
-        renewRow.PerformLayout();
-        enrollRow.ResumeLayout(false);
-        enrollRow.PerformLayout();
-        homeRow.ResumeLayout(false);
-        homeRow.PerformLayout();
-        ((System.ComponentModel.ISupportInitialize)logo).EndInit();
-        brand.ResumeLayout(false);
-        brand.PerformLayout();
-        nav.ResumeLayout(false);
-        nav.PerformLayout();
-        sidebar.ResumeLayout(false);
-        sidebar.PerformLayout();
+        StartPosition = FormStartPosition.CenterScreen;
+        Text = "AMBAR | Panel principal";
         content.ResumeLayout(false);
-        content.PerformLayout();
+        dashboard.ResumeLayout(false);
+        profile.ResumeLayout(false);
+        statistics.ResumeLayout(false);
+        enrolledCard.ResumeLayout(false);
+        applicantsCard.ResumeLayout(false);
+        renewalsCard.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)grid).EndInit();
+        pending.ResumeLayout(false);
+        sidebar.ResumeLayout(false);
+        nav.ResumeLayout(false);
+        homeRow.ResumeLayout(false);
+        enrollRow.ResumeLayout(false);
+        renewRow.ResumeLayout(false);
+        reportsRow.ResumeLayout(false);
+        documentsRow.ResumeLayout(false);
+        studentsRow.ResumeLayout(false);
+        sendRow.ResumeLayout(false);
+        usersRow.ResumeLayout(false);
+        auditRow.ResumeLayout(false);
+        passwordRow.ResumeLayout(false);
+        brand.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)logo).EndInit();
         ResumeLayout(false);
-        PerformLayout();
     }
 
     private Panel content;
@@ -909,15 +1064,6 @@ partial class MainForm
     private RoundedPanel sendRow;
     private Label sendIcon;
     private Button sendButton;
-    private RoundedPanel subjectsRow;
-    private Label subjectsIcon;
-    private Button subjectsButton;
-    private RoundedPanel captureRow;
-    private Label captureIcon;
-    private Button captureButton;
-    private RoundedPanel historyRow;
-    private Label historyIcon;
-    private Button historyButton;
     private RoundedPanel usersRow;
     private Label usersIcon;
     private Button usersButton;

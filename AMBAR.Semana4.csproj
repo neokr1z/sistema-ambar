@@ -20,11 +20,16 @@
   <ItemGroup>
     <Compile Update="ChangePasswordForm.cs"><SubType>Form</SubType></Compile>
     <Compile Update="ChangePasswordForm.Designer.cs"><DependentUpon>ChangePasswordForm.cs</DependentUpon></Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <EmbeddedResource Update="ChangePasswordForm.resx"><DependentUpon>ChangePasswordForm.cs</DependentUpon></EmbeddedResource>
     <Compile Update="DetailForm.cs"><SubType>Form</SubType></Compile>
     <Compile Update="DetailForm.Designer.cs"><DependentUpon>DetailForm.cs</DependentUpon></Compile>
     <EmbeddedResource Update="DetailForm.resx"><DependentUpon>DetailForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="EditStudentForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="EditStudentForm.cs" />
     <Compile Update="EditStudentForm.Designer.cs"><DependentUpon>EditStudentForm.cs</DependentUpon></Compile>
     <EmbeddedResource Update="EditStudentForm.resx"><DependentUpon>EditStudentForm.cs</DependentUpon></EmbeddedResource>
     <Compile Update="EnrollmentForm.cs"><SubType>Form</SubType></Compile>
@@ -44,6 +49,10 @@
     <EmbeddedResource Update="MainForm.resx"><DependentUpon>MainForm.cs</DependentUpon></EmbeddedResource>
     <Compile Update="StudentsForm.cs"><SubType>Form</SubType></Compile>
     <Compile Update="StudentsForm.Designer.cs"><DependentUpon>StudentsForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="StudentsForm.resx"><DependentUpon>StudentsForm.cs</DependentUpon></EmbeddedResource>
     <Compile Update="UsersForm.cs"><SubType>Form</SubType></Compile>
     <Compile Update="UsersForm.Designer.cs"><DependentUpon>UsersForm.cs</DependentUpon></Compile>
