@@ -1,103 +1,71 @@
 namespace AMBAR.Semana4;
 
-internal sealed class MainForm : Form
+public partial class MainForm : Form
 {
-    private readonly Session session;
-    private readonly Panel content=new() {Dock=DockStyle.Fill,BackColor=Color.White,AutoScroll=true};
-    private readonly FlowLayoutPanel nav=new() {Dock=DockStyle.Fill,FlowDirection=FlowDirection.TopDown,
-        WrapContents=false,AutoScroll=true,Padding=new Padding(10,24,6,8)};
-    private readonly List<Button> menuButtons=new();
-    private readonly Panel sidebar=new() {Dock=DockStyle.Left,Width=290,BackColor=Color.White};
-
-    public MainForm(Session logged)
+    private Session session = null!;
+    public MainForm() { InitializeComponent(); }
+    internal MainForm(Session logged) : this()
     {
         session=logged;
-        Theme.Setup(this,"Panel principal",1000,710);MinimumSize=Size;
-        Controls.Add(content);Controls.Add(sidebar);
-        sidebar.Paint+=(_,e)=> {using var pen=new Pen(Theme.Blue,3);e.Graphics.DrawLine(pen,sidebar.Width-2,0,sidebar.Width-2,sidebar.Height);};
-        var brand=new Panel {Dock=DockStyle.Top,Height=110};
-        var logo=Theme.Logo(205,94);logo.Location=new Point(63,6);brand.Controls.Add(logo);
-        var hamburger=new Button {Text="☰",Bounds=new Rectangle(14,26,44,44),FlatStyle=FlatStyle.Flat,Font=new Font("Segoe UI",20)};
-        hamburger.FlatAppearance.BorderSize=0;hamburger.Click+=(_,_)=>nav.Visible=!nav.Visible;brand.Controls.Add(hamburger);
-        var logout=Theme.Button("⇥  Cerrar sesión",false);logout.Dock=DockStyle.Bottom;logout.Height=46;logout.BackColor=Theme.Sky;
-        logout.Click+=(_,_)=>Close();sidebar.Controls.Add(nav);sidebar.Controls.Add(logout);sidebar.Controls.Add(brand);
-        Menu("\uE80F","Inicio",Home);
-        if(session.CanSeeStudents)
-        {
-            Menu("\uE77B","Alta e inscripción",()=>Open(new EnrollmentForm(session)));
-            Menu("\uE895","Reinscripción",()=>Placeholder("Reinscripción"));
-            Menu("\uE9D9","Reportes",()=>Placeholder("Reportes"));
-            Menu("\uE8A5","Documentos",()=>Placeholder("Documentos"));
-            Menu("\uE721","Consulta de alumnos",()=>Open(new StudentsForm(session)));
-            Menu("\uE715","Enviar documentos",()=>Placeholder("Envío de documentos"));
-        }
-        if(session.IsTeacher)
-        {
-            Menu("\uE8F1","Mis materias y grupos",()=>Placeholder("Materias y grupos"));
-            Menu("\uE70F","Captura de calificaciones",()=>Open(new GradesForm(session,false)));
-            Menu("\uE81C","Historial de calificaciones",()=>Open(new GradesForm(session,true)));
-        }
-        if(session.IsAdmin)
-        {
-            Menu("\uE716","Alta de personal",()=>Open(new UsersForm(session)));
-            Menu("\uE9D9","Bitácora",()=>Placeholder("Bitácora"));
-        }
-        Menu("\uE72E","Cambiar contraseña",()=>Open(new ChangePasswordForm(session,false)));
+        enrollRow.Visible = session.CanSeeStudents;
+        renewRow.Visible = session.CanSeeStudents;
+        reportsRow.Visible = session.CanSeeStudents;
+        documentsRow.Visible = session.CanSeeStudents;
+        studentsRow.Visible = session.CanSeeStudents;
+        sendRow.Visible = session.CanSeeStudents;
+        subjectsRow.Visible = session.IsTeacher;
+        captureRow.Visible = session.IsTeacher;
+        historyRow.Visible = session.IsTeacher;
+        usersRow.Visible = session.IsAdmin;
+        auditRow.Visible = session.IsAdmin;
+        SelectMenu(homeButton);
+    }
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        if (DesignMode || System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
+        if (session is null) { Close(); return; }
         Home();
     }
-    private void Menu(string icon,string label,Action action)
+    private void ToggleMenu(object? sender, EventArgs e) => nav.Visible = !nav.Visible;
+    private void LogoutClick(object? sender, EventArgs e) => Close();
+    private void SidebarPaint(object? sender, PaintEventArgs e)
     {
-        var row=new RoundedPanel {Width=258,Height=44,BackColor=Theme.Sky,Margin=new Padding(0,0,0,15)};
-        ReferenceUi.Round(row);
-        var glyph=new Label {Text=icon,Font=new Font("Segoe MDL2 Assets",19),ForeColor=Color.Black,
-            Bounds=new Rectangle(5,4,36,36),TextAlign=ContentAlignment.MiddleCenter};
-        var button=new Button {Text=label,FlatStyle=FlatStyle.Flat,BackColor=Theme.Sky,ForeColor=Theme.Gray,
-            Bounds=new Rectangle(42,2,212,40),TextAlign=ContentAlignment.MiddleLeft,Cursor=Cursors.Hand,
-            Font=new Font("Segoe UI",11,FontStyle.Bold)};
-        button.FlatAppearance.BorderSize=0;menuButtons.Add(button);
-        void Select()
-        {
-            foreach(var b in menuButtons){b.BackColor=Theme.Sky;b.ForeColor=Theme.Gray;b.Parent!.BackColor=Theme.Sky;}
-            row.BackColor=Theme.Gray;button.BackColor=Theme.Gray;button.ForeColor=Color.White;action();
-        }
-        button.Click+=(_,_)=>Select();glyph.Click+=(_,_)=>Select();row.Controls.Add(button);row.Controls.Add(glyph);nav.Controls.Add(row);
-        if(label=="Inicio"){row.BackColor=Theme.Gray;button.BackColor=Theme.Gray;button.ForeColor=Color.White;}
+        using var pen=new Pen(Theme.Blue,3); e.Graphics.DrawLine(pen,sidebar.Width-2,0,sidebar.Width-2,sidebar.Height);
     }
-    private void Open(Form form) {using(form)form.ShowDialog(this);}
-    private void ClearContent()
+    private void SelectMenu(Button selected)
     {
-        while(content.Controls.Count>0)content.Controls[0].Dispose();
+        foreach (var row in nav.Controls.OfType<Panel>())
+            foreach (var button in row.Controls.OfType<Button>())
+            { button.BackColor=Theme.Sky;button.ForeColor=Theme.Gray;row.BackColor=Theme.Sky; }
+        selected.BackColor=Theme.Gray;selected.ForeColor=Color.White;selected.Parent!.BackColor=Theme.Gray;
     }
-    private void Placeholder(string title)
-    {
-        ClearContent();content.Controls.Add(Theme.Message("Este módulo estará disponible en una próxima entrega."));
-        content.Controls.Add(Theme.Heading(title));
-    }
+    private void Open(Form form) { using(form) form.ShowDialog(this); }
+    private void Placeholder(string text)
+    { dashboard.Visible=false; pendingTitle.Text=text; pending.Visible=true; pending.BringToFront(); }
+    private void HomeClick(object? sender, EventArgs e) { SelectMenu(homeButton); Home(); }
+    private void EnrollClick(object? sender, EventArgs e) { SelectMenu(enrollButton); Open(new EnrollmentForm(session)); }
+    private void RenewClick(object? sender, EventArgs e) { SelectMenu(renewButton); Placeholder("Reinscripción"); }
+    private void ReportsClick(object? sender, EventArgs e) { SelectMenu(reportsButton); Placeholder("Reportes"); }
+    private void DocumentsClick(object? sender, EventArgs e) { SelectMenu(documentsButton); Placeholder("Documentos"); }
+    private void StudentsClick(object? sender, EventArgs e) { SelectMenu(studentsButton); Open(new StudentsForm(session)); }
+    private void SendClick(object? sender, EventArgs e) { SelectMenu(sendButton); Placeholder("Envío de documentos"); }
+    private void SubjectsClick(object? sender, EventArgs e) { SelectMenu(subjectsButton); Placeholder("Materias y grupos"); }
+    private void CaptureClick(object? sender, EventArgs e) { SelectMenu(captureButton); Open(new GradesForm(session)); }
+    private void HistoryClick(object? sender, EventArgs e) { SelectMenu(historyButton); Open(new GradeHistoryForm(session)); }
+    private void UsersClick(object? sender, EventArgs e) { SelectMenu(usersButton); Open(new UsersForm(session)); }
+    private void AuditClick(object? sender, EventArgs e) { SelectMenu(auditButton); Placeholder("Bitácora"); }
+    private void PasswordClick(object? sender, EventArgs e) { SelectMenu(passwordButton); Open(new ChangePasswordForm(session, false)); }
     private void Home()
     {
-        ClearContent();
-        var body=new Panel {Dock=DockStyle.Top,Height=690,Width=690};content.Controls.Add(body);
-        var title=ReferenceUi.Label(body,$"{(session.IsSecretary?"Secretaría":session.Role)} - Control escolar",22,18,655,52,18,true,ContentAlignment.MiddleRight);
-        title.ForeColor=Theme.Blue;title.Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right;
-        var profile=new RoundedPanel {Bounds=new Rectangle(28,105,650,174),BorderColor=Theme.Blue};body.Controls.Add(profile);
-        var avatar=ReferenceUi.Label(profile,"\uE77B",16,18,144,138,70,false,ContentAlignment.MiddleCenter);
-        avatar.Font=new Font("Segoe MDL2 Assets",70);avatar.ForeColor=Color.Black;
-        var name=ReferenceUi.Label(profile,session.Username,177,18,457,32,16,true);
-        var mail=ReferenceUi.Label(profile,"Correo institucional no registrado",177,55,457,44,11,true);
-        ReferenceUi.Label(profile,$"Rol\n{session.Role}",177,105,185,58,12,true);
-        ReferenceUi.Label(profile,"Área\n"+(session.IsTeacher?"Docencia":"Control escolar"),382,105,240,58,12,true);
-        if(session.IsTeacher)
-        {
-            ReferenceUi.Label(body,"Selecciona Captura o Historial de calificaciones en el menú.",28,315,640,70,13);
-            LoadProfile(name,mail);return;
-        }
-        var enrolled=ReferenceUi.Stat(body,"Alumnos\ninscritos",45,307,182);
-        var applicants=ReferenceUi.Stat(body,"Aspirantes\npendientes",251,307,182);
-        var renewals=ReferenceUi.Stat(body,"Reinscripciones",457,307,182);
-        ReferenceUi.Label(body,"Actividad reciente",18,423,640,35,15,true);
-        var grid=ReferenceUi.Grid("Fecha","Usuario","Acción");grid.Bounds=new Rectangle(18,467,660,160);body.Controls.Add(grid);
-        var status=ReferenceUi.Label(body,"",18,632,660,48,10);
-        LoadProfile(name,mail);
+        pending.Visible=false;dashboard.Visible=true;dashboard.BringToFront();
+        title.Text=$"{(session.IsSecretary?"Secretaría":session.Role)} - Control escolar";
+        profileName.Text=session.Username;profileRole.Text=$"Rol\n{session.Role}";
+        profileArea.Text="Área\n"+(session.IsTeacher?"Docencia":"Control escolar");
+        LoadProfile(profileName,profileMail);
+        teacherNote.Visible=session.IsTeacher;statistics.Visible=!session.IsTeacher;
+        if(session.IsTeacher)return;
+        grid.Rows.Clear();enrolled.Text=applicants.Text=renewals.Text="—";status.Text="";status.ForeColor=Theme.Gray;
         try
         {
             using var c=Db.Connect();
@@ -111,6 +79,7 @@ internal sealed class MainForm : Form
         }
         catch {status.Text="No se pudieron cargar los indicadores y la actividad. Revisa la conexión y vuelve a Inicio.";status.ForeColor=Color.DarkRed;}
     }
+
     private void LoadProfile(Label name,Label email)
     {
         try

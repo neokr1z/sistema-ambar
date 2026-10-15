@@ -1,56 +1,41 @@
 namespace AMBAR.Semana4;
 
-internal sealed class EditStudentForm : Form
+public partial class EditStudentForm : Form
 {
-    private readonly Session actor;
-    private readonly StudentData data;
-    private readonly Dictionary<string,TextBox> fields=new();
-    private readonly DateTimePicker birth=new(){Width=350,Format=DateTimePickerFormat.Short};
-    private readonly Button save=Theme.Button("Guardar cambios");
-
-    public EditStudentForm(Session session, StudentData student)
+    private Session actor = null!;
+    private StudentData data = null!;
+    private readonly Dictionary<string,TextBox> fields = new();
+    public EditStudentForm() { InitializeComponent(); }
+    internal EditStudentForm(Session session, StudentData student) : this()
     {
-        actor=session;
-        data=student;
-        if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
-        Theme.Setup(this,"Modificar alumno",990,790);
-        var area=new Panel {Dock=DockStyle.Fill,AutoScroll=true,Padding=new Padding(15)};
-        Controls.Add(area);
-        var entries=Theme.Fields(900);
-        area.Controls.Add(entries);
-        Theme.Row(entries,"Número de control (no editable)",Theme.Text(data.Control,11,true,Theme.Blue));
-        Add(entries,"Nombre(s)","First",data.First,60);
-        Add(entries,"Apellido paterno","Paternal",data.Paternal,50);
-        Add(entries,"Apellido materno","Maternal",data.Maternal,50);
-        Add(entries,"CURP","Curp",data.Curp,18);
+        actor=session; data=student;
+        if (!actor.CanSeeStudents) throw new UnauthorizedAccessException("Acceso no autorizado.");
+        controlValue.Text=data.Control; heading.Text=$"Modificar expediente · {data.Control}";
         birth.Value=data.Birth;
-        Theme.Row(entries,"Fecha de nacimiento",birth);
-        Add(entries,"NSS (opcional)","Nss",data.Nss,11);
-        Add(entries,"Teléfono","Phone",data.Phone,10);
-        Add(entries,"Teléfono de emergencia","Emergency",data.Emergency,10);
-        Add(entries,"Alergias","Allergies",data.Allergies,200);
-        Add(entries,"Correo institucional","Email",data.Email,120);
-        Add(entries,"Correo personal","PersonalEmail",data.PersonalEmail,120);
-        Add(entries,"Calle","Street",data.Street,100);
-        Add(entries,"Número exterior","Exterior",data.Exterior,15);
-        Add(entries,"Número interior","Interior",data.Interior,15);
-        Add(entries,"Colonia","Neighborhood",data.Neighborhood,100);
-        Add(entries,"Localidad","Locality",data.Locality,100);
-        Add(entries,"Municipio","Municipality",data.Municipality,100);
-        Add(entries,"Estado","State",data.State,100);
-        Add(entries,"Código postal","Postal",data.Postal,5);
-        var panel=new FlowLayoutPanel{Dock=DockStyle.Bottom,Height=72,FlowDirection=FlowDirection.RightToLeft,Padding=new Padding(12)};
-        panel.Controls.Add(save);
-        Controls.Add(panel);
-        Controls.Add(Theme.Heading($"Modificar expediente · {data.Control}"));
-        save.Click+=Save;
+        fields["First"] = inputFirst; inputFirst.Text = data.First;
+        fields["Paternal"] = inputPaternal; inputPaternal.Text = data.Paternal;
+        fields["Maternal"] = inputMaternal; inputMaternal.Text = data.Maternal;
+        fields["Curp"] = inputCurp; inputCurp.Text = data.Curp;
+        fields["Nss"] = inputNss; inputNss.Text = data.Nss;
+        fields["Phone"] = inputPhone; inputPhone.Text = data.Phone;
+        fields["Emergency"] = inputEmergency; inputEmergency.Text = data.Emergency;
+        fields["Allergies"] = inputAllergies; inputAllergies.Text = data.Allergies;
+        fields["Email"] = inputEmail; inputEmail.Text = data.Email;
+        fields["PersonalEmail"] = inputPersonalEmail; inputPersonalEmail.Text = data.PersonalEmail;
+        fields["Street"] = inputStreet; inputStreet.Text = data.Street;
+        fields["Exterior"] = inputExterior; inputExterior.Text = data.Exterior;
+        fields["Interior"] = inputInterior; inputInterior.Text = data.Interior;
+        fields["Neighborhood"] = inputNeighborhood; inputNeighborhood.Text = data.Neighborhood;
+        fields["Locality"] = inputLocality; inputLocality.Text = data.Locality;
+        fields["Municipality"] = inputMunicipality; inputMunicipality.Text = data.Municipality;
+        fields["State"] = inputState; inputState.Text = data.State;
+        fields["Postal"] = inputPostal; inputPostal.Text = data.Postal;
     }
-
-    private void Add(TableLayoutPanel table,string label,string key,string value,int max)
+    protected override void OnLoad(EventArgs e)
     {
-        var input=Theme.Input(max);input.Text=value;
-        fields[key]=input;
-        Theme.Row(table,label,input);
+        base.OnLoad(e);
+        if (DesignMode || System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
+        if (actor is null) { Close(); return; }
     }
 
     private string F(string key)=>fields[key].Text.Trim();

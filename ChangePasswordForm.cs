@@ -1,35 +1,21 @@
 namespace AMBAR.Semana4;
 
-internal sealed class ChangePasswordForm : Form
+public partial class ChangePasswordForm : Form
 {
-    private readonly Session user;
-    private readonly TextBox previous=Theme.Input(150,true);
-    private readonly TextBox newer=Theme.Input(150,true);
-    private readonly TextBox confirm=Theme.Input(150,true);
-    private readonly Button save=Theme.Button("Guardar contraseña");
-    private readonly bool mandatory;
-
-    public ChangePasswordForm(Session session,bool required)
+    private Session user = null!;
+    private bool mandatory;
+    public ChangePasswordForm() { InitializeComponent(); }
+    internal ChangePasswordForm(Session session, bool required) : this() { user=session; mandatory=required; }
+    protected override void OnLoad(EventArgs e)
     {
-        user=session;mandatory=required;
-        Theme.Setup(this,"Cambiar contraseña",650,480);
-        MaximizeBox=false;
-        var rows=Theme.Fields(600);
-        Controls.Add(rows);
-        Theme.Row(rows,"Contraseña actual",previous);
-        Theme.Row(rows,"Contraseña nueva",newer);
-        Theme.Row(rows,"Confirmar nueva contraseña",confirm);
-        var label=Theme.Text("Mínimo 10 caracteres, con letras y números.",9,false,Theme.Gray);
-        Theme.Row(rows,"Condiciones",label);
-        var line=new FlowLayoutPanel{Dock=DockStyle.Bottom,Height=72,FlowDirection=FlowDirection.RightToLeft,Padding=new Padding(10)};
-        line.Controls.Add(save);Controls.Add(line);
-        Controls.Add(Theme.Heading("Seguridad de la cuenta"));
-        save.Click+=Save;
-        if(mandatory)FormClosing+=(_,e)=>
-        {
-            if(DialogResult!=DialogResult.OK)
-                MessageBox.Show("No podrás acceder a los módulos sin cambiar la contraseña temporal.","AMBAR");
-        };
+        base.OnLoad(e);
+        if (DesignMode || System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
+        if (user is null) { Close(); return; }
+    }
+    private void PasswordClosing(object? sender, FormClosingEventArgs e)
+    {
+        if (user != null && mandatory && DialogResult != DialogResult.OK)
+            MessageBox.Show("No podrás acceder a los módulos sin cambiar la contraseña temporal.", "AMBAR");
     }
 
     private void Save(object? sender,EventArgs args)

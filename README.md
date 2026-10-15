@@ -20,7 +20,7 @@ Proyecto de escritorio en **C# (.NET 8) / Windows Forms**, pensado para **Visual
 | Exportación del expediente a PDF con membrete y logotipos | Implementado en el código |
 | Reinscripción, captura de calificaciones, correo y reportes | **Sólo menús visuales, todavía no funcionan** |
 
-**Importante:** esta entrega es código fuente. No se compiló ni ejecutó la aplicación Windows Forms en este entorno Linux. Se deben restaurar los paquetes, compilar y completar las pruebas funcionales en una PC con Windows/Visual Studio 2022 antes de afirmar que está lista para producción o para una demostración sin supervisión.
+**Importante:** esta entrega es código fuente. La versión convertida al diseñador se compiló correctamente en Release con .NET 8 desde Linux. No se ejecutó la aplicación Windows Forms en este entorno. Se deben restaurar los paquetes, compilar y completar las pruebas funcionales en una PC con Windows/Visual Studio 2022 antes de afirmar que está lista para producción o para una demostración sin supervisión.
 
 ## 2. Requisitos del equipo
 
@@ -130,3 +130,32 @@ Pruebas de aceptación para el RFC:
 3. Usar un RFC con formato correcto y un número administrativo diferente: guardar cada valor en su columna, manteniendo la relación de Usuario por número administrativo.
 4. Repetir RFC con otra secretaria: rechazar el duplicado y revertir la transacción completa.
 5. Cambiar el rol a Docente: deshabilitar el número administrativo y seguir exigiendo RFC.
+
+
+## Edición visual de todos los formularios
+
+Esta versión separa cada formulario en `.cs` (eventos y lógica), `.Designer.cs` (controles y distribución) y `.resx` (recursos). No requiere una migración SQL adicional; la migración 05 de la versión anterior sigue siendo necesaria para el RFC de Secretaría.
+
+1. Actualizar el repositorio con Pull y abrir `AMBAR.Semana4.sln` en Visual Studio 2022.
+2. Restaurar paquetes y usar **Compilar > Recompilar solución**. Esto permite cargar también los controles personalizados `RoundedPanel` y `RoundedButton`.
+3. En el Explorador de soluciones, seleccionar el archivo del formulario, por ejemplo `LoginForm.cs`, y elegir **Ver diseñador** (Shift+F7). No seleccionar `.Designer.cs`.
+4. Editar los controles en el lienzo y en Propiedades. Guardar los cambios generados, incluidos `.Designer.cs` y `.resx`, antes de confirmar el commit.
+
+| Formulario | Pantalla editable |
+|---|---|
+| LoginForm | Acceso |
+| MainForm | Menú lateral, perfil, indicadores y actividad |
+| UsersForm | Alta de docentes y secretarias |
+| EnrollmentForm | Inscripción: datos personales, domicilio y grupo |
+| StudentsForm | Consulta, acciones y tabla de alumnos |
+| DetailForm | Expediente digital y exportación PDF |
+| EditStudentForm | Modificación de datos del alumno |
+| ChangePasswordForm | Cambio de contraseña |
+| GradesForm | Captura de calificaciones |
+| GradeHistoryForm | Historial de calificaciones |
+
+El historial y la captura ahora son formularios independientes para poder editar ambos diseños. Conservan su alcance anterior: Guardar y Buscar permanecen deshabilitados; no se agregaron operaciones de calificaciones.
+
+En MainForm, todos los botones de navegación existen en el diseñador; al ejecutar se muestran según el rol. El panel `pending` y el mensaje `teacherNote` son vistas alternativas y pueden seleccionarse desde el árbol de controles/Propiedades. Los textos del perfil, indicadores, filas de tablas y datos de expedientes se rellenan al ejecutar. Los constructores sin parámetros sólo inicializan el diseño: no se conectan a MySQL ni exigen una sesión dentro del diseñador. La aplicación usa los constructores con sesión y conserva las comprobaciones de acceso.
+
+Validación realizada: compilación Release con .NET 8 sin errores ni advertencias; comprobación de los diez archivos de recursos; comparación de catorce métodos de negocio conservados y de los cuatro archivos de servicios/modelos sin modificaciones. Queda pendiente abrir, modificar, guardar y reabrir cada diseñador en Visual Studio sobre Windows, así como las pruebas de integración con MySQL.

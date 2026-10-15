@@ -2,21 +2,6 @@ using System.Drawing.Drawing2D;
 
 namespace AMBAR.Semana4;
 
-internal sealed class RoundedPanel : Panel
-{
-    public int Radius { get; set; } = 20;
-    public Color BorderColor { get; set; } = Theme.Gray;
-    public RoundedPanel() { DoubleBuffered=true; Padding=new Padding(2); }
-    protected override void OnPaint(PaintEventArgs e)
-    {
-        base.OnPaint(e);
-        e.Graphics.SmoothingMode=SmoothingMode.AntiAlias;
-        using var path=ReferenceUi.Path(new Rectangle(1,1,Width-3,Height-3),Radius);
-        using var pen=new Pen(BorderColor,1.7f);
-        e.Graphics.DrawPath(pen,path);
-    }
-}
-
 internal static class ReferenceUi
 {
     public static GraphicsPath Path(Rectangle r,int radius)

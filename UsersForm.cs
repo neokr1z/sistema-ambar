@@ -1,48 +1,22 @@
 namespace AMBAR.Semana4;
 
-internal sealed class UsersForm : Form
+public partial class UsersForm : Form
 {
-    private readonly Session admin;
-    private readonly ComboBox role=Theme.Combo();
-    private readonly TextBox first=Theme.Input(60), paternal=Theme.Input(50), maternal=Theme.Input(50);
-    private readonly TextBox email=Theme.Input(120), phone=Theme.Input(20), idNumber=Theme.Input(20);
-    private readonly TextBox username=Theme.Input(50), pwd=Theme.Input(150,true), confirm=Theme.Input(150,true);
-    private readonly TextBox rfc=Theme.Input(13);
-    private readonly Label idHint=Theme.Text("RFC obligatorio para docentes y secretarias (13 caracteres).",9,false,Theme.Gray);
-    private readonly Button save=Theme.Button("Crear usuario");
-
-    public UsersForm(Session session)
+    private Session admin = null!;
+    public UsersForm() { InitializeComponent(); }
+    internal UsersForm(Session session) : this()
     {
-        admin=session;
-        if(!admin.IsAdmin) throw new UnauthorizedAccessException("Acceso restringido al Administrador.");
-        Theme.Setup(this,"Alta de personal",970,820);
-        var body=new Panel {Dock=DockStyle.Fill,AutoScroll=true,Padding=new Padding(24)};
-        Controls.Add(body);
-        var fields=Theme.Fields(890);
-        body.Controls.Add(fields);
-        role.Items.AddRange(new object[] { "Docente", "Secretaria" });
-        role.SelectedIndex=0;
-        Theme.Row(fields,"Tipo de usuario",role);
-        Theme.Row(fields,"Nombre(s)",first);
-        Theme.Row(fields,"Apellido paterno",paternal);
-        Theme.Row(fields,"Apellido materno",maternal);
-        Theme.Row(fields,"Correo institucional",email);
-        Theme.Row(fields,"Teléfono (10 dígitos, opcional)",phone);
-        Theme.Row(fields,"RFC (13 caracteres)",rfc);
-        Theme.Row(fields,"Número administrativo (Secretaría)",idNumber);
-        idNumber.Enabled=false;
-        rfc.CharacterCasing=CharacterCasing.Upper;
-        Theme.Row(fields,"Usuario para iniciar sesión",username);
-        Theme.Row(fields,"Contraseña",pwd);
-        Theme.Row(fields,"Confirmar contraseña",confirm);
-        Theme.Row(fields,"Formato de la clave",idHint);
-        var actions=new FlowLayoutPanel {Dock=DockStyle.Bottom,Height=72,FlowDirection=FlowDirection.RightToLeft,Padding=new Padding(18)};
-        actions.Controls.Add(save);
-        Controls.Add(actions);
-        Controls.Add(Theme.Heading("Alta de docente o secretaria"));
-        role.SelectedIndexChanged += (_,_)=> idNumber.Enabled=role.SelectedIndex==1;
-        save.Click+=Save;
+        admin = session;
+        if (!admin.IsAdmin) throw new UnauthorizedAccessException("Acceso restringido al Administrador.");
+        role.SelectedIndex = 0;
     }
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        if (DesignMode || System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
+        if (admin is null) { Close(); return; }
+    }
+    private void RoleChanged(object? sender, EventArgs e) => idNumber.Enabled = role.SelectedIndex == 1;
 
     private void Save(object? sender,EventArgs e)
     {
