@@ -1,9 +1,9 @@
-#nullable enable
+#nullable disable
 namespace AMBAR.Semana4;
 
 partial class LoginForm
 {
-    private System.ComponentModel.IContainer? components = null;
+    private System.ComponentModel.IContainer components = null;
     protected override void Dispose(bool disposing)
     {
         if (disposing) components?.Dispose();
@@ -40,7 +40,7 @@ partial class LoginForm
         logo.Location = new Point(35, 15);
         logo.Size = new Size(345, 145);
         logo.SizeMode = PictureBoxSizeMode.Zoom;
-        logo.Image = (Image)resources.GetObject("logo.Image")!;
+        logo.Image = ((System.Drawing.Image)(resources.GetObject("logo.Image")));
         title.Name = "title";
         title.Location = new Point(70, 154);
         title.Size = new Size(284, 34);
@@ -147,16 +147,16 @@ partial class LoginForm
         PerformLayout();
     }
 
-    private RoundedPanel card = null!;
-    private PictureBox logo = null!;
-    private Label title = null!;
-    private Label usernameLabel = null!;
-    private RoundedPanel usernameBorder = null!;
-    private TextBox username = null!;
-    private Label passwordLabel = null!;
-    private RoundedPanel passwordBorder = null!;
-    private TextBox password = null!;
-    private LinkLabel register = null!;
-    private RoundedButton enter = null!;
-    private Label status = null!;
+    private RoundedPanel card;
+    private PictureBox logo;
+    private Label title;
+    private Label usernameLabel;
+    private RoundedPanel usernameBorder;
+    private TextBox username;
+    private Label passwordLabel;
+    private RoundedPanel passwordBorder;
+    private TextBox password;
+    private LinkLabel register;
+    private RoundedButton enter;
+    private Label status;
 }

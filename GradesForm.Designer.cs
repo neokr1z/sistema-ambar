@@ -1,9 +1,9 @@
-#nullable enable
+#nullable disable
 namespace AMBAR.Semana4;
 
 partial class GradesForm
 {
-    private System.ComponentModel.IContainer? components = null;
+    private System.ComponentModel.IContainer components = null;
     protected override void Dispose(bool disposing)
     {
         if (disposing) components?.Dispose();
@@ -51,7 +51,7 @@ partial class GradesForm
         logo.Location = new Point(62, 12);
         logo.Size = new Size(196, 82);
         logo.SizeMode = PictureBoxSizeMode.Zoom;
-        logo.Image = (Image)resources.GetObject("logo.Image")!;
+        logo.Image = ((System.Drawing.Image)(resources.GetObject("logo.Image")));
         menu.Name = "menu";
         menu.Location = new Point(20, 28);
         menu.Size = new Size(40, 40);
@@ -283,29 +283,29 @@ partial class GradesForm
         PerformLayout();
     }
 
-    private RoundedPanel frame = null!;
-    private PictureBox logo = null!;
-    private RoundedButton menu = null!;
-    private Label title = null!;
-    private Label subjectLabel = null!;
-    private ComboBox subject = null!;
-    private Label groupLabel = null!;
-    private ComboBox group = null!;
-    private Label periodLabel = null!;
-    private ComboBox period = null!;
-    private Panel rule = null!;
-    private RoundedButton unit1 = null!;
-    private RoundedButton unit2 = null!;
-    private RoundedButton unit3 = null!;
-    private RoundedButton unit4 = null!;
-    private DataGridView grid = null!;
-    private DataGridViewTextBoxColumn gridColumn0 = null!;
-    private DataGridViewTextBoxColumn gridColumn1 = null!;
-    private DataGridViewTextBoxColumn gridColumn2 = null!;
-    private DataGridViewTextBoxColumn gridColumn3 = null!;
-    private Label emptyNote = null!;
-    private Label summary = null!;
-    private RoundedButton cancel = null!;
-    private RoundedButton save = null!;
-    private Label note = null!;
+    private RoundedPanel frame;
+    private PictureBox logo;
+    private RoundedButton menu;
+    private Label title;
+    private Label subjectLabel;
+    private ComboBox subject;
+    private Label groupLabel;
+    private ComboBox group;
+    private Label periodLabel;
+    private ComboBox period;
+    private Panel rule;
+    private RoundedButton unit1;
+    private RoundedButton unit2;
+    private RoundedButton unit3;
+    private RoundedButton unit4;
+    private DataGridView grid;
+    private DataGridViewTextBoxColumn gridColumn0;
+    private DataGridViewTextBoxColumn gridColumn1;
+    private DataGridViewTextBoxColumn gridColumn2;
+    private DataGridViewTextBoxColumn gridColumn3;
+    private Label emptyNote;
+    private Label summary;
+    private RoundedButton cancel;
+    private RoundedButton save;
+    private Label note;
 }

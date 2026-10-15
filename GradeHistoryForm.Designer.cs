@@ -1,9 +1,9 @@
-#nullable enable
+#nullable disable
 namespace AMBAR.Semana4;
 
 partial class GradeHistoryForm
 {
-    private System.ComponentModel.IContainer? components = null;
+    private System.ComponentModel.IContainer components = null;
     protected override void Dispose(bool disposing)
     {
         if (disposing) components?.Dispose();
@@ -60,7 +60,7 @@ partial class GradeHistoryForm
         logo.Location = new Point(62, 12);
         logo.Size = new Size(196, 82);
         logo.SizeMode = PictureBoxSizeMode.Zoom;
-        logo.Image = (Image)resources.GetObject("logo.Image")!;
+        logo.Image = ((System.Drawing.Image)(resources.GetObject("logo.Image")));
         menu.Name = "menu";
         menu.Location = new Point(20, 28);
         menu.Size = new Size(40, 40);
@@ -328,36 +328,36 @@ partial class GradeHistoryForm
         PerformLayout();
     }
 
-    private RoundedPanel frame = null!;
-    private PictureBox logo = null!;
-    private RoundedButton menu = null!;
-    private Label title = null!;
-    private Label periodLabel = null!;
-    private ComboBox period = null!;
-    private Label subjectLabel = null!;
-    private ComboBox subject = null!;
-    private Label groupLabel = null!;
-    private ComboBox group = null!;
-    private Label unitLabel = null!;
-    private ComboBox unit = null!;
-    private RoundedButton search = null!;
-    private RoundedPanel capturesCard = null!;
-    private Label capturesCaption = null!;
-    private Label captures = null!;
-    private RoundedPanel averageCard = null!;
-    private Label averageCaption = null!;
-    private Label average = null!;
-    private RoundedPanel passedCard = null!;
-    private Label passedCaption = null!;
-    private Label passed = null!;
-    private DataGridView grid = null!;
-    private DataGridViewTextBoxColumn gridColumn0 = null!;
-    private DataGridViewTextBoxColumn gridColumn1 = null!;
-    private DataGridViewTextBoxColumn gridColumn2 = null!;
-    private DataGridViewTextBoxColumn gridColumn3 = null!;
-    private DataGridViewTextBoxColumn gridColumn4 = null!;
-    private DataGridViewTextBoxColumn gridColumn5 = null!;
-    private DataGridViewLinkColumn detailColumn = null!;
-    private Label emptyNote = null!;
-    private Label note = null!;
+    private RoundedPanel frame;
+    private PictureBox logo;
+    private RoundedButton menu;
+    private Label title;
+    private Label periodLabel;
+    private ComboBox period;
+    private Label subjectLabel;
+    private ComboBox subject;
+    private Label groupLabel;
+    private ComboBox group;
+    private Label unitLabel;
+    private ComboBox unit;
+    private RoundedButton search;
+    private RoundedPanel capturesCard;
+    private Label capturesCaption;
+    private Label captures;
+    private RoundedPanel averageCard;
+    private Label averageCaption;
+    private Label average;
+    private RoundedPanel passedCard;
+    private Label passedCaption;
+    private Label passed;
+    private DataGridView grid;
+    private DataGridViewTextBoxColumn gridColumn0;
+    private DataGridViewTextBoxColumn gridColumn1;
+    private DataGridViewTextBoxColumn gridColumn2;
+    private DataGridViewTextBoxColumn gridColumn3;
+    private DataGridViewTextBoxColumn gridColumn4;
+    private DataGridViewTextBoxColumn gridColumn5;
+    private DataGridViewLinkColumn detailColumn;
+    private Label emptyNote;
+    private Label note;
 }
