@@ -24,6 +24,7 @@ public partial class MainForm : Form
         usersRow.Visible = session.IsAdmin;
         auditRow.Visible = session.IsAdmin;
 
+        if (session.IsTeacher) SetupTeacherInterface();
         SelectMenu(homeButton);
     }
 
@@ -320,6 +321,133 @@ public partial class MainForm : Form
         catch
         {
             email.Text = "No se pudo cargar el perfil.";
+        }
+    }
+
+
+    private Panel? teacherPanel;
+    private FlowLayoutPanel? teacherSubjects;
+    private DataGridView? teacherGrades;
+    private Label? teacherSummary;
+
+    private void SetupTeacherInterface()
+    {
+        title.Text = "DOCENTE";
+        teacherNote.Visible = false;
+        statistics.Visible = false;
+        AddTeacherOption("Materias y grupos", (_, _) => Home());
+        AddTeacherOption("Captura de calificaciones", (_, _) => Open(new GradesForm(session)));
+        AddTeacherOption("Historial", (_, _) => Open(new GradeHistoryForm(session)));
+        teacherPanel = new Panel { Location = new Point(25, 365), Size = new Size(825, 455) };
+        teacherSummary = new Label {
+            Location = new Point(5, 0), Size = new Size(800, 35),
+            ForeColor = Theme.Gray, Font = new Font("Segoe UI", 11, FontStyle.Bold)
+        };
+        teacherSubjects = new FlowLayoutPanel {
+            Location = new Point(5, 40), Size = new Size(805, 112),
+            WrapContents = false, AutoScroll = true
+        };
+        var heading = new Label {
+            Text = "Últimas calificaciones registradas",
+            Location = new Point(5, 157), Size = new Size(800, 38),
+            ForeColor = Theme.Gray, Font = new Font("Segoe UI", 15, FontStyle.Bold)
+        };
+        teacherGrades = ReferenceUi.Grid("Alumno", "Materia", "Unidad", "Calificación");
+        teacherGrades.Location = new Point(5, 200);
+        teacherGrades.Size = new Size(805, 205);
+        teacherPanel.Controls.AddRange(new Control[] { teacherSummary, teacherSubjects, heading, teacherGrades });
+        dashboard.Controls.Add(teacherPanel);
+    }
+
+    private void AddTeacherOption(string caption, EventHandler action)
+    {
+        var row = new RoundedPanel {
+            Size = new Size(322, 55), Margin = new Padding(12, 0, 0, 19),
+            BackColor = Theme.Sky, Padding = new Padding(2)
+        };
+        var button = new Button {
+            Text = caption, Dock = DockStyle.Fill, BackColor = Theme.Sky,
+            ForeColor = Theme.Gray, FlatStyle = FlatStyle.Flat,
+            Font = new Font("Segoe UI", 10, FontStyle.Bold), TextAlign = ContentAlignment.MiddleLeft
+        };
+        button.FlatAppearance.BorderSize = 0;
+        button.Click += action;
+        row.Controls.Add(button);
+        int idx = nav.Controls.GetChildIndex(passwordRow);
+        nav.Controls.Add(row);
+        nav.Controls.SetChildIndex(row, idx);
+    }
+
+    private void LoadTeacherDashboard()
+    {
+        if (teacherSubjects is null || teacherGrades is null || teacherSummary is null) return;
+        teacherSubjects.Controls.Clear();
+        teacherGrades.Rows.Clear();
+        teacherSummary.Text = "Materias: 0  |  Grupos: 0";
+        profileArea.Text = "Materias\n0";
+        try
+        {
+            using var db = Db.Connect();
+            using var cmd = Db.Sql(db, """
+                SELECT m.ID_Materia, m.nombre_materia, g.ID_grupo, g.nombre_grupo,
+                    (SELECT COUNT(DISTINCT i.Numero_control) FROM Inscripcion i
+                     WHERE i.ID_grupo=g.ID_grupo AND UPPER(i.estatus)='INSCRITO')
+                FROM Usuario u
+                JOIN Asignacion_Docente ad ON ad.ID_docente=u.ID_docente
+                JOIN Materia m ON m.ID_Materia=ad.ID_Materia
+                JOIN Grupo g ON g.ID_grupo=ad.ID_grupo
+                WHERE u.Id_usuario=@id
+                ORDER BY m.nombre_materia, g.nombre_grupo
+                """);
+            Db.Param(cmd, "@id", session.Id);
+            var materias = new HashSet<int>();
+            var grupos = new HashSet<int>();
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    materias.Add(reader.GetInt32(0));
+                    grupos.Add(reader.GetInt32(2));
+                    var card = new RoundedPanel {
+                        Size = new Size(250, 82), Margin = new Padding(6),
+                        BackColor = Theme.Gray, BorderColor = Theme.Green
+                    };
+                    card.Controls.Add(new Label {
+                        Dock = DockStyle.Fill, Padding = new Padding(8),
+                        Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                        ForeColor = Color.White, AutoEllipsis = true,
+                        Text = reader.GetString(1) + "\n" + reader.GetString(3) +
+                               " - " + Convert.ToInt32(reader.GetValue(4)) + " alumnos"
+                    });
+                    teacherSubjects.Controls.Add(card);
+                }
+            }
+            teacherSummary.Text = $"Materias: {materias.Count}  |  Grupos: {grupos.Count}";
+            profileArea.Text = $"Materias: {materias.Count}\nGrupos: {grupos.Count}";
+            using var latest = Db.Sql(db, """
+                SELECT CONCAT(a.apellido_paterno,' ',a.apellido_materno,' ',a.nombre),
+                       m.nombre_materia, ue.numero_unidad, c.calificacion
+                FROM Calificacion c
+                JOIN Asignacion_Docente ad ON ad.Id_asignacion=c.Id_asignacion
+                JOIN Usuario u ON u.ID_docente=ad.ID_docente
+                JOIN Alumno a ON a.Numero_control=c.numero_control
+                JOIN Materia m ON m.ID_Materia=ad.ID_Materia
+                JOIN Unidad_Evaluacion ue ON ue.ID_Unidad=c.ID_Unidad
+                WHERE u.Id_usuario=@id
+                ORDER BY c.fecha_registro DESC, c.Id_calificacion DESC LIMIT 10
+                """);
+            Db.Param(latest, "@id", session.Id);
+            using var grades = latest.ExecuteReader();
+            while (grades.Read())
+                teacherGrades.Rows.Add(grades.GetString(0), grades.GetString(1),
+                    grades.GetInt32(2), grades.GetDecimal(3).ToString("0.##"));
+            if (materias.Count == 0)
+                teacherSummary.Text += "  ·  Sin asignaciones registradas";
+        }
+        catch (Exception ex)
+        {
+            teacherSummary.Text = "No se pudieron cargar las asignaciones: " + ex.Message;
+            teacherSummary.ForeColor = Color.DarkRed;
         }
     }
 
