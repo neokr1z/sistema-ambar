@@ -335,9 +335,9 @@ public partial class MainForm : Form
         title.Text = "DOCENTE";
         teacherNote.Visible = false;
         statistics.Visible = false;
-        AddTeacherOption("Materias y grupos", (_, _) => Home());
-        AddTeacherOption("Captura de calificaciones", (_, _) => Open(new GradesForm(session)));
-        AddTeacherOption("Historial", (_, _) => Open(new GradeHistoryForm(session)));
+        AddTeacherOption("\uE82D", "Materias y grupos", (_, _) => Home());
+        AddTeacherOption("\uE8A5", "Captura de calificaciones", (_, _) => Open(new GradesForm(session)));
+        AddTeacherOption("\uE81C", "Historial", (_, _) => Open(new GradeHistoryForm(session)));
         teacherPanel = new Panel { Location = new Point(25, 365), Size = new Size(825, 455) };
         teacherSummary = new Label {
             Location = new Point(5, 0), Size = new Size(800, 35),
@@ -359,19 +359,42 @@ public partial class MainForm : Form
         dashboard.Controls.Add(teacherPanel);
     }
 
-    private void AddTeacherOption(string caption, EventHandler action)
+    private void AddTeacherOption(string glyph, string caption, EventHandler action)
     {
-        var row = new RoundedPanel {
-            Size = new Size(322, 55), Margin = new Padding(12, 0, 0, 19),
-            BackColor = Theme.Sky, Padding = new Padding(2)
+        var row = new RoundedPanel
+        {
+            Size = new Size(322, 55),
+            Margin = new Padding(12, 0, 0, 19),
+            BackColor = Theme.Sky,
+            Padding = new Padding(2)
         };
-        var button = new Button {
-            Text = caption, Dock = DockStyle.Fill, BackColor = Theme.Sky,
-            ForeColor = Theme.Gray, FlatStyle = FlatStyle.Flat,
-            Font = new Font("Segoe UI", 10, FontStyle.Bold), TextAlign = ContentAlignment.MiddleLeft
+        var icon = new Label
+        {
+            Text = glyph,
+            Location = new Point(6, 5),
+            Size = new Size(45, 45),
+            Font = new Font("Segoe MDL2 Assets", 20F),
+            ForeColor = Color.Black,
+            BackColor = Color.Transparent,
+            TextAlign = ContentAlignment.MiddleCenter,
+            Cursor = Cursors.Hand
+        };
+        var button = new Button
+        {
+            Text = caption,
+            Location = new Point(52, 2),
+            Size = new Size(265, 50),
+            BackColor = Theme.Sky,
+            ForeColor = Theme.Gray,
+            FlatStyle = FlatStyle.Flat,
+            Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            TextAlign = ContentAlignment.MiddleLeft,
+            Cursor = Cursors.Hand
         };
         button.FlatAppearance.BorderSize = 0;
         button.Click += action;
+        icon.Click += action;
+        row.Controls.Add(icon);
         row.Controls.Add(button);
         int idx = nav.Controls.GetChildIndex(passwordRow);
         nav.Controls.Add(row);
