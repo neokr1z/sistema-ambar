@@ -18,44 +18,48 @@
     <Content Include="Assets\*.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="ChangePasswordForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="ChangePasswordForm.Designer.cs"><DependentUpon>ChangePasswordForm.cs</DependentUpon></Compile>
+    <None Remove="EVIDENCIAS_SEMANA4.md" />
+    <None Remove="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="CambiarPasswordForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="CambiarPasswordForm.Designer.cs"><DependentUpon>CambiarPasswordForm.cs</DependentUpon></Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Update="ChangePasswordForm.resx"><DependentUpon>ChangePasswordForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="DetailForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="DetailForm.Designer.cs"><DependentUpon>DetailForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="DetailForm.resx"><DependentUpon>DetailForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="EditStudentForm.cs" />
-    <Compile Update="EditStudentForm.Designer.cs"><DependentUpon>EditStudentForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="EditStudentForm.resx"><DependentUpon>EditStudentForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="EnrollmentForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="EnrollmentForm.Designer.cs"><DependentUpon>EnrollmentForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="EnrollmentForm.resx"><DependentUpon>EnrollmentForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="GradeHistoryForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="GradeHistoryForm.Designer.cs"><DependentUpon>GradeHistoryForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="GradeHistoryForm.resx"><DependentUpon>GradeHistoryForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="GradesForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="GradesForm.Designer.cs"><DependentUpon>GradesForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="GradesForm.resx"><DependentUpon>GradesForm.cs</DependentUpon></EmbeddedResource>
+    <EmbeddedResource Update="CambiarPasswordForm.resx"><DependentUpon>CambiarPasswordForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="ConsultaDForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="ConsultaDForm.Designer.cs"><DependentUpon>ConsultaDForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="ConsultaDForm.resx"><DependentUpon>ConsultaDForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="ExpedienteMForm.cs" />
+    <Compile Update="ExpedienteMForm.Designer.cs"><DependentUpon>ExpedienteMForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="ExpedienteMForm.resx"><DependentUpon>ExpedienteMForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="InscripcionForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="InscripcionForm.Designer.cs"><DependentUpon>InscripcionForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="InscripcionForm.resx"><DependentUpon>InscripcionForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="HistorialdocForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="HistorialdocForm.Designer.cs"><DependentUpon>HistorialdocForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="HistorialdocForm.resx"><DependentUpon>HistorialdocForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="CapturaCLForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="CapturaCLForm.Designer.cs"><DependentUpon>CapturaCLForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="CapturaCLForm.resx"><DependentUpon>CapturaCLForm.cs</DependentUpon></EmbeddedResource>
     <Compile Update="LoginForm.cs"><SubType>Form</SubType></Compile>
     <Compile Update="LoginForm.Designer.cs"><DependentUpon>LoginForm.cs</DependentUpon></Compile>
     <EmbeddedResource Update="LoginForm.resx"><DependentUpon>LoginForm.cs</DependentUpon></EmbeddedResource>
     <Compile Update="MainForm.cs"><SubType>Form</SubType></Compile>
     <Compile Update="MainForm.Designer.cs"><DependentUpon>MainForm.cs</DependentUpon></Compile>
     <EmbeddedResource Update="MainForm.resx"><DependentUpon>MainForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="StudentsForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="StudentsForm.Designer.cs"><DependentUpon>StudentsForm.cs</DependentUpon></Compile>
+    <Compile Update="ConsultaA.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="ConsultaA.Designer.cs"><DependentUpon>ConsultaA.cs</DependentUpon></Compile>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="StudentsForm.resx"><DependentUpon>StudentsForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="UsersForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="UsersForm.Designer.cs"><DependentUpon>UsersForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="UsersForm.resx"><DependentUpon>UsersForm.cs</DependentUpon></EmbeddedResource>
+    <EmbeddedResource Update="ConsultaA.resx"><DependentUpon>ConsultaA.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="UsuariosForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="UsuariosForm.Designer.cs"><DependentUpon>UsuariosForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="UsuariosForm.resx"><DependentUpon>UsuariosForm.cs</DependentUpon></EmbeddedResource>
   </ItemGroup>
 </Project>

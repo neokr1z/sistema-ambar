@@ -1,11 +1,11 @@
 namespace AMBAR.Semana4;
 
-public partial class ChangePasswordForm : Form
+public partial class CambiarPasswordForm : Form
 {
-    private Session user = null!;
+    private Sesion user = null!;
     private bool mandatory;
-    public ChangePasswordForm() { InitializeComponent(); }
-    internal ChangePasswordForm(Session session, bool required) : this() { user=session; mandatory=required; }
+    public CambiarPasswordForm() { InitializeComponent(); }
+    internal CambiarPasswordForm(Sesion session, bool required) : this() { user=session; mandatory=required; }
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);

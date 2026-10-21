@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 
 namespace AMBAR.Semana4;
 
-public class RoundedPanel : Panel
+public class PanelRedondeado : Panel
 {
     private int radius = 20;
     private Color borderColor = Color.FromArgb(61, 107, 134);
@@ -32,7 +32,7 @@ public class RoundedPanel : Panel
         }
     }
 
-    public RoundedPanel()
+    public PanelRedondeado()
     {
         DoubleBuffered = true;
         Padding = new Padding(2);
@@ -55,7 +55,7 @@ public class RoundedPanel : Panel
         if (Width < 4 || Height < 4)
             return;
 
-        using var path = ReferenceUi.Path(
+        using var path = ComponentesVisuales.Path(
             new Rectangle(0, 0, Width - 1, Height - 1),
             radius
         );
@@ -74,7 +74,7 @@ public class RoundedPanel : Panel
 
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-        using var path = ReferenceUi.Path(
+        using var path = ComponentesVisuales.Path(
             new Rectangle(1, 1, Width - 3, Height - 3),
             radius
         );

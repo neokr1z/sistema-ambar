@@ -3,7 +3,7 @@ using System.Data;
 
 namespace AMBAR.Semana4;
 
-internal static class StudentRepository
+internal static class RepositorioAlumnos
 {
     public static List<Choice> Plans()
     {
@@ -65,7 +65,7 @@ internal static class StudentRepository
             (state=="ACTIVO" || state=="ACEPTADO" || state=="APROBADO");
     }
 
-    public static string Enroll(StudentData d,Session session)
+    public static string Enroll(StudentData d,Sesion session)
     {
         if(!session.CanSeeStudents)throw new UnauthorizedAccessException("El rol no puede inscribir alumnos.");
         if(d.AspirantId<=0 || d.PlanId<=0 || d.GroupId<=0)
@@ -145,7 +145,7 @@ internal static class StudentRepository
         return d.Control;
     }
 
-    public static DataTable ListStudents(Session session,string filter)
+    public static DataTable ListStudents(Sesion session,string filter)
     {
         if(!session.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
         var t=new DataTable();
@@ -170,7 +170,7 @@ internal static class StudentRepository
         return t;
     }
 
-    public static StudentData? Detail(Session session,string control)
+    public static StudentData? Detail(Sesion session,string control)
     {
         if(!session.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
         using var c=Db.Connect();
@@ -229,7 +229,7 @@ internal static class StudentRepository
         Db.Param(cmd,"@postal",d.Postal);
     }
 
-    public static void Update(StudentData d,Session actor)
+    public static void Update(StudentData d,Sesion actor)
     {
         if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
         d.Validate();
@@ -266,7 +266,7 @@ internal static class StudentRepository
         tx.Commit();
     }
 
-    public static void Visibility(Session session,string control,bool restore)
+    public static void Visibility(Sesion session,string control,bool restore)
     {
         if(!session.CanSeeStudents || (restore && !session.IsAdmin))
             throw new UnauthorizedAccessException("No tiene permiso para realizar esta operación.");

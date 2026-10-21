@@ -13,17 +13,16 @@ partial class LoginForm
     private void InitializeComponent()
     {
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
-        card = new RoundedPanel();
+        card = new PanelRedondeado();
         logo = new PictureBox();
         title = new Label();
         usernameLabel = new Label();
-        usernameBorder = new RoundedPanel();
+        usernameBorder = new PanelRedondeado();
         username = new TextBox();
         passwordLabel = new Label();
-        passwordBorder = new RoundedPanel();
+        passwordBorder = new PanelRedondeado();
         password = new TextBox();
-        register = new LinkLabel();
-        enter = new RoundedButton();
+        enter = new BotonRedondeado();
         status = new Label();
         card.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
@@ -40,7 +39,6 @@ partial class LoginForm
         card.Controls.Add(usernameBorder);
         card.Controls.Add(passwordLabel);
         card.Controls.Add(passwordBorder);
-        card.Controls.Add(register);
         card.Controls.Add(enter);
         card.Controls.Add(status);
         card.Location = new Point(22, 15);
@@ -61,6 +59,7 @@ partial class LoginForm
         logo.SizeMode = PictureBoxSizeMode.Zoom;
         logo.TabIndex = 0;
         logo.TabStop = false;
+        logo.Click += logo_Click;
         // 
         // title
         // 
@@ -145,17 +144,6 @@ partial class LoginForm
         password.TabIndex = 9;
         password.UseSystemPasswordChar = true;
         // 
-        // register
-        // 
-        register.Location = new Point(369, 558);
-        register.Margin = new Padding(4, 0, 4, 0);
-        register.Name = "register";
-        register.Size = new Size(130, 35);
-        register.TabIndex = 6;
-        register.TabStop = true;
-        register.Text = "Registrarse";
-        register.LinkClicked += RegisterClick;
-        // 
         // enter
         // 
         enter.BackColor = Color.FromArgb(6, 55, 99);
@@ -209,16 +197,15 @@ partial class LoginForm
         ResumeLayout(false);
     }
 
-    private RoundedPanel card;
+    private PanelRedondeado card;
     private PictureBox logo;
     private Label title;
     private Label usernameLabel;
-    private RoundedPanel usernameBorder;
+    private PanelRedondeado usernameBorder;
     private TextBox username;
     private Label passwordLabel;
-    private RoundedPanel passwordBorder;
+    private PanelRedondeado passwordBorder;
     private TextBox password;
-    private LinkLabel register;
-    private RoundedButton enter;
+    private BotonRedondeado enter;
     private Label status;
 }

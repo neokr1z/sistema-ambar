@@ -1,17 +1,17 @@
 namespace AMBAR.Semana4;
 
-public partial class UsersForm : Form
+public partial class UsuariosForm : Form
 {
-    private Session admin = null!;
+    private Sesion admin = null!;
 
-    public UsersForm()
+    public UsuariosForm()
     {
         InitializeComponent();
         Text = "Administrador | Alta de personal";
         cancel.Click += (_, _) => Close();
     }
 
-    internal UsersForm(Session session) : this()
+    internal UsuariosForm(Sesion session) : this()
     {
         admin = session;
         if (!admin.IsAdmin)
@@ -179,5 +179,4 @@ public partial class UsersForm : Form
 
     }
 }
-
 

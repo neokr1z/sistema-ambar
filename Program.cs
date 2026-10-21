@@ -54,7 +54,7 @@ internal static class Db
     }
 }
 
-internal sealed record Session(int Id, string Username, string Role, bool RequiresPasswordChange)
+internal sealed record Sesion(int Id, string Username, string Role, bool RequiresPasswordChange)
 {
     public bool IsAdmin => Role.Equals("Administrador", StringComparison.OrdinalIgnoreCase);
     public bool IsSecretary => Role.Equals("Secretaria", StringComparison.OrdinalIgnoreCase);
@@ -64,7 +64,7 @@ internal sealed record Session(int Id, string Username, string Role, bool Requir
 
 internal static class Auth
 {
-    public static Session? Login(string username, string password)
+    public static Sesion? Login(string username, string password)
     {
         using var c = Db.Connect();
         using var cmd = Db.Sql(c, """
@@ -83,7 +83,7 @@ internal static class Auth
         reader.Close();
         if (!PasswordHasher.Verify(password, stored)) return null;
         Db.Audit(c, null, id, "ACCESO", "AUTENTICACION", "Inicio de sesión correcto");
-        return new Session(id, user, role, change);
+        return new Sesion(id, user, role, change);
     }
 }
 
