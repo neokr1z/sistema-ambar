@@ -2,13 +2,13 @@ using System.ComponentModel;
 
 namespace AMBAR.Semana4;
 
-public partial class EditStudentForm : Form
+public partial class ExpedienteMForm : Form
 {
-    private Session actor = null!;
+    private Sesion actor = null!;
     private StudentData data = null!;
     private readonly Dictionary<string, TextBox> fields = new();
 
-    public EditStudentForm()
+    public ExpedienteMForm()
     {
         InitializeComponent();
         // La imagen del encabezado se obtiene al ejecutar el formulario.
@@ -30,7 +30,7 @@ public partial class EditStudentForm : Form
         }
     }
 
-    internal EditStudentForm(Session session, StudentData student) : this()
+    internal ExpedienteMForm(Sesion session, StudentData student) : this()
     {
         actor = session;
         data = student;
@@ -87,7 +87,7 @@ public partial class EditStudentForm : Form
             data.Neighborhood = F("Neighborhood"); data.Locality = F("Locality");
             data.Municipality = F("Municipality"); data.State = F("State"); data.Postal = F("Postal");
             save.Enabled = false;
-            StudentRepository.Update(data, actor);
+            RepositorioAlumnos.Update(data, actor);
             MessageBox.Show("Los datos se actualizaron correctamente.", "AMBAR");
             Close();
         }
@@ -95,7 +95,6 @@ public partial class EditStudentForm : Form
         finally { save.Enabled = true; }
     }
 }
-
 
 
 

@@ -1,15 +1,14 @@
 namespace AMBAR.Semana4;
 
-public partial class GradeHistoryForm : Form
+public partial class CapturaCLForm : Form
 {
-    private Session session = null!;
-    public GradeHistoryForm() { InitializeComponent(); }
-    internal GradeHistoryForm(Session actor) : this()
+    private Sesion session = null!;
+    public CapturaCLForm() { InitializeComponent(); }
+    internal CapturaCLForm(Sesion actor) : this()
     {
         session=actor;
         if(!session.IsTeacher)throw new UnauthorizedAccessException("Acceso exclusivo para docentes.");
         subject.SelectedIndex=0;group.SelectedIndex=0;period.SelectedIndex=0;
-        unit.SelectedIndex=0;
     }
     protected override void OnLoad(EventArgs e)
     {
@@ -18,5 +17,10 @@ public partial class GradeHistoryForm : Form
         if (session is null) { Close(); return; }
     }
 
+    private void UnitClick(object? sender, EventArgs e)
+    {
+        foreach(var button in new[] {unit1,unit2,unit3,unit4}) {button.BackColor=Theme.Sky;button.ForeColor=Theme.Gray;}
+        if(sender is Button selected){selected.BackColor=Theme.Gray;selected.ForeColor=Color.White;}
+    }
     private void CloseClick(object? sender, EventArgs e) => Close();
 }

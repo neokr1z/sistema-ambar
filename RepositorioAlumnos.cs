@@ -3,7 +3,7 @@ using System.Data;
 
 namespace AMBAR.Semana4;
 
-internal static class StudentRepository
+internal static class RepositorioAlumnos
 {
     public static List<Choice> Plans()
     {
@@ -20,7 +20,7 @@ internal static class StudentRepository
         return list;
     }
 
-    public static List<Choice> Groups(int planId)
+    public static List<Choice> Groups(int planId, int? periodId = null)
     {
         var list=new List<Choice>();
         using var c=Db.Connect();
@@ -33,12 +33,12 @@ internal static class StudentRepository
             INNER JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre AND s.numero_semestre=1
             INNER JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
             LEFT JOIN Inscripcion i ON i.ID_grupo=g.ID_grupo AND UPPER(i.estatus)='INSCRITO'
-            WHERE pl.id_plan=@plan AND UPPER(g.Estatus)='ACTIVO' AND UPPER(pe.estatus)='ACTIVO'
+            WHERE pl.id_plan=@plan AND (@period IS NULL OR (g.ID_Periodo=@period AND g.habilitado_fichas=1)) AND UPPER(g.Estatus)='ACTIVO' AND UPPER(pe.estatus)='ACTIVO'
             GROUP BY g.ID_grupo,g.nombre_grupo,pe.nombre_periodo,g.Capacidad
             HAVING COUNT(i.Id_inscripcion)<g.Capacidad
             ORDER BY g.nombre_grupo
             """);
-        Db.Param(cmd,"@plan",planId);
+        Db.Param(cmd,"@plan",planId); Db.Param(cmd,"@period",periodId);
         using var r=cmd.ExecuteReader();
         while(r.Read())list.Add(new Choice(r.GetInt32(0),r.GetString(1)));
         return list;
@@ -48,13 +48,13 @@ internal static class StudentRepository
     {
         using var c=Db.Connect();
         using var cmd=Db.Sql(c,"""
-            SELECT ID_Aspirante,curp,resultado_examen,estatus
+            SELECT ID_Aspirante,curp,resultado_examen,estatus,periodo_fichas
             FROM Aspirante WHERE numero_ficha=@ficha
             """);
         Db.Param(cmd,"@ficha",ficha.Trim());
         using var r=cmd.ExecuteReader();
         if(!r.Read())return null;
-        return new AspirantInfo(r.GetInt32(0),r.GetString(1),r.GetString(2),r.GetString(3));
+        return new AspirantInfo(r.GetInt32(0),r.IsDBNull(1)?"":r.GetString(1),r.GetString(2),r.GetString(3),r.IsDBNull(4)?null:r.GetInt32(4));
     }
 
     private static bool Eligible(string result,string status)
@@ -65,7 +65,7 @@ internal static class StudentRepository
             (state=="ACTIVO" || state=="ACEPTADO" || state=="APROBADO");
     }
 
-    public static string Enroll(StudentData d,Session session)
+    public static string Enroll(StudentData d,Sesion session)
     {
         if(!session.CanSeeStudents)throw new UnauthorizedAccessException("El rol no puede inscribir alumnos.");
         if(d.AspirantId<=0 || d.PlanId<=0 || d.GroupId<=0)
@@ -73,17 +73,19 @@ internal static class StudentRepository
         d.Validate();
         using var c=Db.Connect();
         using var tx=c.BeginTransaction(IsolationLevel.ReadCommitted);
+        Identidad.Check(c,tx,session,d.First,d.Paternal,d.Maternal,d.Curp,aspirantId:d.AspirantId);
         // Los bloqueos de aspirante y grupo impiden que dos secretarias dupliquen una inscripción.
-        string result,status,curp;
-        using(var lockAsp=Db.Sql(c,"SELECT resultado_examen,estatus,curp FROM Aspirante WHERE ID_Aspirante=@id FOR UPDATE",tx))
+        string result,status,curp; int? period;
+        using(var lockAsp=Db.Sql(c,"SELECT resultado_examen,estatus,curp,periodo_fichas FROM Aspirante WHERE ID_Aspirante=@id FOR UPDATE",tx))
         {
             Db.Param(lockAsp,"@id",d.AspirantId);
             using var reader=lockAsp.ExecuteReader();
             if(!reader.Read())throw new ArgumentException("La ficha del aspirante ya no existe.");
-            result=reader.GetString(0); status=reader.GetString(1);curp=reader.GetString(2);
+            result=reader.GetString(0); status=reader.GetString(1);curp=reader.IsDBNull(2)?"":reader.GetString(2);
+            period=reader.IsDBNull(3)?null:reader.GetInt32(3);
         }
         if(!Eligible(result,status))throw new ArgumentException("El aspirante no tiene admisión aprobada/aceptada.");
-        if(!string.Equals(d.Curp,curp,StringComparison.OrdinalIgnoreCase))
+        if(!(curp.Length==0 && period.HasValue) && !string.Equals(d.Curp,curp,StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException("La CURP no coincide con la ficha del aspirante.");
         int existing;
         using(var x=Db.Sql(c,"SELECT COUNT(*) FROM Alumno WHERE ID_Aspirante=@a",tx))
@@ -98,9 +100,11 @@ internal static class StudentRepository
             INNER JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
             WHERE g.ID_grupo=@grupo AND p.id_plan=@plan AND s.numero_semestre=1
                 AND UPPER(g.Estatus)='ACTIVO' AND UPPER(pe.estatus)='ACTIVO'
+                AND (@period IS NULL OR (g.ID_Periodo=@period AND g.habilitado_fichas=1))
             FOR UPDATE
             """,tx))
         {
+            Db.Param(lockGroup,"@period",period);
             Db.Param(lockGroup,"@grupo",d.GroupId);Db.Param(lockGroup,"@plan",d.PlanId);
             object? size=lockGroup.ExecuteScalar();
             if(size is null)throw new ArgumentException("El grupo no está vigente o no corresponde al plan seleccionado.");
@@ -138,18 +142,19 @@ internal static class StudentRepository
             VALUES (@control,@group,'NUEVO_INGRESO','INSCRITO')
             """,tx))
         {Db.Param(ins,"@control",d.Control);Db.Param(ins,"@group",d.GroupId);ins.ExecuteNonQuery();}
-        using(var asp=Db.Sql(c,"UPDATE Aspirante SET estatus='INSCRITO' WHERE ID_Aspirante=@id",tx))
-        {Db.Param(asp,"@id",d.AspirantId);asp.ExecuteNonQuery();}
+        using(var asp=Db.Sql(c,"UPDATE Aspirante SET estatus='INSCRITO',curp=@curp WHERE ID_Aspirante=@id",tx))
+        {Db.Param(asp,"@curp",d.Curp);Db.Param(asp,"@id",d.AspirantId);asp.ExecuteNonQuery();}
         Db.Audit(c,tx,session.Id,"INSCRIPCION","ALUMNOS","Inscripción de nuevo ingreso",d.Control);
         tx.Commit();
         return d.Control;
     }
 
-    public static DataTable ListStudents(Session session,string filter)
+    public static DataTable ListStudents(Sesion session,string filter)
     {
         if(!session.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
         var t=new DataTable();
         using var c=Db.Connect();
+        Identidad.RequireActive(c,null,session);
         using var cmd=Db.Sql(c,"""
             SELECT a.Numero_control AS 'No. control',
                 CONCAT_WS(' ',a.nombre,a.apellido_paterno,a.apellido_materno) AS 'Nombre completo',
@@ -170,10 +175,11 @@ internal static class StudentRepository
         return t;
     }
 
-    public static StudentData? Detail(Session session,string control)
+    public static StudentData? Detail(Sesion session,string control)
     {
         if(!session.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
         using var c=Db.Connect();
+        Identidad.RequireActive(c,null,session);
         using var cmd=Db.Sql(c,"""
             SELECT a.Numero_control,a.ID_Aspirante,a.ID_Plan,a.curp,a.nombre,a.apellido_paterno,
                 a.apellido_materno,a.fecha_nacimiento,a.nss,a.telefono,a.telefono_emergencia,
@@ -229,16 +235,20 @@ internal static class StudentRepository
         Db.Param(cmd,"@postal",d.Postal);
     }
 
-    public static void Update(StudentData d,Session actor)
+    public static void Update(StudentData d,Sesion actor)
     {
         if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
         d.Validate();
-        using var c=Db.Connect();using var tx=c.BeginTransaction();
+        using var c=Db.Connect();using var tx=c.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
+        // El ID de la ficha se obtiene del expediente, no del formulario.
+        using(var own=Db.Sql(c,"SELECT ID_Aspirante FROM Alumno WHERE Numero_control=@control",tx))
+        { Db.Param(own,"@control",d.Control); d.AspirantId=Convert.ToInt32(own.ExecuteScalar() ?? throw new ArgumentException("El alumno ya no existe.")); }
+        Identidad.Check(c,tx,actor,d.First,d.Paternal,d.Maternal,d.Curp,d.Control,d.AspirantId);
         using(var guard=Db.Sql(c,"SELECT estatus FROM Alumno WHERE Numero_control=@control FOR UPDATE",tx))
         {
             Db.Param(guard,"@control",d.Control);
             string? status=Convert.ToString(guard.ExecuteScalar());
-            if(status is null)throw new ArgumentException("El alumno ya no existe.");
+            if(string.IsNullOrEmpty(status))throw new ArgumentException("El alumno ya no existe.");
             if(status.Equals("OCULTO",StringComparison.OrdinalIgnoreCase) && !actor.IsAdmin)
                 throw new UnauthorizedAccessException("El expediente se ocultó; sólo Administración puede modificarlo.");
         }
@@ -266,11 +276,12 @@ internal static class StudentRepository
         tx.Commit();
     }
 
-    public static void Visibility(Session session,string control,bool restore)
+    public static void Visibility(Sesion session,string control,bool restore)
     {
         if(!session.CanSeeStudents || (restore && !session.IsAdmin))
             throw new UnauthorizedAccessException("No tiene permiso para realizar esta operación.");
-        using var c=Db.Connect();using var tx=c.BeginTransaction();
+        using var c=Db.Connect();using var tx=c.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
+        Identidad.RequireActive(c,tx,session);
         using(var cmd=Db.Sql(c,"UPDATE Alumno SET estatus=@status WHERE Numero_control=@control",tx))
         {
             Db.Param(cmd,"@status",restore?"INSCRITO":"OCULTO");

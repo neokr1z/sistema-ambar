@@ -1,7 +1,7 @@
 using System.ComponentModel;
 namespace AMBAR.Semana4;
 
-public class RoundedButton : Button
+public class BotonRedondeado : Button
 {
     private int radius=18;
     [DefaultValue(18)]
@@ -11,7 +11,7 @@ public class RoundedButton : Button
     private void UpdateShape()
     {
         if(Width<3 || Height<3)return;
-        using var path=ReferenceUi.Path(new Rectangle(0,0,Width,Height),Radius);
+        using var path=ComponentesVisuales.Path(new Rectangle(0,0,Width,Height),Radius);
         var old=Region;Region=new Region(path);old?.Dispose();
     }
 }

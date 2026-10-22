@@ -1,7 +1,7 @@
 #nullable enable
 namespace AMBAR.Semana4;
 
-partial class ChangePasswordForm
+partial class CambiarPasswordForm
 {
     private System.ComponentModel.IContainer? components = null;
     protected override void Dispose(bool disposing)

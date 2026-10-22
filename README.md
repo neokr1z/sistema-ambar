@@ -1,5 +1,7 @@
 # AMBAR · Semana 4 — Sistema de Control Escolar
 
+> **Actualización octubre 2026:** validaciones compartidas, consulta/baja de personal y carga de seis grupos y 50 fichas. Antes de ejecutar esta versión sobre una base existente, aplica **05 (si falta) → 06 → 07**. Instrucciones completas en [ACTUALIZACION_OCTUBRE_2026.md](ACTUALIZACION_OCTUBRE_2026.md).
+
 Proyecto de escritorio en **C# (.NET 8) / Windows Forms**, pensado para **Visual Studio Community 2022** y una base de datos **MySQL 8**. Está construido tomando como referencia los informes de las semanas 1, 2 y 3 y el script `tablas_ambar.sql` proporcionados por el equipo.
 
 ## 1. ¿Qué incluye realmente esta entrega?

@@ -2,7 +2,7 @@ using System.Drawing.Drawing2D;
 
 namespace AMBAR.Semana4;
 
-internal static class ReferenceUi
+internal static class ComponentesVisuales
 {
     public static GraphicsPath Path(Rectangle r,int radius)
     {
@@ -31,7 +31,7 @@ internal static class ReferenceUi
     }
     public static void Input(Control parent,TextBox input,int x,int y,int width)
     {
-        var border=new RoundedPanel { Bounds=new Rectangle(x,y,width,48),Radius=16,BorderColor=Theme.Blue };
+        var border=new PanelRedondeado { Bounds=new Rectangle(x,y,width,48),Radius=16,BorderColor=Theme.Blue };
         input.BorderStyle=BorderStyle.None;input.Location=new Point(13,13);input.Width=width-26;
         border.Controls.Add(input);parent.Controls.Add(border);
     }
@@ -53,7 +53,7 @@ internal static class ReferenceUi
     }
     public static Label Stat(Control parent,string title,int x,int y,int width,int height=104)
     {
-        var panel=new RoundedPanel {Bounds=new Rectangle(x,y,width,height),BackColor=Theme.Gray,BorderColor=Theme.Green,Radius=20};
+        var panel=new PanelRedondeado {Bounds=new Rectangle(x,y,width,height),BackColor=Theme.Gray,BorderColor=Theme.Green,Radius=20};
         Round(panel);parent.Controls.Add(panel);
         var caption=Label(panel,title,8,6,width-16,height-45,13,true,ContentAlignment.MiddleCenter);caption.ForeColor=Color.White;
         var value=Label(panel,"—",8,height-40,width-16,32,16,true,ContentAlignment.MiddleCenter);value.ForeColor=Color.White;
