@@ -388,6 +388,7 @@ partial class InscripcionForm
         birthday.Format = DateTimePickerFormat.Short;
         birthday.Location = new Point(270, 379);
         birthday.Margin = new Padding(4);
+        birthday.MinDate = new DateTime(1926, 1, 1);
         birthday.Name = "birthday";
         birthday.Size = new Size(290, 32);
         birthday.TabIndex = 22;

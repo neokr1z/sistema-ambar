@@ -27,6 +27,7 @@ public partial class MainForm : Form
         sendRow.Visible = session.CanSeeStudents;
 
         usersRow.Visible = session.IsAdmin;
+        personnelRow.Visible = session.IsAdmin;
         auditRow.Visible = session.IsAdmin;
 
         if (session.IsTeacher)
@@ -162,6 +163,12 @@ public partial class MainForm : Form
     {
         SelectMenu(usersButton);
         Open(new UsuariosForm(session));
+    }
+
+    private void PersonnelClick(object? sender, EventArgs e)
+    {
+        SelectMenu(personnelButton);
+        Open(new PersonalForm(session));
     }
 
     private void AuditClick(object? sender, EventArgs e)

@@ -4,6 +4,7 @@ public partial class InscripcionForm : Form
 {
     private Sesion actor = null!;
     private int aspirantId;
+    private int? fichaPeriod;
     private string verifiedFicha = "";
 
     public InscripcionForm()
@@ -72,7 +73,7 @@ public partial class InscripcionForm : Form
         if (plans.SelectedItem is not Choice c) return;
         try
         {
-            foreach (var item in RepositorioAlumnos.Groups(c.Id)) groups.Items.Add(item);
+            foreach (var item in RepositorioAlumnos.Groups(c.Id, fichaPeriod)) groups.Items.Add(item);
             if (groups.Items.Count > 0) groups.SelectedIndex = 0;
             groupNote.Text = groups.Items.Count > 0 ? "Cupo validado nuevamente al guardar." : "Sin grupos activos con cupo para primer semestre.";
         }
@@ -83,6 +84,7 @@ public partial class InscripcionForm : Form
     {
         try
         {
+            aspirantId = 0; verifiedFicha = ""; fichaPeriod = null; curp.Clear(); curp.ReadOnly = true;
             var f = Validation.Mandatory(ficha.Text, "número de ficha");
             var a = RepositorioAlumnos.Aspirant(f);
             aspirantId = 0; verifiedFicha = "";
@@ -94,6 +96,9 @@ public partial class InscripcionForm : Form
             if (!eligible) throw new ArgumentException("El aspirante aún no está aprobado/aceptado o ya fue inscrito.");
             aspirantId = a.Id; verifiedFicha = f;
             curp.Text = a.Curp;
+            curp.ReadOnly = a.Curp.Length > 0;
+            fichaPeriod = a.PeriodId;
+            LoadGroups();
             if (institutionalMail.TextLength == 0)
                 institutionalMail.Text = $"{DateTime.Today.Year}{a.Id:D6}@alumnos.acapulco.tecnm.mx";
             MessageBox.Show("Ficha aceptada. Completa los datos y verifica el correo propuesto antes de guardar.\nAMBAR no crea buzones de correo.", "Ficha validada");

@@ -67,6 +67,9 @@ partial class MainForm
         sendRow = new PanelRedondeado();
         sendIcon = new Label();
         sendButton = new Button();
+        personnelRow = new PanelRedondeado();
+        personnelIcon = new Label();
+        personnelButton = new Button();
         usersRow = new PanelRedondeado();
         usersIcon = new Label();
         usersButton = new Button();
@@ -497,6 +500,7 @@ partial class MainForm
         nav.Controls.Add(studentsRow);
         nav.Controls.Add(sendRow);
         nav.Controls.Add(usersRow);
+        nav.Controls.Add(personnelRow);
         nav.Controls.Add(auditRow);
         nav.Controls.Add(passwordRow);
         nav.Dock = DockStyle.Fill;
@@ -852,6 +856,46 @@ partial class MainForm
         usersButton.TextAlign = ContentAlignment.MiddleLeft;
         usersButton.UseVisualStyleBackColor = false;
         usersButton.Click += UsersClick;
+        personnelRow.BackColor = Color.FromArgb(180, 213, 234);
+        personnelRow.Controls.Add(personnelIcon);
+        personnelRow.Controls.Add(personnelButton);
+        personnelRow.Location = new Point(12, 548);
+        personnelRow.Margin = new Padding(0, 0, 0, 19);
+        personnelRow.Name = "personnelRow";
+        personnelRow.Padding = new Padding(2);
+        personnelRow.Size = new Size(322, 55);
+        personnelRow.TabIndex = 10;
+        // 
+        // personnelIcon
+        // 
+        personnelIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        personnelIcon.ForeColor = Color.Black;
+        personnelIcon.Location = new Point(6, 5);
+        personnelIcon.Margin = new Padding(4, 0, 4, 0);
+        personnelIcon.Name = "personnelIcon";
+        personnelIcon.Size = new Size(45, 45);
+        personnelIcon.TabIndex = 0;
+        personnelIcon.Text = "";
+        personnelIcon.TextAlign = ContentAlignment.MiddleCenter;
+        personnelIcon.Click += PersonnelClick;
+        // 
+        // personnelButton
+        // 
+        personnelButton.BackColor = Color.FromArgb(180, 213, 234);
+        personnelButton.Cursor = Cursors.Hand;
+        personnelButton.FlatAppearance.BorderSize = 0;
+        personnelButton.FlatStyle = FlatStyle.Flat;
+        personnelButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        personnelButton.ForeColor = Color.FromArgb(61, 107, 134);
+        personnelButton.Location = new Point(52, 2);
+        personnelButton.Margin = new Padding(4);
+        personnelButton.Name = "personnelButton";
+        personnelButton.Size = new Size(265, 50);
+        personnelButton.TabIndex = 1;
+        personnelButton.Text = "Consulta / baja de personal";
+        personnelButton.TextAlign = ContentAlignment.MiddleLeft;
+        personnelButton.UseVisualStyleBackColor = false;
+        personnelButton.Click += PersonnelClick;
         // 
         // auditRow
         // 
@@ -1064,6 +1108,9 @@ partial class MainForm
     private PanelRedondeado sendRow;
     private Label sendIcon;
     private Button sendButton;
+    private PanelRedondeado personnelRow;
+    private Label personnelIcon;
+    private Button personnelButton;
     private PanelRedondeado usersRow;
     private Label usersIcon;
     private Button usersButton;

@@ -14,6 +14,8 @@ partial class UsuariosForm
     {
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UsuariosForm));
         body = new Panel();
+        curpLabel = new Label();
+        curpInput = new TextBox();
         roleLabel = new Label();
         role = new ComboBox();
         rfcLabel = new Label();
@@ -58,6 +60,18 @@ partial class UsuariosForm
         body.AutoScroll = true;
         body.AutoScrollMinSize = new Size(1150, 630);
         body.BackColor = Color.White;
+        body.Controls.Add(curpLabel);
+        body.Controls.Add(curpInput);
+        curpLabel.Text = "CURP:";
+        curpLabel.Location = new Point(48, 328);
+        curpLabel.Size = new Size(200, 30);
+        curpLabel.Name = "curpLabel";
+        curpInput.Location = new Point(255, 328);
+        curpInput.Size = new Size(265, 31);
+        curpInput.MaxLength = 18;
+        curpInput.CharacterCasing = CharacterCasing.Upper;
+        curpInput.Name = "curpInput";
+        curpInput.TabIndex = 9;
         body.Controls.Add(roleLabel);
         body.Controls.Add(role);
         body.Controls.Add(rfcLabel);
@@ -484,6 +498,8 @@ partial class UsuariosForm
     private Label heading = null!;
     private Label personalTitle = null!;
     private Panel personalLine = null!;
+    private Label curpLabel = null!;
+    private TextBox curpInput = null!;
     private Label accessTitle = null!;
     private Panel accessLine = null!;
     private Label idHint = null!;

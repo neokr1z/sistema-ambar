@@ -10,6 +10,9 @@
     <RootNamespace>AMBAR.Semana4</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Tests/**/*.cs" />
+    <EmbeddedResource Remove="Tests/**/*" />
+    <None Remove="Tests/**/*" />
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
     <PackageReference Include="QuestPDF" Version="2024.3.1" />
   </ItemGroup>
@@ -58,6 +61,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ConsultaA.resx"><DependentUpon>ConsultaA.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="PersonalForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="PersonalForm.Designer.cs"><DependentUpon>PersonalForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="PersonalForm.resx"><DependentUpon>PersonalForm.cs</DependentUpon></EmbeddedResource>
     <Compile Update="UsuariosForm.cs"><SubType>Form</SubType></Compile>
     <Compile Update="UsuariosForm.Designer.cs"><DependentUpon>UsuariosForm.cs</DependentUpon></Compile>
     <EmbeddedResource Update="UsuariosForm.resx"><DependentUpon>UsuariosForm.cs</DependentUpon></EmbeddedResource>

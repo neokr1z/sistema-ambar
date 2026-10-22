@@ -346,6 +346,7 @@ partial class ExpedienteMForm
         // 
         birth.Format = DateTimePickerFormat.Short;
         birth.Location = new Point(237, 207);
+        birth.MinDate = new DateTime(1926, 1, 1);
         birth.Name = "birth";
         birth.Size = new Size(310, 30);
         birth.TabIndex = 13;

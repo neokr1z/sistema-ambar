@@ -62,99 +62,11 @@ public partial class UsuariosForm : Form
     {
         try
         {
-            string rol = (string)(role.SelectedItem ??
-                throw new ArgumentException("Selecciona un tipo de usuario."));
-            string nombre = Validation.Mandatory(first.Text, "Nombre(s)");
-            string ap = Validation.Mandatory(paternal.Text, "Apellido paterno");
-            string am = Validation.Mandatory(maternal.Text, "Apellido materno");
-            string mail = Validation.Mandatory(email.Text, "Correo institucional");
-            string user = Validation.Mandatory(username.Text, "Usuario");
-            string taxId = Validation.Mandatory(rfc.Text, "RFC").ToUpperInvariant();
-            string ident = rol == "Secretaria"
-                ? Validation.Mandatory(idNumber.Text, "Número administrativo").ToUpperInvariant()
-                : "";
-
-            if (!Validation.Email(mail))
-                throw new ArgumentException("Escribe un correo institucional válido.");
-
-            if (phone.Text.Trim().Length > 0 && !Validation.Phone(phone.Text))
-                throw new ArgumentException("El teléfono debe tener 10 dígitos.");
-
-            if (user.Length < 4)
-                throw new ArgumentException("El usuario debe tener al menos 4 caracteres.");
-
-            if (!Validation.Rfc(taxId))
-                throw new ArgumentException(
-                    "El RFC debe tener 13 caracteres: cuatro letras, seis dígitos y tres caracteres de homoclave.");
-
-            if (pwd.Text != confirm.Text)
-                throw new ArgumentException("Las contraseñas no coinciden.");
-
-            if (!Validation.Password(pwd.Text))
-                throw new ArgumentException(
-                    "La contraseña requiere al menos 10 caracteres, letras y números.");
-
             save.Enabled = false;
-
-            using var c = Db.Connect();
-            using var tx = c.BeginTransaction();
-            int docenteId = 0;
-
-            if (rol == "Docente")
-            {
-                using var cmd = Db.Sql(c, """
-                    INSERT INTO Docente(nombre,apellido_paterno,apellido_materno,correo_institucional,RFC,telefono,estatus)
-                    VALUES (@nombre,@ap,@am,@mail,@rfc,@tel,'ACTIVO')
-                    """, tx);
-                Db.Param(cmd, "@nombre", nombre);
-                Db.Param(cmd, "@ap", ap);
-                Db.Param(cmd, "@am", am);
-                Db.Param(cmd, "@mail", mail);
-                Db.Param(cmd, "@rfc", taxId);
-                Db.Param(cmd, "@tel", string.IsNullOrWhiteSpace(phone.Text) ? null : phone.Text.Trim());
-                cmd.ExecuteNonQuery();
-                docenteId = Convert.ToInt32(cmd.LastInsertedId);
-            }
-            else
-            {
-                using var cmd = Db.Sql(c, """
-                    INSERT INTO Personal_Administrativo(num_administrativo,nombre,apellido_paterno,
-                        apellido_materno,correo_institucional,RFC,telefono,puesto,estatus)
-                    VALUES (@id,@nombre,@ap,@am,@mail,@rfc,@tel,'Secretaría','ACTIVO')
-                    """, tx);
-                Db.Param(cmd, "@id", ident);
-                Db.Param(cmd, "@nombre", nombre);
-                Db.Param(cmd, "@rfc", taxId);
-                Db.Param(cmd, "@ap", ap);
-                Db.Param(cmd, "@am", am);
-                Db.Param(cmd, "@mail", mail);
-                Db.Param(cmd, "@tel", string.IsNullOrWhiteSpace(phone.Text) ? null : phone.Text.Trim());
-                cmd.ExecuteNonQuery();
-            }
-
-            int roleId;
-            using (var find = Db.Sql(c, "SELECT id_rol FROM Rol WHERE nombre=@nombre", tx))
-            {
-                Db.Param(find, "@nombre", rol);
-                roleId = Convert.ToInt32(find.ExecuteScalar()
-                    ?? throw new InvalidOperationException("Falta precargar el rol en MySQL."));
-            }
-
-            using (var cmd = Db.Sql(c, """
-                INSERT INTO Usuario(nombre_usuario,password_hash,Id_rol,estatus,ID_docente,num_administrativo,debe_cambiar_password)
-                VALUES (@usuario,@hash,@rol,'ACTIVO',@doc,@admin,0)
-                """, tx))
-            {
-                Db.Param(cmd, "@usuario", user);
-                Db.Param(cmd, "@hash", PasswordHasher.Hash(pwd.Text));
-                Db.Param(cmd, "@rol", roleId);
-                Db.Param(cmd, "@doc", rol == "Docente" ? docenteId : null);
-                Db.Param(cmd, "@admin", rol == "Secretaria" ? ident : null);
-                cmd.ExecuteNonQuery();
-            }
-
-            Db.Audit(c, tx, admin.Id, "ALTA_USUARIO", "USUARIOS", $"Alta de {rol}: {user}", user);
-            tx.Commit();
+            RepositorioPersonal.Create(admin, new PersonalData(
+                role.SelectedItem as string ?? "", first.Text, paternal.Text, maternal.Text,
+                email.Text, username.Text, rfc.Text, curpInput.Text, phone.Text, idNumber.Text,
+                pwd.Text, confirm.Text));
 
             MessageBox.Show(
                 "Personal y usuario creados correctamente.",

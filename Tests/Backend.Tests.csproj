@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.4.0" />
+    <Compile Include="../Validation.cs" Link="Validation.cs" />
+    <Compile Include="../ModelosEstudiantes.cs" Link="ModelosEstudiantes.cs" />
+    <Compile Include="../Identidad.cs" Link="Identidad.cs" />
+    <Compile Include="../Datos.cs" Link="Datos.cs" />
+    <Compile Include="../RepositorioPersonal.cs" Link="RepositorioPersonal.cs" />
+    <Compile Include="../RepositorioAlumnos.cs" Link="RepositorioAlumnos.cs" />
+  </ItemGroup>
+</Project>
