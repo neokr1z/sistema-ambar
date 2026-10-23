@@ -19,3 +19,16 @@ CREATE TABLE IF NOT EXISTS Catalogo_Postal (
 -- d_ciudad -> localidad (si no existe, usar D_mnpio);
 -- D_mnpio -> municipio; d_estado -> estado.
 -- Ante un CP inexistente en el catálogo cargado, AMBAR NO permitirá guardar.
+
+-- Importación recomendada: descargar TXT desde Correos de México (separador |).
+-- MySQL Workbench: primero importar a tabla temporal o transformar el TXT a CSV
+-- con columnas codigo_postal,colonia,localidad,municipio,estado.
+-- En localidades donde d_ciudad sea vacío, usar D_mnpio como localidad.
+-- Ejemplo para archivo CSV UTF-8 preparado con encabezado:
+-- LOAD DATA LOCAL INFILE 'C:/ruta/catalogo_postal.csv'
+-- INTO TABLE Catalogo_Postal
+-- CHARACTER SET utf8mb4
+-- FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+-- LINES TERMINATED BY '\\n'
+-- IGNORE 1 LINES
+-- (codigo_postal,colonia,localidad,municipio,estado);
