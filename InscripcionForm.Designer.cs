@@ -58,7 +58,7 @@ partial class InscripcionForm
         interiorLabel = new Label();
         interior = new TextBox();
         neighborhoodLabel = new Label();
-        neighborhood = new TextBox();
+        neighborhood = new ComboBox();
         localityLabel = new Label();
         locality = new TextBox();
         municipalityLabel = new Label();
@@ -559,7 +559,7 @@ partial class InscripcionForm
         // 
         streetLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         streetLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        streetLabel.Location = new Point(45, 110);
+        streetLabel.Location = new Point(650, 110);
         streetLabel.Margin = new Padding(4, 0, 4, 0);
         streetLabel.Name = "streetLabel";
         streetLabel.Size = new Size(213, 40);
@@ -570,7 +570,7 @@ partial class InscripcionForm
         // street
         // 
         street.Font = new Font("Segoe UI", 11F);
-        street.Location = new Point(270, 114);
+        street.Location = new Point(878, 114);
         street.Margin = new Padding(4);
         street.MaxLength = 100;
         street.Name = "street";
@@ -581,7 +581,7 @@ partial class InscripcionForm
         // 
         exteriorLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         exteriorLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        exteriorLabel.Location = new Point(650, 110);
+        exteriorLabel.Location = new Point(650, 175);
         exteriorLabel.Margin = new Padding(4, 0, 4, 0);
         exteriorLabel.Name = "exteriorLabel";
         exteriorLabel.Size = new Size(216, 40);
@@ -592,7 +592,7 @@ partial class InscripcionForm
         // exterior
         // 
         exterior.Font = new Font("Segoe UI", 11F);
-        exterior.Location = new Point(878, 114);
+        exterior.Location = new Point(878, 179);
         exterior.Margin = new Padding(4);
         exterior.MaxLength = 15;
         exterior.Name = "exterior";
@@ -603,7 +603,7 @@ partial class InscripcionForm
         // 
         interiorLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         interiorLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        interiorLabel.Location = new Point(45, 175);
+        interiorLabel.Location = new Point(650, 240);
         interiorLabel.Margin = new Padding(4, 0, 4, 0);
         interiorLabel.Name = "interiorLabel";
         interiorLabel.Size = new Size(213, 40);
@@ -614,7 +614,7 @@ partial class InscripcionForm
         // interior
         // 
         interior.Font = new Font("Segoe UI", 11F);
-        interior.Location = new Point(270, 179);
+        interior.Location = new Point(878, 244);
         interior.Margin = new Padding(4);
         interior.MaxLength = 15;
         interior.Name = "interior";
@@ -625,7 +625,7 @@ partial class InscripcionForm
         // 
         neighborhoodLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         neighborhoodLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        neighborhoodLabel.Location = new Point(650, 175);
+        neighborhoodLabel.Location = new Point(45, 175);
         neighborhoodLabel.Margin = new Padding(4, 0, 4, 0);
         neighborhoodLabel.Name = "neighborhoodLabel";
         neighborhoodLabel.Size = new Size(216, 40);
@@ -636,9 +636,9 @@ partial class InscripcionForm
         // neighborhood
         // 
         neighborhood.Font = new Font("Segoe UI", 11F);
-        neighborhood.Location = new Point(878, 179);
+        neighborhood.Location = new Point(270, 179);
         neighborhood.Margin = new Padding(4);
-        neighborhood.MaxLength = 100;
+        neighborhood.DropDownStyle = ComboBoxStyle.DropDownList;
         neighborhood.Name = "neighborhood";
         neighborhood.Size = new Size(250, 32);
         neighborhood.TabIndex = 42;
@@ -669,7 +669,7 @@ partial class InscripcionForm
         // 
         municipalityLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         municipalityLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        municipalityLabel.Location = new Point(650, 240);
+        municipalityLabel.Location = new Point(45, 305);
         municipalityLabel.Margin = new Padding(4, 0, 4, 0);
         municipalityLabel.Name = "municipalityLabel";
         municipalityLabel.Size = new Size(216, 40);
@@ -680,7 +680,7 @@ partial class InscripcionForm
         // municipality
         // 
         municipality.Font = new Font("Segoe UI", 11F);
-        municipality.Location = new Point(878, 244);
+        municipality.Location = new Point(270, 309);
         municipality.Margin = new Padding(4);
         municipality.MaxLength = 100;
         municipality.Name = "municipality";
@@ -691,7 +691,7 @@ partial class InscripcionForm
         // 
         stateLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         stateLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        stateLabel.Location = new Point(45, 305);
+        stateLabel.Location = new Point(45, 370);
         stateLabel.Margin = new Padding(4, 0, 4, 0);
         stateLabel.Name = "stateLabel";
         stateLabel.Size = new Size(213, 40);
@@ -702,7 +702,7 @@ partial class InscripcionForm
         // state
         // 
         state.Font = new Font("Segoe UI", 11F);
-        state.Location = new Point(270, 309);
+        state.Location = new Point(270, 374);
         state.Margin = new Padding(4);
         state.MaxLength = 100;
         state.Name = "state";
@@ -713,7 +713,7 @@ partial class InscripcionForm
         // 
         postalLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         postalLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        postalLabel.Location = new Point(650, 305);
+        postalLabel.Location = new Point(45, 110);
         postalLabel.Margin = new Padding(4, 0, 4, 0);
         postalLabel.Name = "postalLabel";
         postalLabel.Size = new Size(216, 40);
@@ -724,7 +724,7 @@ partial class InscripcionForm
         // postal
         // 
         postal.Font = new Font("Segoe UI", 11F);
-        postal.Location = new Point(878, 309);
+        postal.Location = new Point(270, 114);
         postal.Margin = new Padding(4);
         postal.MaxLength = 5;
         postal.Name = "postal";
@@ -796,7 +796,8 @@ partial class InscripcionForm
         groups.Location = new Point(878, 114);
         groups.Margin = new Padding(4);
         groups.Name = "groups";
-        groups.Size = new Size(250, 33);
+        groups.Size = new Size(345, 33);
+        groups.DropDownWidth = 480;
         groups.TabIndex = 3;
         // 
         // groupNoteLabel
@@ -855,6 +856,7 @@ partial class InscripcionForm
         periodNoteLabel.Size = new Size(205, 40);
         periodNoteLabel.TabIndex = 8;
         periodNoteLabel.Text = "Periodo escolar";
+        periodNoteLabel.Visible = false;
         periodNoteLabel.TextAlign = ContentAlignment.MiddleLeft;
         // 
         // periodNote
@@ -865,7 +867,8 @@ partial class InscripcionForm
         periodNote.Name = "periodNote";
         periodNote.Size = new Size(855, 45);
         periodNote.TabIndex = 9;
-        periodNote.Text = "Determinado por el grupo vigente seleccionado";
+        periodNote.Text = "Agosto-Diciembre 2026";
+        periodNote.Visible = false;
         periodNote.TextAlign = ContentAlignment.MiddleLeft;
         // 
         // statusNoteLabel
@@ -1067,7 +1070,7 @@ partial class InscripcionForm
     private Label interiorLabel = null!;
     private TextBox interior = null!;
     private Label neighborhoodLabel = null!;
-    private TextBox neighborhood = null!;
+    private ComboBox neighborhood = null!;
     private Label localityLabel = null!;
     private TextBox locality = null!;
     private Label municipalityLabel = null!;
