@@ -33,7 +33,7 @@ internal static class RepositorioAlumnos
             INNER JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre AND s.numero_semestre=1
             INNER JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
             LEFT JOIN Inscripcion i ON i.ID_grupo=g.ID_grupo AND UPPER(i.estatus)='INSCRITO'
-            WHERE pl.id_plan=@plan AND (@period IS NULL OR (g.ID_Periodo=@period AND g.habilitado_fichas=1)) AND UPPER(g.Estatus)='ACTIVO' AND UPPER(pe.estatus)='ACTIVO'
+            WHERE pl.id_plan=@plan AND g.habilitado_fichas=1 AND pe.nombre_periodo='Agosto-Diciembre 2026' AND (@period IS NULL OR g.ID_Periodo=@period) AND UPPER(g.Estatus)='ACTIVO' AND UPPER(pe.estatus)='ACTIVO'
             GROUP BY g.ID_grupo,g.nombre_grupo,pe.nombre_periodo,g.Capacidad
             HAVING COUNT(i.Id_inscripcion)<g.Capacidad
             ORDER BY g.nombre_grupo
@@ -71,6 +71,7 @@ internal static class RepositorioAlumnos
         if(d.AspirantId<=0 || d.PlanId<=0 || d.GroupId<=0)
             throw new ArgumentException("Primero busca una ficha válida, selecciona el plan y un grupo con cupo.");
         d.Validate();
+        CatalogoPostal.Validar(d.Postal,d.Neighborhood,d.Locality,d.Municipality,d.State);
         using var c=Db.Connect();
         using var tx=c.BeginTransaction(IsolationLevel.ReadCommitted);
         Identidad.Check(c,tx,session,d.First,d.Paternal,d.Maternal,d.Curp,aspirantId:d.AspirantId);

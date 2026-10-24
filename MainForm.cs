@@ -245,7 +245,9 @@ public partial class MainForm : Form
             // ASPIRANTES PENDIENTES
             applicants.Text = Count(
                 "SELECT COUNT(*) FROM Aspirante a " +
-                "WHERE NOT EXISTS (" +
+                "JOIN Periodo_Escolar pe ON pe.ID_Periodo=a.periodo_fichas " +
+                "WHERE pe.nombre_periodo=\u0027Agosto-Diciembre 2026\u0027 " +
+                "AND NOT EXISTS (" +
                 "SELECT 1 FROM Alumno al " +
                 "WHERE al.ID_Aspirante=a.ID_Aspirante)"
             );

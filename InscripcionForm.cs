@@ -6,10 +6,16 @@ public partial class InscripcionForm : Form
     private int aspirantId;
     private int? fichaPeriod;
     private string verifiedFicha = "";
+    private List<RegistroPostal> coloniasCp = new();
 
     public InscripcionForm()
     {
         InitializeComponent();
+        postal.TextChanged += PostalChanged;
+        neighborhood.SelectedIndexChanged += ColoniaChanged;
+        locality.ReadOnly = true;
+        municipality.ReadOnly = true;
+        state.ReadOnly = true;
         // El diseñador usa pestañas normales para que los nombres siempre se vean.
         // El estilo azul personalizado se activa al abrir una sesión real.
 
@@ -106,6 +112,37 @@ public partial class InscripcionForm : Form
         catch (Exception ex) { Problems.Show(ex); }
     }
 
+
+    private void PostalChanged(object? sender, EventArgs e)
+    {
+        neighborhood.Items.Clear();
+        coloniasCp.Clear();
+        locality.Clear(); municipality.Clear(); state.Clear();
+        if (!Validation.Postal(postal.Text)) return;
+        try
+        {
+            coloniasCp = CatalogoPostal.Buscar(postal.Text.Trim());
+            foreach (var item in coloniasCp)
+                if (!neighborhood.Items.Contains(item.Colonia))
+                    neighborhood.Items.Add(item.Colonia);
+            if (neighborhood.Items.Count == 0)
+                MessageBox.Show("No se encontró el CP en el catálogo postal cargado.", "Domicilio");
+            else if (neighborhood.Items.Count == 1)
+                neighborhood.SelectedIndex = 0;
+        }
+        catch (Exception ex) { Problems.Show(ex); }
+    }
+
+    private void ColoniaChanged(object? sender, EventArgs e)
+    {
+        if (neighborhood.SelectedItem is not string nombre) return;
+        var info = coloniasCp.FirstOrDefault(x => x.Colonia == nombre);
+        if (info is null) return;
+        locality.Text = info.Localidad;
+        municipality.Text = info.Municipio;
+        state.Text = info.Estado;
+    }
+
     private StudentData Collect()
     {
         var d = new StudentData
@@ -127,7 +164,7 @@ public partial class InscripcionForm : Form
             Street = street.Text.Trim(),
             Exterior = exterior.Text.Trim(),
             Interior = interior.Text.Trim(),
-            Neighborhood = neighborhood.Text.Trim(),
+            Neighborhood = neighborhood.SelectedItem?.ToString() ?? "",
             Locality = locality.Text.Trim(),
             Municipality = municipality.Text.Trim(),
             State = state.Text.Trim(),
