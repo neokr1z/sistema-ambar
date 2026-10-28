@@ -18,20 +18,20 @@ partial class MainForm
         content = new Panel();
         dashboard = new Panel();
         title = new Label();
-        profile = new RoundedPanel();
+        profile = new PanelRedondeado();
         avatar = new Label();
         profileName = new Label();
         profileMail = new Label();
         profileRole = new Label();
         profileArea = new Label();
         statistics = new Panel();
-        enrolledCard = new RoundedPanel();
+        enrolledCard = new PanelRedondeado();
         enrolledCaption = new Label();
         enrolled = new Label();
-        applicantsCard = new RoundedPanel();
+        applicantsCard = new PanelRedondeado();
         applicantsCaption = new Label();
         applicants = new Label();
-        renewalsCard = new RoundedPanel();
+        renewalsCard = new PanelRedondeado();
         renewalsCaption = new Label();
         renewals = new Label();
         activityTitle = new Label();
@@ -46,34 +46,37 @@ partial class MainForm
         pendingMessage = new Label();
         sidebar = new Panel();
         nav = new FlowLayoutPanel();
-        homeRow = new RoundedPanel();
+        homeRow = new PanelRedondeado();
         homeIcon = new Label();
         homeButton = new Button();
-        enrollRow = new RoundedPanel();
+        enrollRow = new PanelRedondeado();
         enrollIcon = new Label();
         enrollButton = new Button();
-        renewRow = new RoundedPanel();
+        renewRow = new PanelRedondeado();
         renewIcon = new Label();
         renewButton = new Button();
-        reportsRow = new RoundedPanel();
+        reportsRow = new PanelRedondeado();
         reportsIcon = new Label();
         reportsButton = new Button();
-        documentsRow = new RoundedPanel();
+        documentsRow = new PanelRedondeado();
         documentsIcon = new Label();
         documentsButton = new Button();
-        studentsRow = new RoundedPanel();
+        studentsRow = new PanelRedondeado();
         studentsIcon = new Label();
         studentsButton = new Button();
-        sendRow = new RoundedPanel();
+        sendRow = new PanelRedondeado();
         sendIcon = new Label();
         sendButton = new Button();
-        usersRow = new RoundedPanel();
+        usersRow = new PanelRedondeado();
         usersIcon = new Label();
         usersButton = new Button();
-        auditRow = new RoundedPanel();
+        personnelRow = new PanelRedondeado();
+        personnelIcon = new Label();
+        personnelButton = new Button();
+        auditRow = new PanelRedondeado();
         auditIcon = new Label();
         auditButton = new Button();
-        passwordRow = new RoundedPanel();
+        passwordRow = new PanelRedondeado();
         passwordIcon = new Label();
         passwordButton = new Button();
         logout = new Button();
@@ -99,6 +102,7 @@ partial class MainForm
         studentsRow.SuspendLayout();
         sendRow.SuspendLayout();
         usersRow.SuspendLayout();
+        personnelRow.SuspendLayout();
         auditRow.SuspendLayout();
         passwordRow.SuspendLayout();
         brand.SuspendLayout();
@@ -354,6 +358,7 @@ partial class MainForm
         activityTitle.TabIndex = 3;
         activityTitle.Text = "Actividad reciente";
         activityTitle.TextAlign = ContentAlignment.MiddleLeft;
+        activityTitle.Visible = false;
         // 
         // grid
         // 
@@ -392,6 +397,7 @@ partial class MainForm
         grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         grid.Size = new Size(825, 200);
         grid.TabIndex = 4;
+        grid.Visible = false;
         // 
         // gridColumn0
         // 
@@ -471,7 +477,6 @@ partial class MainForm
         pendingMessage.Name = "pendingMessage";
         pendingMessage.Size = new Size(800, 188);
         pendingMessage.TabIndex = 1;
-        pendingMessage.Text = "Este módulo estará disponible en una próxima entrega.";
         pendingMessage.TextAlign = ContentAlignment.MiddleLeft;
         // 
         // sidebar
@@ -498,6 +503,7 @@ partial class MainForm
         nav.Controls.Add(studentsRow);
         nav.Controls.Add(sendRow);
         nav.Controls.Add(usersRow);
+        nav.Controls.Add(personnelRow);
         nav.Controls.Add(auditRow);
         nav.Controls.Add(passwordRow);
         nav.Dock = DockStyle.Fill;
@@ -854,12 +860,55 @@ partial class MainForm
         usersButton.UseVisualStyleBackColor = false;
         usersButton.Click += UsersClick;
         // 
+        // personnelRow
+        // 
+        personnelRow.BackColor = Color.FromArgb(180, 213, 234);
+        personnelRow.Controls.Add(personnelIcon);
+        personnelRow.Controls.Add(personnelButton);
+        personnelRow.Location = new Point(12, 622);
+        personnelRow.Margin = new Padding(0, 0, 0, 19);
+        personnelRow.Name = "personnelRow";
+        personnelRow.Padding = new Padding(2);
+        personnelRow.Size = new Size(322, 55);
+        personnelRow.TabIndex = 10;
+        // 
+        // personnelIcon
+        // 
+        personnelIcon.Font = new Font("Segoe MDL2 Assets", 19F);
+        personnelIcon.ForeColor = Color.Black;
+        personnelIcon.Location = new Point(6, 5);
+        personnelIcon.Margin = new Padding(4, 0, 4, 0);
+        personnelIcon.Name = "personnelIcon";
+        personnelIcon.Size = new Size(45, 45);
+        personnelIcon.TabIndex = 0;
+        personnelIcon.Text = "";
+        personnelIcon.TextAlign = ContentAlignment.MiddleCenter;
+        personnelIcon.Click += PersonnelClick;
+        // 
+        // personnelButton
+        // 
+        personnelButton.BackColor = Color.FromArgb(180, 213, 234);
+        personnelButton.Cursor = Cursors.Hand;
+        personnelButton.FlatAppearance.BorderSize = 0;
+        personnelButton.FlatStyle = FlatStyle.Flat;
+        personnelButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        personnelButton.ForeColor = Color.FromArgb(61, 107, 134);
+        personnelButton.Location = new Point(52, 2);
+        personnelButton.Margin = new Padding(4);
+        personnelButton.Name = "personnelButton";
+        personnelButton.Size = new Size(265, 50);
+        personnelButton.TabIndex = 1;
+        personnelButton.Text = "Consulta / baja de personal";
+        personnelButton.TextAlign = ContentAlignment.MiddleLeft;
+        personnelButton.UseVisualStyleBackColor = false;
+        personnelButton.Click += PersonnelClick;
+        // 
         // auditRow
         // 
         auditRow.BackColor = Color.FromArgb(180, 213, 234);
         auditRow.Controls.Add(auditIcon);
         auditRow.Controls.Add(auditButton);
-        auditRow.Location = new Point(12, 622);
+        auditRow.Location = new Point(12, 696);
         auditRow.Margin = new Padding(0, 0, 0, 19);
         auditRow.Name = "auditRow";
         auditRow.Padding = new Padding(2);
@@ -902,7 +951,7 @@ partial class MainForm
         passwordRow.BackColor = Color.FromArgb(180, 213, 234);
         passwordRow.Controls.Add(passwordIcon);
         passwordRow.Controls.Add(passwordButton);
-        passwordRow.Location = new Point(12, 696);
+        passwordRow.Location = new Point(12, 770);
         passwordRow.Margin = new Padding(0, 0, 0, 45);
         passwordRow.Name = "passwordRow";
         passwordRow.Padding = new Padding(2);
@@ -994,6 +1043,7 @@ partial class MainForm
         hamburger.TabIndex = 1;
         hamburger.Text = "☰";
         hamburger.UseVisualStyleBackColor = false;
+        hamburger.Visible = false;
         hamburger.Click += ToggleMenu;
         // 
         // MainForm
@@ -1029,6 +1079,7 @@ partial class MainForm
         studentsRow.ResumeLayout(false);
         sendRow.ResumeLayout(false);
         usersRow.ResumeLayout(false);
+        personnelRow.ResumeLayout(false);
         auditRow.ResumeLayout(false);
         passwordRow.ResumeLayout(false);
         brand.ResumeLayout(false);
@@ -1043,52 +1094,55 @@ partial class MainForm
     private Panel brand;
     private PictureBox logo;
     private Button hamburger;
-    private RoundedPanel homeRow;
+    private PanelRedondeado homeRow;
     private Label homeIcon;
     private Button homeButton;
-    private RoundedPanel enrollRow;
+    private PanelRedondeado enrollRow;
     private Label enrollIcon;
     private Button enrollButton;
-    private RoundedPanel renewRow;
+    private PanelRedondeado renewRow;
     private Label renewIcon;
     private Button renewButton;
-    private RoundedPanel reportsRow;
+    private PanelRedondeado reportsRow;
     private Label reportsIcon;
     private Button reportsButton;
-    private RoundedPanel documentsRow;
+    private PanelRedondeado documentsRow;
     private Label documentsIcon;
     private Button documentsButton;
-    private RoundedPanel studentsRow;
+    private PanelRedondeado studentsRow;
     private Label studentsIcon;
     private Button studentsButton;
-    private RoundedPanel sendRow;
+    private PanelRedondeado sendRow;
     private Label sendIcon;
     private Button sendButton;
-    private RoundedPanel usersRow;
+    private PanelRedondeado personnelRow;
+    private Label personnelIcon;
+    private Button personnelButton;
+    private PanelRedondeado usersRow;
     private Label usersIcon;
     private Button usersButton;
-    private RoundedPanel auditRow;
+    private PanelRedondeado auditRow;
     private Label auditIcon;
     private Button auditButton;
-    private RoundedPanel passwordRow;
+    private PanelRedondeado passwordRow;
     private Label passwordIcon;
     private Button passwordButton;
     private Panel dashboard;
     private Label title;
-    private RoundedPanel profile;
+    private PanelRedondeado profile;
     private Label avatar;
     private Label profileName;
     private Label profileMail;
     private Label profileRole;
     private Label profileArea;
     private Panel statistics;
-    private RoundedPanel enrolledCard;
+    private PanelRedondeado enrolledCard;
     private Label enrolledCaption;
     private Label enrolled;
-    private RoundedPanel applicantsCard;
+    private PanelRedondeado applicantsCard;
     private Label applicantsCaption;
     private Label applicants;
-    private RoundedPanel renewalsCard;
+    private PanelRedondeado renewalsCard;
     private Label renewalsCaption;
     private Label renewals;
     private Label activityTitle;

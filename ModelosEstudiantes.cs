@@ -36,17 +36,19 @@ internal sealed class StudentData
     public string FullName=>$"{First} {Paternal} {Maternal}".Trim();
     public void Validate()
     {
-        First=Validation.Mandatory(First,"nombre(s)");
-        Paternal=Validation.Mandatory(Paternal,"apellido paterno");
-        Maternal=Validation.Mandatory(Maternal,"apellido materno");
+        First=Validation.Name(First,"nombre(s)",60);
+        Paternal=Validation.Name(Paternal,"apellido paterno");
+        Maternal=Validation.Name(Maternal,"apellido materno");
         Curp=Validation.Mandatory(Curp,"CURP").ToUpperInvariant();
         if(!Validation.Curp(Curp)) throw new ArgumentException("CURP inválida: verifica sus 18 caracteres y formato.");
-        if(Birth.Date>=DateTime.Today || Birth.Date<DateTime.Today.AddYears(-100))
-            throw new ArgumentException("La fecha de nacimiento no es válida.");
+        if(Birth.Date>=DateTime.Today || Birth.Date<Validation.EarliestBirth)
+            throw new ArgumentException("La fecha de nacimiento debe estar entre el 01/01/1926 y ayer.");
+        if(!Validation.CurpMatchesBirth(Curp,Birth.Date)) throw new ArgumentException("La fecha de nacimiento no coincide con la CURP.");
+        Phone=Phone.Trim(); Emergency=Emergency.Trim(); PersonalEmail=PersonalEmail.Trim().ToLowerInvariant();
         if(Phone.Length>0 && !Validation.Phone(Phone))throw new ArgumentException("Teléfono personal: introduce 10 dígitos.");
         if(!Validation.Phone(Emergency))throw new ArgumentException("El teléfono de emergencia debe tener 10 dígitos.");
-        Email=Validation.Mandatory(Email,"correo institucional");
-        if(!Validation.Email(Email))throw new ArgumentException("El correo institucional no es válido.");
+        Email=Validation.Mandatory(Email,"correo institucional").ToLowerInvariant();
+        if(!Validation.InstitutionalEmail(Email))throw new ArgumentException("Usa un correo válido @acapulco.tecnm.mx o @alumnos.acapulco.tecnm.mx.");
         if(PersonalEmail.Length>0 && !Validation.Email(PersonalEmail))throw new ArgumentException("El correo personal no es válido.");
         Street=Validation.Mandatory(Street,"calle");
         Exterior=Validation.Mandatory(Exterior,"número exterior");
@@ -60,4 +62,4 @@ internal sealed class StudentData
     }
 }
 
-internal sealed record AspirantInfo(int Id,string Curp,string Result,string Status);
+internal sealed record AspirantInfo(int Id,string Curp,string Result,string Status, int? PeriodId);

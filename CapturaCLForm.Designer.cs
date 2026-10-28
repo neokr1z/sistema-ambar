@@ -1,7 +1,7 @@
 #nullable disable
 namespace AMBAR.Semana4;
 
-partial class GradesForm
+partial class CapturaCLForm
 {
     private System.ComponentModel.IContainer components = null;
     protected override void Dispose(bool disposing)
@@ -13,10 +13,10 @@ partial class GradesForm
     private void InitializeComponent()
     {
         components = new System.ComponentModel.Container();
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GradesForm));
-        frame = new RoundedPanel();
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CapturaCLForm));
+        frame = new PanelRedondeado();
         logo = new PictureBox();
-        menu = new RoundedButton();
+        menu = new BotonRedondeado();
         title = new Label();
         subjectLabel = new Label();
         subject = new ComboBox();
@@ -25,10 +25,10 @@ partial class GradesForm
         periodLabel = new Label();
         period = new ComboBox();
         rule = new Panel();
-        unit1 = new RoundedButton();
-        unit2 = new RoundedButton();
-        unit3 = new RoundedButton();
-        unit4 = new RoundedButton();
+        unit1 = new BotonRedondeado();
+        unit2 = new BotonRedondeado();
+        unit3 = new BotonRedondeado();
+        unit4 = new BotonRedondeado();
         grid = new DataGridView();
         gridColumn0 = new DataGridViewTextBoxColumn();
         gridColumn1 = new DataGridViewTextBoxColumn();
@@ -36,8 +36,8 @@ partial class GradesForm
         gridColumn3 = new DataGridViewTextBoxColumn();
         emptyNote = new Label();
         summary = new Label();
-        cancel = new RoundedButton();
-        save = new RoundedButton();
+        cancel = new BotonRedondeado();
+        save = new BotonRedondeado();
         note = new Label();
         SuspendLayout();
         frame.SuspendLayout();
@@ -283,9 +283,9 @@ partial class GradesForm
         PerformLayout();
     }
 
-    private RoundedPanel frame;
+    private PanelRedondeado frame;
     private PictureBox logo;
-    private RoundedButton menu;
+    private BotonRedondeado menu;
     private Label title;
     private Label subjectLabel;
     private ComboBox subject;
@@ -294,10 +294,10 @@ partial class GradesForm
     private Label periodLabel;
     private ComboBox period;
     private Panel rule;
-    private RoundedButton unit1;
-    private RoundedButton unit2;
-    private RoundedButton unit3;
-    private RoundedButton unit4;
+    private BotonRedondeado unit1;
+    private BotonRedondeado unit2;
+    private BotonRedondeado unit3;
+    private BotonRedondeado unit4;
     private DataGridView grid;
     private DataGridViewTextBoxColumn gridColumn0;
     private DataGridViewTextBoxColumn gridColumn1;
@@ -305,7 +305,7 @@ partial class GradesForm
     private DataGridViewTextBoxColumn gridColumn3;
     private Label emptyNote;
     private Label summary;
-    private RoundedButton cancel;
-    private RoundedButton save;
+    private BotonRedondeado cancel;
+    private BotonRedondeado save;
     private Label note;
 }

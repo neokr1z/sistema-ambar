@@ -2,16 +2,27 @@ using System.Data;
 
 namespace AMBAR.Semana4;
 
-public partial class StudentsForm : Form
+public partial class ConsultaA : Form
 {
-    private Session actor = null!;
+    private Sesion actor = null!;
 
-    public StudentsForm()
+    public ConsultaA()
     {
         InitializeComponent();
+        var horario = new Button {
+            Text = "Ver horario", BackColor = Theme.Sky, ForeColor = Theme.Blue,
+            Font = new Font("Segoe UI",10,FontStyle.Bold), FlatStyle = FlatStyle.Flat,
+            Width = 158, Height = 42, Margin = new Padding(5)
+        };
+        horario.FlatAppearance.BorderSize = 0;
+        horario.Click += (_, _) => {
+            try { using var ventana = new HorarioAlumnoForm(SelectedStudent()); ventana.ShowDialog(this); }
+            catch(Exception ex) { Problems.Show(ex); }
+        };
+        actions.Controls.Add(horario);
     }
 
-    internal StudentsForm(Session session) : this()
+    internal ConsultaA(Sesion session) : this()
     {
         actor = session;
         if (!actor.CanSeeStudents)
@@ -49,7 +60,7 @@ public partial class StudentsForm : Form
     {
         try
         {
-            DataTable data = StudentRepository.ListStudents(actor, filter.Text);
+            DataTable data = RepositorioAlumnos.ListStudents(actor, filter.Text);
             grid.DataSource = data;
             count.Text = $"Registros: {data.Rows.Count}";
         }
@@ -57,18 +68,18 @@ public partial class StudentsForm : Form
     }
 
     private StudentData SelectedStudent()
-        => StudentRepository.Detail(actor, SelectedControl())
+        => RepositorioAlumnos.Detail(actor, SelectedControl())
             ?? throw new ArgumentException("No se pudo acceder al expediente.");
 
     private void View()
     {
-        try { using var f = new DetailForm(actor, SelectedStudent()); f.ShowDialog(this); LoadData(); }
+        try { using var f = new ConsultaDForm(actor, SelectedStudent()); f.ShowDialog(this); LoadData(); }
         catch (Exception ex) { Problems.Show(ex); }
     }
 
     private void Edit()
     {
-        try { using var f = new EditStudentForm(actor, SelectedStudent()); f.ShowDialog(this); LoadData(); }
+        try { using var f = new ExpedienteMForm(actor, SelectedStudent()); f.ShowDialog(this); LoadData(); }
         catch (Exception ex) { Problems.Show(ex); }
     }
 
@@ -102,7 +113,7 @@ public partial class StudentsForm : Form
             string message = restore ? "¿Restaurar este registro para Secretaría?" :
                 "¿Ocultar este registro de Secretaría? Los datos NO se eliminan de MySQL y permanecen disponibles para Administración.";
             if (MessageBox.Show(message, "Confirmar operación", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
-            StudentRepository.Visibility(actor, d.Control, restore);
+            RepositorioAlumnos.Visibility(actor, d.Control, restore);
             LoadData();
         }
         catch (Exception ex) { Problems.Show(ex); }
@@ -113,5 +124,4 @@ public partial class StudentsForm : Form
 
     }
 }
-
 

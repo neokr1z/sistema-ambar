@@ -1,11 +1,11 @@
 namespace AMBAR.Semana4;
 
-public partial class DetailForm : Form
+public partial class ConsultaDForm : Form
 {
-    private Session actor = null!;
+    private Sesion actor = null!;
     private StudentData data = null!;
-    public DetailForm() { InitializeComponent(); }
-    internal DetailForm(Session session, StudentData d) : this()
+    public ConsultaDForm() { InitializeComponent(); }
+    internal ConsultaDForm(Sesion session, StudentData d) : this()
     {
         actor=session; data=d;
         identityValue.Text=$"Nombre: {d.FullName}\nNúmero de control: {d.Control}\nCURP: {d.Curp}\nFecha de nacimiento: {d.Birth:dd/MM/yyyy}\nEstatus: {d.Status}";

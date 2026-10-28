@@ -1,7 +1,7 @@
 #nullable disable
 namespace AMBAR.Semana4;
 
-partial class GradeHistoryForm
+partial class HistorialdocForm
 {
     private System.ComponentModel.IContainer components = null;
     protected override void Dispose(bool disposing)
@@ -13,10 +13,10 @@ partial class GradeHistoryForm
     private void InitializeComponent()
     {
         components = new System.ComponentModel.Container();
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GradeHistoryForm));
-        frame = new RoundedPanel();
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HistorialdocForm));
+        frame = new PanelRedondeado();
         logo = new PictureBox();
-        menu = new RoundedButton();
+        menu = new BotonRedondeado();
         title = new Label();
         periodLabel = new Label();
         period = new ComboBox();
@@ -26,14 +26,14 @@ partial class GradeHistoryForm
         group = new ComboBox();
         unitLabel = new Label();
         unit = new ComboBox();
-        search = new RoundedButton();
-        capturesCard = new RoundedPanel();
+        search = new BotonRedondeado();
+        capturesCard = new PanelRedondeado();
         capturesCaption = new Label();
         captures = new Label();
-        averageCard = new RoundedPanel();
+        averageCard = new PanelRedondeado();
         averageCaption = new Label();
         average = new Label();
-        passedCard = new RoundedPanel();
+        passedCard = new PanelRedondeado();
         passedCaption = new Label();
         passed = new Label();
         grid = new DataGridView();
@@ -328,9 +328,9 @@ partial class GradeHistoryForm
         PerformLayout();
     }
 
-    private RoundedPanel frame;
+    private PanelRedondeado frame;
     private PictureBox logo;
-    private RoundedButton menu;
+    private BotonRedondeado menu;
     private Label title;
     private Label periodLabel;
     private ComboBox period;
@@ -340,14 +340,14 @@ partial class GradeHistoryForm
     private ComboBox group;
     private Label unitLabel;
     private ComboBox unit;
-    private RoundedButton search;
-    private RoundedPanel capturesCard;
+    private BotonRedondeado search;
+    private PanelRedondeado capturesCard;
     private Label capturesCaption;
     private Label captures;
-    private RoundedPanel averageCard;
+    private PanelRedondeado averageCard;
     private Label averageCaption;
     private Label average;
-    private RoundedPanel passedCard;
+    private PanelRedondeado passedCard;
     private Label passedCaption;
     private Label passed;
     private DataGridView grid;
