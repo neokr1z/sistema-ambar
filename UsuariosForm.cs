@@ -67,12 +67,36 @@ public partial class UsuariosForm : Form
         catch (ArgumentException) { email.Clear(); }
     }
 
-    private void Save(object? sender, EventArgs e)
+    private bool saving;
+    protected override void OnFormClosing(FormClosingEventArgs e)
     {
+        base.OnFormClosing(e);
+        if(saving) e.Cancel=true;
+    }
+
+    private async void Save(object? sender, EventArgs e)
+    {
+        if(saving)return;
+        string buttonText=save.Text;
+        void RestoreSave()
+        {
+            saving=false;
+            if(IsDisposed)return;
+            save.Text=buttonText;
+            save.Enabled=true;
+            body.Enabled=true;
+            cancel.Enabled=true;
+            UseWaitCursor=false;
+        }
+        saving=true;
+        body.Enabled=false;
+        cancel.Enabled=false;
+        UseWaitCursor=true;
+        save.Text="Validando…";
         try
         {
             save.Enabled = false;
-            var created = RepositorioPersonal.Create(admin, new PersonalData(
+            var created = await RepositorioPersonal.CreateAsync(admin, new PersonalData(
                 role.SelectedItem as string ?? "", first.Text, paternal.Text, maternal.Text,
                 email.Text, username.Text, rfc.Text, curpInput.Text, phone.Text, idNumber.Text,
                 pwd.Text, confirm.Text, birthInput.Checked ? birthInput.Value.Date : null));
@@ -83,6 +107,7 @@ public partial class UsuariosForm : Form
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
 
+            saving=false;
             Close();
         }
         catch (Exception ex)
@@ -91,7 +116,7 @@ public partial class UsuariosForm : Form
         }
         finally
         {
-            save.Enabled = true;
+            RestoreSave();
         }
     }
 

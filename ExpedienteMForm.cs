@@ -75,8 +75,32 @@ public partial class ExpedienteMForm : Form
 
     private string F(string key) => fields[key].Text.Trim();
 
-    private void Save(object? sender, EventArgs e)
+    private bool saving;
+    protected override void OnFormClosing(FormClosingEventArgs e)
     {
+        base.OnFormClosing(e);
+        if(saving) e.Cancel=true;
+    }
+
+    private async void Save(object? sender, EventArgs e)
+    {
+        if(saving)return;
+        string buttonText=save.Text;
+        void RestoreSave()
+        {
+            saving=false;
+            if(IsDisposed)return;
+            save.Text=buttonText;
+            save.Enabled=true;
+            body.Enabled=true;
+            cancel.Enabled=true;
+            UseWaitCursor=false;
+        }
+        saving=true;
+        body.Enabled=false;
+        cancel.Enabled=false;
+        UseWaitCursor=true;
+        save.Text="Validando…";
         try
         {
             data.First = F("First"); data.Paternal = F("Paternal"); data.Maternal = F("Maternal");
@@ -87,12 +111,13 @@ public partial class ExpedienteMForm : Form
             data.Neighborhood = F("Neighborhood"); data.Locality = F("Locality");
             data.Municipality = F("Municipality"); data.State = F("State"); data.Postal = F("Postal");
             save.Enabled = false;
-            RepositorioAlumnos.Update(data, actor);
+            await RepositorioAlumnos.UpdateAsync(data, actor);
             MessageBox.Show("Los datos se actualizaron correctamente.", "AMBAR");
+            saving=false;
             Close();
         }
         catch (Exception ex) { Problems.Show(ex); }
-        finally { save.Enabled = true; }
+        finally { RestoreSave(); }
     }
 }
 

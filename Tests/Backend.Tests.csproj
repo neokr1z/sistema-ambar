@@ -4,11 +4,14 @@
     <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="libphonenumber-csharp" Version="9.0.42" />
     <PackageReference Include="MySqlConnector" Version="2.4.0" />
     <Compile Include="../PersonalAutomatico.cs" Link="PersonalAutomatico.cs" />
     <Compile Include="../RepositorioDocente.cs" Link="RepositorioDocente.cs" />
     <Compile Include="../RepositorioBitacora.cs" Link="RepositorioBitacora.cs" />
     <Compile Include="../CatalogoPostal.cs" Link="CatalogoPostal.cs" />
+    <Compile Include="../CorreoDominio.cs" Link="CorreoDominio.cs" />
+    <Compile Include="../Contacto.cs" Link="Contacto.cs" />
     <Compile Include="../Validation.cs" Link="Validation.cs" />
     <Compile Include="../ModelosEstudiantes.cs" Link="ModelosEstudiantes.cs" />
     <Compile Include="../Identidad.cs" Link="Identidad.cs" />

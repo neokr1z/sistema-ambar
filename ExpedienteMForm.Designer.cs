@@ -386,7 +386,7 @@ partial class ExpedienteMForm
         // 
         inputPhone.Font = new Font("Segoe UI", 11F);
         inputPhone.Location = new Point(237, 258);
-        inputPhone.MaxLength = 10;
+        inputPhone.MaxLength = 25;
         inputPhone.Name = "inputPhone";
         inputPhone.Size = new Size(310, 32);
         inputPhone.TabIndex = 17;
@@ -406,7 +406,7 @@ partial class ExpedienteMForm
         // 
         inputEmergency.Font = new Font("Segoe UI", 11F);
         inputEmergency.Location = new Point(850, 258);
-        inputEmergency.MaxLength = 10;
+        inputEmergency.MaxLength = 25;
         inputEmergency.Name = "inputEmergency";
         inputEmergency.Size = new Size(315, 32);
         inputEmergency.TabIndex = 19;

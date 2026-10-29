@@ -411,7 +411,7 @@ partial class InscripcionForm
         phone.Font = new Font("Segoe UI", 11F);
         phone.Location = new Point(270, 444);
         phone.Margin = new Padding(4);
-        phone.MaxLength = 10;
+        phone.MaxLength = 25;
         phone.Name = "phone";
         phone.Size = new Size(290, 32);
         phone.TabIndex = 24;
@@ -433,7 +433,7 @@ partial class InscripcionForm
         emergency.Font = new Font("Segoe UI", 11F);
         emergency.Location = new Point(878, 444);
         emergency.Margin = new Padding(4);
-        emergency.MaxLength = 10;
+        emergency.MaxLength = 25;
         emergency.Name = "emergency";
         emergency.Size = new Size(250, 32);
         emergency.TabIndex = 26;

@@ -244,7 +244,7 @@ partial class UsuariosForm
         phone.BorderStyle = BorderStyle.FixedSingle;
         phone.Font = new Font("Segoe UI", 10.5F);
         phone.Location = new Point(845, 218);
-        phone.MaxLength = 20;
+        phone.MaxLength = 25;
         phone.Name = "phone";
         phone.Size = new Size(290, 31);
         phone.TabIndex = 5;

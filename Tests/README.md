@@ -25,4 +25,15 @@ El ejecutable se niega a usar una base cuyo nombre no termine en `_test`. Sus pr
 
 Comprobación adicional de idempotencia tras inscribir: en una copia de `07_grupos_y_fichas_2026.sql`, sustituye **únicamente** `USE AMBAR_Control_Escolar` por `USE nombre_de_la_base_test`, ejecuta la copia sobre esa base temporal y comprueba que siguen existiendo 50 fichas `INSCRITO` y 160 filas de `Horario_Referencia`.
 
-La suite incluye 101 verificaciones, con pruebas de correo/número automáticos, permisos de bitácora, acceso por docente, unidades dinámicas, captura, conflictos, rollback e historial. El catálogo postal usado en la prueba es una fila ficticia exclusiva de esa base temporal.
+La suite incluye verificaciones de contactos (teléfono mexicano y DNS) además de las pruebas previas, con pruebas de correo/número automáticos, permisos de bitácora, acceso por docente, unidades dinámicas, captura, conflictos, rollback e historial. El catálogo postal usado en la prueba es una fila ficticia exclusiva de esa base temporal.
+
+
+`ContactoTests.cs` usa respuestas DNS controladas para comprobar las rutas MX, A/AAAA, Null MX, NXDOMAIN, fallas y aplicación en repositorios. No necesita MySQL ni envía correos. Para incluir consultas DNS reales (sólo dominios públicos de prueba), ejecuta en PowerShell:
+
+```powershell
+$env:AMBAR_TEST_DNS_LIVE = "1"
+dotnet run --project Tests/Backend.Tests.csproj --configuration Release
+Remove-Item Env:AMBAR_TEST_DNS_LIVE
+```
+
+La preparación MySQL actual incluye también 10 y 11. Las pruebas de integración sustituyen DNS por un resolvedor simulado, sin depender de Internet durante la escritura de datos de prueba.

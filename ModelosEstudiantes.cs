@@ -44,12 +44,10 @@ internal sealed class StudentData
         if(Birth.Date>=DateTime.Today || Birth.Date<Validation.EarliestBirth)
             throw new ArgumentException("La fecha de nacimiento debe estar entre el 01/01/1926 y ayer.");
         Validation.CurpIdentity(Curp,First,Paternal,Maternal,Birth);
-        Phone=Phone.Trim(); Emergency=Emergency.Trim(); PersonalEmail=PersonalEmail.Trim().ToLowerInvariant();
-        if(Phone.Length>0 && !Validation.Phone(Phone))throw new ArgumentException("Teléfono personal: introduce 10 dígitos.");
-        if(!Validation.Phone(Emergency))throw new ArgumentException("El teléfono de emergencia debe tener 10 dígitos.");
-        Email=Validation.Mandatory(Email,"correo institucional").ToLowerInvariant();
-        if(!Validation.InstitutionalEmail(Email))throw new ArgumentException("Usa un correo válido @acapulco.tecnm.mx o @alumnos.acapulco.tecnm.mx.");
-        if(PersonalEmail.Length>0 && !Validation.Email(PersonalEmail))throw new ArgumentException("El correo personal no es válido.");
+        Phone=Contacto.Phone(Phone,"Teléfono personal",optional:true);
+        Emergency=Contacto.Phone(Emergency,"Teléfono de emergencia");
+        Email=Contacto.Email(Email,"Correo institucional",institutional:true);
+        PersonalEmail=Contacto.Email(PersonalEmail,"Correo personal",optional:true);
         Street=Validation.Mandatory(Street,"calle");
         Exterior=Validation.Mandatory(Exterior,"número exterior");
         Neighborhood=Validation.Mandatory(Neighborhood,"colonia");

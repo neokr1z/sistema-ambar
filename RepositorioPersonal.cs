@@ -5,6 +5,9 @@ namespace AMBAR.Semana4;
 internal static class RepositorioPersonal
 {
     public static PersonalCreated Create(Sesion actor, PersonalData data)
+        => CreateAsync(actor,data).GetAwaiter().GetResult();
+
+    public static async Task<PersonalCreated> CreateAsync(Sesion actor, PersonalData data)
     {
         string rol = data.Role;
         if (rol != "Docente" && rol != "Secretaria") throw new ArgumentException("Selecciona un tipo de usuario válido.");
@@ -17,10 +20,9 @@ internal static class RepositorioPersonal
         string ident = "";
 
         if (!Validation.InstitutionalEmail(mail))
-            throw new ArgumentException("Usa un correo válido @acapulco.tecnm.mx o @alumnos.acapulco.tecnm.mx.");
+            throw new ArgumentException("Usa un correo válido @acapulco.tecnm.mx.");
 
-        if (data.Phone.Trim().Length > 0 && !Validation.Phone(data.Phone))
-            throw new ArgumentException("El teléfono debe tener 10 dígitos.");
+        string phone = Contacto.Phone(data.Phone, "Teléfono", optional:true);
 
         if (!Validation.Username(user))
             throw new ArgumentException("El usuario debe tener de 4 a 50 caracteres, comenzar con letra y contener letras, números o separadores . _ - entre segmentos.");
@@ -43,6 +45,7 @@ internal static class RepositorioPersonal
                 "La contraseña requiere al menos 10 caracteres, letras y números.");
 
 
+        await CorreoDominio.Current.RequireAsync(mail, "Correo institucional").ConfigureAwait(false);
         using var c = Db.Connect();
         using var tx = c.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
         Identidad.RequireActive(c, tx, actor, true);
@@ -64,7 +67,7 @@ internal static class RepositorioPersonal
             Db.Param(cmd, "@am", am);
             Db.Param(cmd, "@mail", mail);
             Db.Param(cmd, "@rfc", taxId);
-            Db.Param(cmd, "@tel", string.IsNullOrWhiteSpace(data.Phone) ? null : data.Phone.Trim());
+            Db.Param(cmd, "@tel", phone.Length == 0 ? null : phone);
             cmd.ExecuteNonQuery();
             docenteId = Convert.ToInt32(cmd.LastInsertedId);
         }
@@ -83,7 +86,7 @@ internal static class RepositorioPersonal
             Db.Param(cmd, "@ap", ap);
             Db.Param(cmd, "@am", am);
             Db.Param(cmd, "@mail", mail);
-            Db.Param(cmd, "@tel", string.IsNullOrWhiteSpace(data.Phone) ? null : data.Phone.Trim());
+            Db.Param(cmd, "@tel", phone.Length == 0 ? null : phone);
             cmd.ExecuteNonQuery();
         }
 

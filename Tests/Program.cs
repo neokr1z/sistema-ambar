@@ -25,7 +25,7 @@ foreach(string s in new[]{"....","a...b","abc_","12345","a bcd","ab"}) Check(!Va
 Check(Validation.Username("juan.perez_01"),"usuario válido");
 foreach(string s in new[]{"...@...","a..b@acapulco.tecnm.mx",".a@acapulco.tecnm.mx","a@-dominio.mx","a@dominio..mx","a@dominio.x"}) Check(!Validation.Email(s),"correo inválido "+s);
 Check(Validation.InstitutionalEmail("juan.perez@acapulco.tecnm.mx"),"correo personal institucional");
-Check(Validation.InstitutionalEmail("202600001@alumnos.acapulco.tecnm.mx"),"correo alumno institucional");
+Check(!Validation.InstitutionalEmail("202600001@alumnos.acapulco.tecnm.mx"),"rechaza antiguo subdominio inexistente");
 Check(!Validation.InstitutionalEmail("juan@gmail.com") && Validation.Email("juan@gmail.com"),"distingue correo personal");
 Check(!Validation.InstitutionalEmail("juan@acapulco.tecnm.mx.ejemplo.com"),"dominio suplantado");
 foreach(string s in new[]{"0000000000","5555555555","1234567890","744123456","74412345678","74412abc67"}) Check(!Validation.Phone(s),"teléfono inválido "+s);
@@ -67,9 +67,12 @@ Check(true,"Ñ inicial sustituida por X");
 Validation.CurpIdentity(Digit("BXCA900101HGRCRN00"),"Ana","Baca","Cruz",new DateTime(1990,1,1));
 Check(true,"palabra inconveniente reemplaza segunda posición");
 
+passed+=await ContactoTests.Run();
+CorreoDominio.Current=ContactoTests.WorkingResolver();
+
 // Sólo base de pruebas desechable. Nunca lee la conexión del proyecto principal.
 string? connection=Environment.GetEnvironmentVariable("AMBAR_TEST_CONNECTION");
-if(string.IsNullOrEmpty(connection)) { Console.WriteLine($"{passed} verificaciones. Integración omitida: define AMBAR_TEST_CONNECTION con una BDD desechable preparada con 01,02,05,06,07."); return; }
+if(string.IsNullOrEmpty(connection)) { Console.WriteLine($"{passed} verificaciones. Integración omitida: define AMBAR_TEST_CONNECTION con una BDD desechable preparada con Tests/preparar_mysql.py."); return; }
 var builder=new MySqlConnector.MySqlConnectionStringBuilder(connection);
 if(!builder.Database.EndsWith("_test",StringComparison.OrdinalIgnoreCase)) throw new Exception("La BDD de pruebas debe terminar en _test.");
 File.WriteAllText(Path.Combine(AppContext.BaseDirectory,"appsettings.json"),JsonSerializer.Serialize(new {ConnectionString=connection}));
@@ -123,7 +126,7 @@ StudentData Student(int n,int group)
     var birth=new DateTime(2005,1,1).AddDays(n-1);
     var asp=RepositorioAlumnos.Aspirant($"ISC26-{n:D3}")!;
     string suffix=""+(char)('A'+(n/26))+(char)('A'+(n%26));
-    return new StudentData{AspirantId=asp.Id,PlanId=plan,GroupId=group,Curp=Digit($"PUIA{birth:yyMMdd}HGRRNLA0"),First="Alumno "+suffix,Paternal="Prueba",Maternal="Integración",Birth=birth,Phone="7441234567",Emergency="7447654321",Email=$"alumno{n}@alumnos.acapulco.tecnm.mx",PersonalEmail="",Street="Calle",Exterior="1",Neighborhood="Centro",Locality="Acapulco",Municipality="Acapulco",State="Guerrero",Postal="39300"};
+    return new StudentData{AspirantId=asp.Id,PlanId=plan,GroupId=group,Curp=Digit($"PUIA{birth:yyMMdd}HGRRNLA0"),First="Alumno "+suffix,Paternal="Prueba",Maternal="Integración",Birth=birth,Phone="7441234567",Emergency="7447654321",Email=$"alumno{n}@acapulco.tecnm.mx",PersonalEmail="",Street="Calle",Exterior="1",Neighborhood="Centro",Locality="Acapulco",Municipality="Acapulco",State="Guerrero",Postal="39300"};
 }
 var first=Student(1,group1);
 string control=RepositorioAlumnos.Enroll(first,admin);

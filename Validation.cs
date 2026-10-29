@@ -21,22 +21,10 @@ internal static class Validation
         return CultureInfo.GetCultureInfo("es-MX").TextInfo.ToTitleCase(value.ToLowerInvariant());
     }
     public static bool Username(string text) => Regex.IsMatch(text, @"^[A-Za-z][A-Za-z0-9]*(?:[._-][A-Za-z0-9]+)*$") && text.Length is >= 4 and <= 50;
-    public static bool Email(string text)
-    {
-        string s = text.Trim();
-        if (s.Length > 120 || s.Contains("..")) return false;
-        var parts = s.Split('@');
-        return parts.Length == 2 && parts[0].Length is > 0 and <= 64 &&
-            Regex.IsMatch(parts[0], @"^[A-Za-z0-9]+(?:[._%+\-][A-Za-z0-9]+)*$") &&
-            Regex.IsMatch(parts[1], @"^(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$");
-    }
-    public static bool InstitutionalEmail(string text)
-    {
-        if (!Email(text)) return false;
-        string domain = text.Trim().Split('@')[1].ToLowerInvariant();
-        return domain is "acapulco.tecnm.mx" or "alumnos.acapulco.tecnm.mx";
-    }
-    public static bool Phone(string s) => Regex.IsMatch(s.Trim(), @"^[2-9][0-9]{9}$") && s.Trim().Distinct().Count() > 1;
+    public static bool Email(string text) => Contacto.TryEmail(text, out _);
+    public static bool InstitutionalEmail(string text) => Contacto.TryEmail(text, out var email) &&
+        email.Split('@')[1] == "acapulco.tecnm.mx";
+    public static bool Phone(string text) => Contacto.TryPhone(text, out _);
     public static bool Password(string s) => s.Length >= 10 && s.Any(char.IsLetter) && s.Any(char.IsDigit);
     public static bool Postal(string s) => Regex.IsMatch(s.Trim(), @"^[0-9]{5}$");
     private static bool BirthCode(string s, int? century = null)

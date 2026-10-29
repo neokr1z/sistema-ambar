@@ -65,12 +65,15 @@ internal static class RepositorioAlumnos
             (state=="ACTIVO" || state=="ACEPTADO" || state=="APROBADO");
     }
 
-    public static string Enroll(StudentData d,Sesion session)
+    public static string Enroll(StudentData d,Sesion session) => EnrollAsync(d,session).GetAwaiter().GetResult();
+    public static async Task<string> EnrollAsync(StudentData d,Sesion session)
     {
         if(!session.CanSeeStudents)throw new UnauthorizedAccessException("El rol no puede inscribir alumnos.");
         if(d.AspirantId<=0 || d.PlanId<=0 || d.GroupId<=0)
             throw new ArgumentException("Primero busca una ficha válida, selecciona el plan y un grupo con cupo.");
         d.Validate();
+        await CorreoDominio.Current.RequireAsync(d.Email,"Correo institucional").ConfigureAwait(false);
+        if(d.PersonalEmail.Length>0) await CorreoDominio.Current.RequireAsync(d.PersonalEmail,"Correo personal").ConfigureAwait(false);
         CatalogoPostal.Validar(d.Postal,d.Neighborhood,d.Locality,d.Municipality,d.State);
         using var c=Db.Connect();
         using var tx=c.BeginTransaction(IsolationLevel.ReadCommitted);
@@ -236,10 +239,13 @@ internal static class RepositorioAlumnos
         Db.Param(cmd,"@postal",d.Postal);
     }
 
-    public static void Update(StudentData d,Sesion actor)
+    public static void Update(StudentData d,Sesion actor) => UpdateAsync(d,actor).GetAwaiter().GetResult();
+    public static async Task UpdateAsync(StudentData d,Sesion actor)
     {
         if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
         d.Validate();
+        await CorreoDominio.Current.RequireAsync(d.Email,"Correo institucional").ConfigureAwait(false);
+        if(d.PersonalEmail.Length>0) await CorreoDominio.Current.RequireAsync(d.PersonalEmail,"Correo personal").ConfigureAwait(false);
         using var c=Db.Connect();using var tx=c.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
         // El ID de la ficha se obtiene del expediente, no del formulario.
         using(var own=Db.Sql(c,"SELECT ID_Aspirante FROM Alumno WHERE Numero_control=@control",tx))

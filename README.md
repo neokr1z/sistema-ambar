@@ -165,3 +165,5 @@ En MainForm, todos los botones de navegación existen en el diseñador; al ejecu
 Validación realizada: compilación Release con .NET 8 sin errores ni advertencias; comprobación de los diez archivos de recursos; comparación de catorce métodos de negocio conservados y de los cuatro archivos de servicios/modelos sin modificaciones. Queda pendiente abrir, modificar, guardar y reabrir cada diseñador en Visual Studio sobre Windows, así como las pruebas de integración con MySQL.
 
 Actualización de docentes desde horarios y validación de CURP: [instrucciones y orden de scripts](ACTUALIZACION_DOCENTES_CURP.md).
+
+Validación de teléfonos mexicanos y dominios de correo: [actualización de contactos](ACTUALIZACION_CONTACTOS.md). No requiere una migración SQL adicional.

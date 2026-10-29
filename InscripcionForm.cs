@@ -106,7 +106,7 @@ public partial class InscripcionForm : Form
             fichaPeriod = a.PeriodId;
             LoadGroups();
             if (institutionalMail.TextLength == 0)
-                institutionalMail.Text = $"{DateTime.Today.Year}{a.Id:D6}@alumnos.acapulco.tecnm.mx";
+                institutionalMail.Text = $"{DateTime.Today.Year}{a.Id:D6}@acapulco.tecnm.mx";
             MessageBox.Show("Ficha aceptada. Completa los datos y verifica el correo propuesto antes de guardar.\nAMBAR no crea buzones de correo.", "Ficha validada");
         }
         catch (Exception ex) { Problems.Show(ex); }
@@ -173,21 +173,46 @@ public partial class InscripcionForm : Form
         return d;
     }
 
-    private void Save(object? sender, EventArgs args)
+    private bool saving;
+    protected override void OnFormClosing(FormClosingEventArgs e)
     {
+        base.OnFormClosing(e);
+        if(saving) e.Cancel=true;
+    }
+
+    private async void Save(object? sender, EventArgs args)
+    {
+        if(saving)return;
+        string buttonText=submit.Text;
+        void RestoreSave()
+        {
+            saving=false;
+            if(IsDisposed)return;
+            submit.Text=buttonText;
+            submit.Enabled=true;
+            tabs.Enabled=true;
+            cancel.Enabled=true;
+            UseWaitCursor=false;
+        }
+        saving=true;
+        tabs.Enabled=false;
+        cancel.Enabled=false;
+        UseWaitCursor=true;
+        submit.Text="Validando…";
         try
         {
             submit.Enabled = false;
             if (!string.Equals(ficha.Text.Trim(), verifiedFicha, StringComparison.Ordinal))
                 throw new ArgumentException("La ficha cambió después de validarla. Vuelve a verificarla.");
             var d = Collect();
-            string control = RepositorioAlumnos.Enroll(d, actor);
+            string control = await RepositorioAlumnos.EnrollAsync(d, actor);
             MessageBox.Show($"Inscripción realizada correctamente.\nNúmero de control: {control}\n\nPuede consultar el expediente y generar el PDF en 'Consulta de alumnos'.",
                 "AMBAR · Inscripción exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            saving=false;
             Close();
         }
         catch (Exception ex) { Problems.Show(ex); }
-        finally { submit.Enabled = true; }
+        finally { RestoreSave(); }
     }
 
     private void logo_Click(object sender, EventArgs e)
