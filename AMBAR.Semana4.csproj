@@ -61,6 +61,18 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ConsultaA.resx"><DependentUpon>ConsultaA.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="ConfirmarPasswordForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="ConfirmarPasswordForm.Designer.cs"><DependentUpon>ConfirmarPasswordForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="ConfirmarPasswordForm.resx"><DependentUpon>ConfirmarPasswordForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="BitacoraForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="BitacoraForm.Designer.cs"><DependentUpon>BitacoraForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="BitacoraForm.resx"><DependentUpon>BitacoraForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="MateriasDocenteForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="MateriasDocenteForm.Designer.cs"><DependentUpon>MateriasDocenteForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="MateriasDocenteForm.resx"><DependentUpon>MateriasDocenteForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="DetalleCapturaForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="DetalleCapturaForm.Designer.cs"><DependentUpon>DetalleCapturaForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="DetalleCapturaForm.resx"><DependentUpon>DetalleCapturaForm.cs</DependentUpon></EmbeddedResource>
     <Compile Update="PersonalForm.cs"><SubType>Form</SubType></Compile>
     <Compile Update="PersonalForm.Designer.cs"><DependentUpon>PersonalForm.cs</DependentUpon></Compile>
     <EmbeddedResource Update="PersonalForm.resx"><DependentUpon>PersonalForm.cs</DependentUpon></EmbeddedResource>

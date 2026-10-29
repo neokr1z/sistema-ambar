@@ -12,8 +12,6 @@ partial class MainForm
 
     private void InitializeComponent()
     {
-        DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-        DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
         content = new Panel();
         dashboard = new Panel();
@@ -34,11 +32,6 @@ partial class MainForm
         renewalsCard = new PanelRedondeado();
         renewalsCaption = new Label();
         renewals = new Label();
-        activityTitle = new Label();
-        grid = new DataGridView();
-        gridColumn0 = new DataGridViewTextBoxColumn();
-        gridColumn1 = new DataGridViewTextBoxColumn();
-        gridColumn2 = new DataGridViewTextBoxColumn();
         status = new Label();
         teacherNote = new Label();
         pending = new Panel();
@@ -90,7 +83,6 @@ partial class MainForm
         enrolledCard.SuspendLayout();
         applicantsCard.SuspendLayout();
         renewalsCard.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)grid).BeginInit();
         pending.SuspendLayout();
         sidebar.SuspendLayout();
         nav.SuspendLayout();
@@ -178,10 +170,10 @@ partial class MainForm
         // 
         profileName.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
         profileName.ForeColor = Color.FromArgb(61, 107, 134);
-        profileName.Location = new Point(221, 22);
+        profileName.Location = new Point(221, 8);
         profileName.Margin = new Padding(4, 0, 4, 0);
         profileName.Name = "profileName";
-        profileName.Size = new Size(571, 40);
+        profileName.Size = new Size(571, 68);
         profileName.TabIndex = 1;
         profileName.Text = "Nombre";
         profileName.TextAlign = ContentAlignment.MiddleLeft;
@@ -190,7 +182,7 @@ partial class MainForm
         // 
         profileMail.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
         profileMail.ForeColor = Color.FromArgb(61, 107, 134);
-        profileMail.Location = new Point(221, 69);
+        profileMail.Location = new Point(221, 82);
         profileMail.Margin = new Padding(4, 0, 4, 0);
         profileMail.Name = "profileMail";
         profileMail.Size = new Size(571, 55);
@@ -227,8 +219,6 @@ partial class MainForm
         statistics.Controls.Add(enrolledCard);
         statistics.Controls.Add(applicantsCard);
         statistics.Controls.Add(renewalsCard);
-        statistics.Controls.Add(activityTitle);
-        statistics.Controls.Add(grid);
         statistics.Controls.Add(status);
         statistics.Location = new Point(0, 375);
         statistics.Margin = new Padding(4);
@@ -347,84 +337,11 @@ partial class MainForm
         renewals.Text = "—";
         renewals.TextAlign = ContentAlignment.MiddleCenter;
         // 
-        // activityTitle
-        // 
-        activityTitle.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
-        activityTitle.ForeColor = Color.FromArgb(61, 107, 134);
-        activityTitle.Location = new Point(22, 154);
-        activityTitle.Margin = new Padding(4, 0, 4, 0);
-        activityTitle.Name = "activityTitle";
-        activityTitle.Size = new Size(800, 44);
-        activityTitle.TabIndex = 3;
-        activityTitle.Text = "Actividad reciente";
-        activityTitle.TextAlign = ContentAlignment.MiddleLeft;
-        activityTitle.Visible = false;
-        // 
-        // grid
-        // 
-        grid.AllowUserToAddRows = false;
-        grid.AllowUserToDeleteRows = false;
-        grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        grid.BackgroundColor = Color.White;
-        grid.BorderStyle = BorderStyle.None;
-        dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-        dataGridViewCellStyle1.BackColor = Color.FromArgb(6, 55, 99);
-        dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F);
-        dataGridViewCellStyle1.ForeColor = Color.White;
-        dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-        dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-        dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-        grid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-        grid.ColumnHeadersHeight = 36;
-        grid.Columns.AddRange(new DataGridViewColumn[] { gridColumn0, gridColumn1, gridColumn2 });
-        dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-        dataGridViewCellStyle2.BackColor = SystemColors.Window;
-        dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F);
-        dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-        dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(180, 213, 234);
-        dataGridViewCellStyle2.SelectionForeColor = Color.Black;
-        dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-        grid.DefaultCellStyle = dataGridViewCellStyle2;
-        grid.EnableHeadersVisualStyles = false;
-        grid.Location = new Point(22, 209);
-        grid.Margin = new Padding(4);
-        grid.MultiSelect = false;
-        grid.Name = "grid";
-        grid.ReadOnly = true;
-        grid.RowHeadersVisible = false;
-        grid.RowHeadersWidth = 51;
-        grid.RowTemplate.Height = 36;
-        grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        grid.Size = new Size(825, 200);
-        grid.TabIndex = 4;
-        grid.Visible = false;
-        // 
-        // gridColumn0
-        // 
-        gridColumn0.HeaderText = "Fecha";
-        gridColumn0.MinimumWidth = 6;
-        gridColumn0.Name = "gridColumn0";
-        gridColumn0.ReadOnly = true;
-        // 
-        // gridColumn1
-        // 
-        gridColumn1.HeaderText = "Usuario";
-        gridColumn1.MinimumWidth = 6;
-        gridColumn1.Name = "gridColumn1";
-        gridColumn1.ReadOnly = true;
-        // 
-        // gridColumn2
-        // 
-        gridColumn2.HeaderText = "Acción";
-        gridColumn2.MinimumWidth = 6;
-        gridColumn2.Name = "gridColumn2";
-        gridColumn2.ReadOnly = true;
-        // 
         // status
         // 
         status.Font = new Font("Segoe UI", 10F);
         status.ForeColor = Color.FromArgb(61, 107, 134);
-        status.Location = new Point(22, 415);
+        status.Location = new Point(22, 154);
         status.Margin = new Padding(4, 0, 4, 0);
         status.Name = "status";
         status.Size = new Size(825, 60);
@@ -1034,16 +951,16 @@ partial class MainForm
         hamburger.Cursor = Cursors.Hand;
         hamburger.FlatAppearance.BorderSize = 0;
         hamburger.FlatStyle = FlatStyle.Flat;
-        hamburger.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        hamburger.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
         hamburger.ForeColor = Color.Black;
         hamburger.Location = new Point(4, 11);
         hamburger.Margin = new Padding(4);
         hamburger.Name = "hamburger";
-        hamburger.Size = new Size(86, 99);
+        hamburger.Size = new Size(54, 70);
         hamburger.TabIndex = 1;
         hamburger.Text = "☰";
         hamburger.UseVisualStyleBackColor = false;
-        hamburger.Visible = false;
+        hamburger.Visible = true;
         hamburger.Click += ToggleMenu;
         // 
         // MainForm
@@ -1067,7 +984,6 @@ partial class MainForm
         enrolledCard.ResumeLayout(false);
         applicantsCard.ResumeLayout(false);
         renewalsCard.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)grid).EndInit();
         pending.ResumeLayout(false);
         sidebar.ResumeLayout(false);
         nav.ResumeLayout(false);
@@ -1145,11 +1061,6 @@ partial class MainForm
     private PanelRedondeado renewalsCard;
     private Label renewalsCaption;
     private Label renewals;
-    private Label activityTitle;
-    private DataGridView grid;
-    private DataGridViewTextBoxColumn gridColumn0;
-    private DataGridViewTextBoxColumn gridColumn1;
-    private DataGridViewTextBoxColumn gridColumn2;
     private Label status;
     private Label teacherNote;
     private Panel pending;

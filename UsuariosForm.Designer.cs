@@ -251,6 +251,7 @@ partial class UsuariosForm
         email.Location = new Point(255, 283);
         email.MaxLength = 120;
         email.Name = "email";
+        email.ReadOnly = true;
         email.Size = new Size(265, 31);
         email.TabIndex = 6;
         // 
@@ -273,6 +274,7 @@ partial class UsuariosForm
         idNumber.Location = new Point(845, 283);
         idNumber.MaxLength = 20;
         idNumber.Name = "idNumber";
+        idNumber.ReadOnly = true;
         idNumber.Size = new Size(290, 31);
         idNumber.TabIndex = 7;
         // 

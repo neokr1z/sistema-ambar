@@ -4,19 +4,17 @@ namespace AMBAR.Semana4;
 
 internal static class RepositorioPersonal
 {
-    public static void Create(Sesion actor, PersonalData data)
+    public static PersonalCreated Create(Sesion actor, PersonalData data)
     {
         string rol = data.Role;
         if (rol != "Docente" && rol != "Secretaria") throw new ArgumentException("Selecciona un tipo de usuario válido.");
         string nombre = Validation.Name(data.First, "Nombre(s)",60);
         string ap = Validation.Name(data.Paternal, "Apellido paterno");
         string am = Validation.Name(data.Maternal, "Apellido materno");
-        string mail = Validation.Mandatory(data.Email, "Correo institucional").ToLowerInvariant();
+        string mail = PersonalAutomatico.EmailBase(nombre, ap, am);
         string user = Validation.Mandatory(data.Username, "Usuario");
         string taxId = Validation.Mandatory(data.Rfc, "RFC").ToUpperInvariant();
-        string ident = rol == "Secretaria"
-            ? Validation.Mandatory(data.Number, "Número administrativo").ToUpperInvariant()
-            : "";
+        string ident = "";
 
         if (!Validation.InstitutionalEmail(mail))
             throw new ArgumentException("Usa un correo válido @acapulco.tecnm.mx o @alumnos.acapulco.tecnm.mx.");
@@ -48,6 +46,8 @@ internal static class RepositorioPersonal
         using var tx = c.BeginTransaction(System.Data.IsolationLevel.ReadCommitted);
         Identidad.RequireActive(c, tx, actor, true);
         Identidad.Check(c, tx, actor, nombre, ap, am, curpValue, rfc: taxId);
+        mail = PersonalAutomatico.AvailableEmail(c, tx, mail);
+        if (rol == "Secretaria") ident = PersonalAutomatico.NextNumber(c, tx);
         int docenteId = 0;
 
         if (rol == "Docente")
@@ -107,6 +107,7 @@ internal static class RepositorioPersonal
 
         Db.Audit(c, tx, actor.Id, "ALTA_USUARIO", "USUARIOS", $"Alta de {rol}: {user}", user);
         tx.Commit();
+        return new PersonalCreated(mail, rol == "Secretaria" ? ident : $"DOC{docenteId:D6}");
     }
 
     public static DataTable List(Sesion actor, string search, string role, string status)
@@ -169,3 +170,5 @@ internal static class RepositorioPersonal
 internal sealed record PersonalData(string Role, string First, string Paternal, string Maternal,
     string Email, string Username, string Rfc, string Curp, string Phone, string Number,
     string Password, string Confirmation);
+
+internal sealed record PersonalCreated(string Email, string Number);

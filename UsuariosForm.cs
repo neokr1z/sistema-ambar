@@ -18,6 +18,9 @@ public partial class UsuariosForm : Form
             throw new UnauthorizedAccessException("Acceso restringido al Administrador.");
 
         role.SelectedIndex = 0;
+        first.TextChanged += PreviewEmail;
+        paternal.TextChanged += PreviewEmail;
+        maternal.TextChanged += PreviewEmail;
     }
 
     protected override void OnLoad(EventArgs e)
@@ -53,9 +56,14 @@ public partial class UsuariosForm : Form
 
     private void RoleChanged(object? sender, EventArgs e)
     {
-        idNumber.Enabled = role.SelectedIndex == 1;
-        if (!idNumber.Enabled)
-            idNumber.Clear();
+        idNumber.Enabled = true;
+        idNumber.Text = "Se asigna al guardar";
+    }
+
+    private void PreviewEmail(object? sender, EventArgs e)
+    {
+        try { email.Text = PersonalAutomatico.EmailBase(first.Text, paternal.Text, maternal.Text); }
+        catch (ArgumentException) { email.Clear(); }
     }
 
     private void Save(object? sender, EventArgs e)
@@ -63,13 +71,13 @@ public partial class UsuariosForm : Form
         try
         {
             save.Enabled = false;
-            RepositorioPersonal.Create(admin, new PersonalData(
+            var created = RepositorioPersonal.Create(admin, new PersonalData(
                 role.SelectedItem as string ?? "", first.Text, paternal.Text, maternal.Text,
                 email.Text, username.Text, rfc.Text, curpInput.Text, phone.Text, idNumber.Text,
                 pwd.Text, confirm.Text));
 
             MessageBox.Show(
-                "Personal y usuario creados correctamente.",
+                $"Personal y usuario creados correctamente.\nCorreo: {created.Email}\nNúmero de personal: {created.Number}\nEl correo generado no crea un buzón real.",
                 "AMBAR",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);

@@ -4,7 +4,7 @@ namespace AMBAR.Semana4;
 public partial class MainForm : Form
 {
     private Sesion session = null!;
-    private static readonly bool ModulosDocenteActivos = false;
+    private static readonly bool ModulosDocenteActivos = true;
     private Panel? teacherPanel;
     private FlowLayoutPanel? teacherSubjects;
     private DataGridView? teacherGrades;
@@ -56,7 +56,12 @@ public partial class MainForm : Form
 
     private void ToggleMenu(object? sender, EventArgs e)
     {
-        nav.Visible = !nav.Visible;
+        bool expanded = sidebar.Width > 80;
+        nav.Visible = !expanded;
+        logout.Visible = !expanded;
+        logo.Visible = !expanded;
+        sidebar.Width = expanded ? 64 : 362;
+        hamburger.AccessibleName = expanded ? "Abrir menú lateral" : "Cerrar menú lateral";
     }
 
     private void LogoutClick(object? sender, EventArgs e)
@@ -174,7 +179,7 @@ public partial class MainForm : Form
     private void AuditClick(object? sender, EventArgs e)
     {
         SelectMenu(auditButton);
-        Placeholder("Bitácora");
+        Open(new BitacoraForm(session));
     }
 
     private void PasswordClick(object? sender, EventArgs e)
@@ -215,7 +220,6 @@ public partial class MainForm : Form
             return;
         }
 
-        grid.Rows.Clear();
 
         enrolled.Text = "—";
         applicants.Text = "—";
@@ -259,40 +263,11 @@ public partial class MainForm : Form
                 "IN ('REINSCRIPCION','REINSCRIPCIÓN')"
             );
 
-            // ACTIVIDAD RECIENTE
-            using var cmd = Db.Sql(c, """
-                SELECT
-                    b.fecha_hora,
-                    u.nombre_usuario,
-                    b.descripcion
-                FROM Bitacora b
-                JOIN Usuario u
-                    ON u.Id_usuario = b.Id_usuario
-                ORDER BY
-                    b.fecha_hora DESC,
-                    b.Id_bitacora DESC
-                LIMIT 10
-                """);
-
-            using var r = cmd.ExecuteReader();
-
-            while (r.Read())
-            {
-                grid.Rows.Add(
-                    r.GetDateTime(0).ToString("dd/MM · HH:mm"),
-                    r.GetString(1),
-                    r.GetString(2)
-                );
-            }
-
-            status.Text = grid.Rows.Count == 0
-                ? "Sin actividad registrada. Indicadores acumulados."
-                : "Indicadores acumulados · Últimas 10 actividades";
         }
         catch
         {
             status.Text =
-                "No se pudieron cargar los indicadores y la actividad. " +
+                "No se pudieron cargar los indicadores. " +
                 "Revisa la conexión y vuelve a Inicio.";
 
             status.ForeColor = Color.DarkRed;
@@ -308,8 +283,8 @@ public partial class MainForm : Form
             using var cmd = Db.Sql(c, """
                 SELECT
                     COALESCE(
-                        d.nombre,
-                        p.nombre,
+                        NULLIF(TRIM(CONCAT_WS(' ',d.nombre,d.apellido_paterno,d.apellido_materno)),''),
+                        NULLIF(TRIM(CONCAT_WS(' ',p.nombre,p.apellido_paterno,p.apellido_materno)),''),
                         u.nombre_usuario
                     ),
                     COALESCE(
@@ -332,6 +307,7 @@ public partial class MainForm : Form
             if (r.Read())
             {
                 name.Text = r.GetString(0);
+                name.Font = new Font("Segoe UI", name.Text.Length > 100 ? 10F : name.Text.Length > 55 ? 13F : 16F, FontStyle.Bold);
 
                 email.Text =
                     session.Username + " · " + r.GetString(1);
@@ -350,7 +326,7 @@ public partial class MainForm : Form
         statistics.Visible = false;
 
         AddTeacherOption("\uE82D", "Materias y grupos",
-    (_, _) => Home());
+            (_, _) => Open(new MateriasDocenteForm(session)));
 
         AddTeacherOption("\uE8A5", "Captura de calificaciones",
             (_, _) => Open(new CapturaCLForm(session)));
@@ -490,6 +466,7 @@ public partial class MainForm : Form
         try
         {
             using var db = Db.Connect();
+            Identidad.RequireActive(db, null, session);
 
             using var cmd = Db.Sql(db, """
             SELECT
