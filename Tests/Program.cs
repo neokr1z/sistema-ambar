@@ -39,6 +39,34 @@ Check(Validation.CurpMatchesBirth("GODE260101HGRMZN01",new DateTime(1926,1,1)),"
 Check(!Validation.CurpMatchesBirth("GODE251231HGRMZN01",new DateTime(1925,12,31)),"rechazo 1925");
 Check(!Validation.CurpMatchesBirth("GODE900101HGRMZN01",new DateTime(1991,1,1)),"fecha distinta de CURP");
 
+// Segmento del ejemplo SEGOB; el dígito se ajusta al algoritmo (la imagen es ilustrativa).
+Validation.CurpIdentity("SABC560626MDFLRN01","Concepción","Salgado","Briseño",new DateTime(1956,6,26));
+Check(true,"segmento de ejemplo SEGOB con dígito calculado");
+string Digit(string root)
+{
+ const string symbols="0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+ int total=root.Take(17).Select((c,i)=>symbols.IndexOf(c)*(18-i)).Sum();
+ return root[..17]+((10-total%10)%10);
+}
+void Identity(string curp,string name="Concepción",string ap="Salgado",string am="Briseño") =>
+ Validation.CurpIdentity(curp,name,ap,am,new DateTime(1956,6,26));
+Reject(()=>Identity("SABC560626MDFLRN08"),"dígito verificador incorrecto");
+Reject(()=>Identity(Digit("PABC560626MDFLRN00")),"inicial paterna incorrecta aunque checksum coincide");
+Reject(()=>Identity(Digit("SOBC560626MDFLRN00")),"vocal interna incorrecta");
+Reject(()=>Identity(Digit("SAGC560626MDFLRN00")),"inicial materna incorrecta");
+Reject(()=>Identity(Digit("SABJ560626MDFLRN00")),"inicial del nombre incorrecta");
+Reject(()=>Identity(Digit("SABC560626MDFLLN00")),"consonante interna incorrecta");
+Identity("SABC560626MDFLRN01","María Concepción");
+Check(true,"omisión María en nombre compuesto");
+Identity("SABC560626MDFLRN01","Concepción","de Salgado","Briseño");
+Check(true,"partícula de en apellido");
+Validation.CurpIdentity(Digit("PEGL900101HGRRRS00"),"José Luis","Pérez","García",new DateTime(1990,1,1));
+Check(true,"José Luis utiliza Luis");
+Validation.CurpIdentity(Digit("XAGJ900101HGRRRL00"),"Julia","Ñarez","García",new DateTime(1990,1,1));
+Check(true,"Ñ inicial sustituida por X");
+Validation.CurpIdentity(Digit("BXCA900101HGRCRN00"),"Ana","Baca","Cruz",new DateTime(1990,1,1));
+Check(true,"palabra inconveniente reemplaza segunda posición");
+
 // Sólo base de pruebas desechable. Nunca lee la conexión del proyecto principal.
 string? connection=Environment.GetEnvironmentVariable("AMBAR_TEST_CONNECTION");
 if(string.IsNullOrEmpty(connection)) { Console.WriteLine($"{passed} verificaciones. Integración omitida: define AMBAR_TEST_CONNECTION con una BDD desechable preparada con 01,02,05,06,07."); return; }
@@ -51,15 +79,22 @@ Check(Number("SELECT COUNT(*) FROM Aspirante WHERE numero_ficha LIKE 'ISC26-%'")
 Check(Number("SELECT COUNT(*) FROM Grupo WHERE Capacidad=25 AND nombre_grupo IN ('1ISC1','1ISC2','3ISC1','3ISC2','5ISC1','5ISC2')")==6,"6 grupos con 25 lugares");
 Check(Number("SELECT COUNT(*) FROM Horario_Referencia")==160,"160 bloques semanales de las imágenes");
 var admin=new Sesion(Number("SELECT u.Id_usuario FROM Usuario u JOIN Rol r ON r.id_rol=u.Id_rol WHERE r.nombre='Administrador' LIMIT 1"),"admin","Administrador",false);
-PersonalData Person(string rol,string name,string user,string curp,string rfc)=>new(rol,name,"Pérez","García",user+"@acapulco.tecnm.mx",user,rfc,curp,"7441234567",user,"PruebaClave123","PruebaClave123");
-var secretary=Person("Secretaria","JOHny","test.secretaria","PEGJ900101HGRRHR01","PEGJ900101AB1");
-var teacher=Person("Docente","MARÍA","test.docente","PEGM900101MGRRRC01","PEGM900101AB1");
+PersonalData Person(string rol,string name,string user,string curp,string rfc)=>new(rol,name,"Pérez","García",user+"@acapulco.tecnm.mx",user,rfc,Digit(curp),"7441234567",user,"PruebaClave123","PruebaClave123",DateTime.ParseExact("19"+curp.Substring(4,6),"yyyyMMdd",System.Globalization.CultureInfo.InvariantCulture));
+var secretary=Person("Secretaria","JOHny","test.secretaria","PEGJ900101HGRRRH01","PEGJ900101AB1");
+var teacher=Person("Docente","MARÍA","test.docente","PEGM900101MGRRRR01","PEGM900101AB1");
+foreach(var person in new[]{teacher,secretary})
+{
+ Reject(()=>RepositorioPersonal.Create(admin,person with{First="Otro"}),"nombre/CURP en alta "+person.Role);
+ Reject(()=>RepositorioPersonal.Create(admin,person with{Birth=null}),"fecha obligatoria en alta "+person.Role);
+ Reject(()=>RepositorioPersonal.Create(admin,person with{Birth=new DateTime(1991,1,1)}),"fecha/CURP en alta "+person.Role);
+ Reject(()=>RepositorioPersonal.Create(admin,person with{Rfc="PEGJ900102AB1"}),"RFC/CURP en alta "+person.Role);
+}
 var secretaryCreated=RepositorioPersonal.Create(admin,secretary);
 RepositorioPersonal.Create(admin,teacher);
 Check((string)Scalar("SELECT nombre FROM Personal_Administrativo WHERE nombre='Johny'")=="Johny","nombre normalizado en BDD");
-Reject(()=>RepositorioPersonal.Create(admin,teacher with{Username="test.otro",Email="otro@acapulco.tecnm.mx",Curp="PEGM900102MGRRRC01",Rfc="PEGM900102AB1"}),"nombre completo duplicado");
-Reject(()=>RepositorioPersonal.Create(admin,secretary with{Role="Docente",First="Pedro",Username="test.curp",Email="curp@acapulco.tecnm.mx",Rfc="XXXX900101AB1"}),"CURP entre secretaria y docente");
-Reject(()=>RepositorioPersonal.Create(admin,secretary with{Role="Docente",First="Pedro",Username="test.rfc",Email="rfc@acapulco.tecnm.mx",Curp="PEGP900101HGRRRD01"}),"RFC entre módulos");
+Reject(()=>RepositorioPersonal.Create(admin,teacher with{Username="test.otro",Email="otro@acapulco.tecnm.mx",Curp=Digit("PEGM900102MGRRRR00"),Rfc="PEGM900102AB1",Birth=new DateTime(1990,1,2)}),"nombre completo duplicado");
+Reject(()=>RepositorioPersonal.Create(admin,secretary with{Role="Docente",First="Johana",Username="test.curp",Email="curp@acapulco.tecnm.mx",Rfc="XXXX900101AB1"}),"CURP entre secretaria y docente");
+Reject(()=>RepositorioPersonal.Create(admin,secretary with{Role="Docente",First="Pedro",Username="test.rfc",Email="rfc@acapulco.tecnm.mx",Curp=Digit("PEGP900101HGRRRD00")}),"RFC entre módulos");
 foreach(string rol in new[]{"Docente","Secretaria"})
     Reject(()=>RepositorioPersonal.Create(admin,teacher with{Role=rol,Rfc="AAAA000000AAA"}),"RFC inválido en "+rol);
 var secSession=Auth.Login("test.secretaria","PruebaClave123")!;
@@ -69,14 +104,14 @@ Deny(()=>RepositorioPersonal.Deactivate(secSession!,admin.Id),"baja exclusiva de
 Check(RepositorioPersonal.List(admin,"Johny","Secretaria","ACTIVO").Rows.Count==1,"filtro consulta");
 
 // Dos altas simultáneas en tablas distintas: sólo una puede reservar el mismo nombre.
-var candidate=Person("Docente","Concurrente","test.concurrente1","PEGC900101HGRRNC01","PEGC900101AB1");
-var candidate2=Person("Secretaria","Concurrente","test.concurrente2","PEGC900102HGRRNC01","PEGC900102AB1");
+var candidate=Person("Docente","Concurrente","test.concurrente1","PEGC900101HGRRRN01","PEGC900101AB1");
+var candidate2=Person("Secretaria","Concurrente","test.concurrente2","PEGC900102HGRRRN01","PEGC900102AB1");
 var attempts=await Task.WhenAll(new[]{candidate,candidate2}.Select(p=>Task.Run(()=>
 {
     try { RepositorioPersonal.Create(admin,p); return true; } catch(ArgumentException) { return false; }
 })));
 Check(attempts.Count(x=>x)==1,"duplicado concurrente entre tablas");
-Reject(()=>RepositorioPersonal.Create(admin,teacher with{First="Johny",Username="test.nombre",Email="nombre@acapulco.tecnm.mx",Curp="PEGM900103MGRRRC01",Rfc="PEGM900103AB1"}),"nombre completo entre docente y secretaria");
+Reject(()=>RepositorioPersonal.Create(admin,teacher with{First="Johny",Username="test.nombre",Email="nombre@acapulco.tecnm.mx",Curp=Digit("PEGJ900103HGRRRH00"),Rfc="PEGJ900103AB1",Birth=new DateTime(1990,1,3)}),"nombre completo entre docente y secretaria");
 
 using(var setup=Db.Connect())
 using(var cmd=Db.Sql(setup,"INSERT INTO Catalogo_Postal(codigo_postal,colonia,localidad,municipio,estado) VALUES('39300','Centro','Acapulco','Acapulco','Guerrero')"))cmd.ExecuteNonQuery();
@@ -88,7 +123,7 @@ StudentData Student(int n,int group)
     var birth=new DateTime(2005,1,1).AddDays(n-1);
     var asp=RepositorioAlumnos.Aspirant($"ISC26-{n:D3}")!;
     string suffix=""+(char)('A'+(n/26))+(char)('A'+(n%26));
-    return new StudentData{AspirantId=asp.Id,PlanId=plan,GroupId=group,Curp=$"GODE{birth:yyMMdd}HGRMZNA1",First="Alumno "+suffix,Paternal="Prueba",Maternal="Integración",Birth=birth,Phone="7441234567",Emergency="7447654321",Email=$"alumno{n}@alumnos.acapulco.tecnm.mx",PersonalEmail="",Street="Calle",Exterior="1",Neighborhood="Centro",Locality="Acapulco",Municipality="Acapulco",State="Guerrero",Postal="39300"};
+    return new StudentData{AspirantId=asp.Id,PlanId=plan,GroupId=group,Curp=Digit($"PUIA{birth:yyMMdd}HGRRNLA0"),First="Alumno "+suffix,Paternal="Prueba",Maternal="Integración",Birth=birth,Phone="7441234567",Emergency="7447654321",Email=$"alumno{n}@alumnos.acapulco.tecnm.mx",PersonalEmail="",Street="Calle",Exterior="1",Neighborhood="Centro",Locality="Acapulco",Municipality="Acapulco",State="Guerrero",Postal="39300"};
 }
 var first=Student(1,group1);
 string control=RepositorioAlumnos.Enroll(first,admin);
@@ -117,7 +152,7 @@ var teacherSession=Auth.Login("test.docente","PruebaClave123")!;
 Check(PersonalAutomatico.EmailBase("Michelle","Pereda","Perez")=="MichellePP@acapulco.tecnm.mx","correo solicitado MichellePP");
 Check(PersonalAutomatico.EmailBase("José Luis","Pérez","García")=="JoseLuisPG@acapulco.tecnm.mx","correo sin acentos con nombres compuestos");
 Check(secretaryCreated.Email=="JohnyPG@acapulco.tecnm.mx" && secretaryCreated.Number=="ADM000001","datos automáticos al guardar");
-var collision=RepositorioPersonal.Create(admin,teacher with{Username="test.colision",Paternal="Paz",Maternal="Gómez",Curp="PEGM900104MGRRRC01",Rfc="PEGM900104AB1"});
+var collision=RepositorioPersonal.Create(admin,teacher with{Username="test.colision",Paternal="Paz",Maternal="Gómez",Curp=Digit("PAGM900104MGRZMR00"),Rfc="PAGM900104AB1",Birth=new DateTime(1990,1,4)});
 Check(collision.Email=="MariaPG2@acapulco.tecnm.mx","correo duplicado obtiene sufijo");
 void Exec(string sql){using var c=Db.Connect();using var cmd=Db.Sql(c,sql);cmd.ExecuteNonQuery();}
 Exec("INSERT INTO Materia(ID_Carrera,clave_materia,nombre_materia,creditos,horas_teoricas,horas_practicas,estatus) SELECT ID_Carrera,'TEST-MAT','Materia de prueba',5,2,3,'ACTIVO' FROM Carrera WHERE clave_carrera='ISC'");
@@ -167,6 +202,17 @@ RepositorioPersonal.Deactivate(admin,teacherSession.Id);
 Check(Auth.Login("test.docente","PruebaClave123")==null,"baja docente bloquea login");
 Deny(()=>RepositorioDocente.History(teacherSession,asignacion),"baja docente invalida sesión abierta");
 Check(Number("SELECT COUNT(*) FROM Bitacora WHERE tipo_evento='BAJA_PERSONAL'")==2,"bajas auditadas");
+Check(Number("SELECT COUNT(*) FROM Docente WHERE fecha_nacimiento='1990-01-01' AND nombre='María'") == 1,"fecha de personal persistida");
+var imported=new List<(string User,string Hash)>();
+using(var c=Db.Connect())using(var cmd=Db.Sql(c,"SELECT u.nombre_usuario,u.password_hash FROM Usuario u JOIN Docente d ON d.ID_docente=u.ID_docente WHERE d.curp IS NULL"))
+using(var r=cmd.ExecuteReader())while(r.Read()) imported.Add((r.GetString(0),r.GetString(1)));
+Check(imported.Count==25,"25 docentes importados sin identidad ficticia");
+foreach(var account in imported)
+{
+ Check(PasswordHasher.Verify("holaruben12",account.Hash),"contraseña importada: "+account.User);
+ var session=Auth.Login(account.User,"holaruben12")!;
+ Check(session is not null && RepositorioDocente.Assignments(session).Count>0,"asignación visible: "+account.User);
+}
 Console.WriteLine($"{passed} verificaciones completadas.");
 
 namespace AMBAR.Semana4 { internal sealed record Choice(int Id,string Label); }

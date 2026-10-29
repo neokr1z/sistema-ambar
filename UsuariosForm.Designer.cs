@@ -16,6 +16,8 @@ partial class UsuariosForm
         body = new Panel();
         curpLabel = new Label();
         curpInput = new TextBox();
+        birthLabel = new Label();
+        birthInput = new DateTimePicker();
         roleLabel = new Label();
         role = new ComboBox();
         rfcLabel = new Label();
@@ -60,6 +62,20 @@ partial class UsuariosForm
         body.AutoScroll = true;
         body.AutoScrollMinSize = new Size(1150, 630);
         body.BackColor = Color.White;
+        body.Controls.Add(birthLabel);
+        body.Controls.Add(birthInput);
+        birthLabel.Name = "birthLabel";
+        birthLabel.Text = "Fecha de nacimiento:";
+        birthLabel.Location = new Point(560, 328);
+        birthLabel.Size = new Size(280, 30);
+        birthInput.Name = "birthInput";
+        birthInput.Location = new Point(845, 328);
+        birthInput.Size = new Size(290, 31);
+        birthInput.Format = DateTimePickerFormat.Short;
+        birthInput.MinDate = new DateTime(1926, 1, 1);
+        birthInput.ShowCheckBox = true;
+        birthInput.Checked = false;
+        birthInput.TabIndex = 10;
         body.Controls.Add(curpLabel);
         body.Controls.Add(curpInput);
         curpLabel.Text = "CURP:";
@@ -500,6 +516,8 @@ partial class UsuariosForm
     private Label heading = null!;
     private Label personalTitle = null!;
     private Panel personalLine = null!;
+    private Label birthLabel = null!;
+    private DateTimePicker birthInput = null!;
     private Label curpLabel = null!;
     private TextBox curpInput = null!;
     private Label accessTitle = null!;

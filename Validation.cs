@@ -62,4 +62,42 @@ internal static class Validation
         Curp(curp) && birth >= EarliestBirth && birth < DateTime.Today &&
         curp.Substring(4, 6) == birth.ToString("yyMMdd", CultureInfo.InvariantCulture) &&
         (char.IsDigit(curp[16]) ? birth.Year < 2000 : birth.Year >= 2000);
+    // Verificación local de congruencia, no certificación ante RENAPO.
+    public static void CurpIdentity(string curp, string first, string paternal, string maternal, DateTime birth)
+    {
+        curp = curp.Trim().ToUpperInvariant();
+        if (!Curp(curp)) throw new ArgumentException("CURP inválida: revisa formato, entidad y fecha (desde 1926).");
+        if (!CurpMatchesBirth(curp, birth.Date)) throw new ArgumentException("La fecha de nacimiento no coincide con la CURP (incluido el siglo).");
+        string given = CurpWord(first, true), ap = CurpWord(paternal, false), am = CurpWord(maternal, false);
+        char Initial(string value) => value.Length == 0 || value[0] == 'Ñ' ? 'X' : value[0];
+        char Internal(string value, bool vowel)
+        {
+            foreach (char ch in value.Skip(1))
+                if (char.IsLetter(ch) && ("AEIOU".Contains(ch) == vowel)) return ch == 'Ñ' ? 'X' : ch;
+            return 'X';
+        }
+        string prefix = $"{Initial(ap)}{Internal(ap, true)}{Initial(am)}{Initial(given)}";
+        const string inconvenient = "BACA BAKA BUEI BUEY CACA CACO CAGA CAGO CAKA CAKO COGE COGI COJA COJE COJI COJO COLA CULO FALO FETO GETA GUEI GUEY JETA JOTO KACA KACO KAGA KAGO KAKA KAKO KOGE KOGI KOJA KOJE KOJI KOJO KOLA KULO LILO LOCA LOCO LOKA LOKO MAME MAMO MEAR MEAS MEON MIAR MION MOCO MOKO MULA MULO NACA NACO PEDA PEDO PENE PIPI PITO POPO PUTA PUTO QULO RATA ROBA ROBE ROBO RUIN SENO TETA VACA VAGA VAGO VAKA VUEI VUEY WUEI WUEY";
+        if (inconvenient.Split(' ').Contains(prefix)) prefix = prefix[0] + "X" + prefix[2..];
+        if (curp[..4] != prefix)
+            throw new ArgumentException("Las primeras cuatro letras de la CURP no coinciden con el nombre y los apellidos. Revisa los datos conforme al acta de nacimiento.");
+        if (curp.Substring(13, 3) != $"{Internal(ap, false)}{Internal(am, false)}{Internal(given, false)}")
+            throw new ArgumentException("Las consonantes internas de la CURP no coinciden con el nombre y los apellidos.");
+        const string alphabet = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+        int sum = 0;
+        for (int n = 0; n < 17; n++) sum += alphabet.IndexOf(curp[n]) * (18 - n);
+        if ((10 - sum % 10) % 10 != curp[17] - '0')
+            throw new ArgumentException("El dígito verificador de la CURP es incorrecto. Copia la clave de tu constancia.");
+    }
+    private static string CurpWord(string value, bool given)
+    {
+        // Preserva Ñ: en posiciones seleccionadas se sustituye por X, no por N.
+        value = value.ToUpperInvariant().Replace("Ñ", "\u0001");
+        value = string.Concat(value.Normalize(System.Text.NormalizationForm.FormD)
+            .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)).Replace("\u0001", "Ñ");
+        var particles = new HashSet<string>("DA DAS DE DEL DER DI DIE DD EL LA LAS LOS LE LES MAC MC VAN VON Y".Split(' '));
+        var words = value.Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(w => !particles.Contains(w)).ToArray();
+        if (words.Length == 0) return "";
+        return (given && words.Length > 1 && (words[0] == "MARIA" || words[0] == "JOSE") ? words[1] : words[0]).Replace("-", "X").Replace("\'", "X").Replace("’", "X");
+    }
 }

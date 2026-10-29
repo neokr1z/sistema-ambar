@@ -163,3 +163,5 @@ El historial y la captura ahora son formularios independientes para poder editar
 En MainForm, todos los botones de navegación existen en el diseñador; al ejecutar se muestran según el rol. El panel `pending` y el mensaje `teacherNote` son vistas alternativas y pueden seleccionarse desde el árbol de controles/Propiedades. Los textos del perfil, indicadores, filas de tablas y datos de expedientes se rellenan al ejecutar. Los constructores sin parámetros sólo inicializan el diseño: no se conectan a MySQL ni exigen una sesión dentro del diseñador. La aplicación usa los constructores con sesión y conserva las comprobaciones de acceso.
 
 Validación realizada: compilación Release con .NET 8 sin errores ni advertencias; comprobación de los diez archivos de recursos; comparación de catorce métodos de negocio conservados y de los cuatro archivos de servicios/modelos sin modificaciones. Queda pendiente abrir, modificar, guardar y reabrir cada diseñador en Visual Studio sobre Windows, así como las pruebas de integración con MySQL.
+
+Actualización de docentes desde horarios y validación de CURP: [instrucciones y orden de scripts](ACTUALIZACION_DOCENTES_CURP.md).

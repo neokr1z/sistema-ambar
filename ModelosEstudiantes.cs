@@ -43,7 +43,7 @@ internal sealed class StudentData
         if(!Validation.Curp(Curp)) throw new ArgumentException("CURP inválida: verifica sus 18 caracteres y formato.");
         if(Birth.Date>=DateTime.Today || Birth.Date<Validation.EarliestBirth)
             throw new ArgumentException("La fecha de nacimiento debe estar entre el 01/01/1926 y ayer.");
-        if(!Validation.CurpMatchesBirth(Curp,Birth.Date)) throw new ArgumentException("La fecha de nacimiento no coincide con la CURP.");
+        Validation.CurpIdentity(Curp,First,Paternal,Maternal,Birth);
         Phone=Phone.Trim(); Emergency=Emergency.Trim(); PersonalEmail=PersonalEmail.Trim().ToLowerInvariant();
         if(Phone.Length>0 && !Validation.Phone(Phone))throw new ArgumentException("Teléfono personal: introduce 10 dígitos.");
         if(!Validation.Phone(Emergency))throw new ArgumentException("El teléfono de emergencia debe tener 10 dígitos.");

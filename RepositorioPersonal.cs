@@ -30,7 +30,8 @@ internal static class RepositorioPersonal
                 "El RFC debe tener 13 caracteres: cuatro letras, una fecha real de nacimiento y homoclave válida en formato.");
 
         string curpValue = Validation.Mandatory(data.Curp, "CURP").ToUpperInvariant();
-        if (!Validation.Curp(curpValue)) throw new ArgumentException("CURP inválida: revisa formato, entidad y fecha de nacimiento (desde 1926).");
+        if (!data.Birth.HasValue) throw new ArgumentException("Selecciona la fecha de nacimiento.");
+        Validation.CurpIdentity(curpValue, nombre, ap, am, data.Birth.Value);
         if (taxId.Substring(4, 6) != curpValue.Substring(4, 6)) throw new ArgumentException("Las fechas de nacimiento del RFC y la CURP no coinciden.");
         if (ident.Length > 20) throw new ArgumentException("El número administrativo admite hasta 20 caracteres.");
 
@@ -53,10 +54,11 @@ internal static class RepositorioPersonal
         if (rol == "Docente")
         {
             using var cmd = Db.Sql(c, """
-                INSERT INTO Docente(nombre,apellido_paterno,apellido_materno,correo_institucional,RFC,telefono,curp,estatus)
-                VALUES (@nombre,@ap,@am,@mail,@rfc,@tel,@curp,'ACTIVO')
+                INSERT INTO Docente(nombre,apellido_paterno,apellido_materno,correo_institucional,RFC,telefono,curp,fecha_nacimiento,estatus)
+                VALUES (@nombre,@ap,@am,@mail,@rfc,@tel,@curp,@birth,'ACTIVO')
                 """, tx);
             Db.Param(cmd, "@curp", curpValue);
+            Db.Param(cmd, "@birth", data.Birth.Value.Date);
             Db.Param(cmd, "@nombre", nombre);
             Db.Param(cmd, "@ap", ap);
             Db.Param(cmd, "@am", am);
@@ -70,11 +72,12 @@ internal static class RepositorioPersonal
         {
             using var cmd = Db.Sql(c, """
                 INSERT INTO Personal_Administrativo(num_administrativo,nombre,apellido_paterno,
-                    apellido_materno,correo_institucional,RFC,telefono,curp,puesto,estatus)
-                VALUES (@id,@nombre,@ap,@am,@mail,@rfc,@tel,@curp,'Secretaría','ACTIVO')
+                    apellido_materno,correo_institucional,RFC,telefono,curp,fecha_nacimiento,puesto,estatus)
+                VALUES (@id,@nombre,@ap,@am,@mail,@rfc,@tel,@curp,@birth,'Secretaría','ACTIVO')
                 """, tx);
             Db.Param(cmd, "@id", ident);
             Db.Param(cmd, "@curp", curpValue);
+            Db.Param(cmd, "@birth", data.Birth.Value.Date);
             Db.Param(cmd, "@nombre", nombre);
             Db.Param(cmd, "@rfc", taxId);
             Db.Param(cmd, "@ap", ap);
@@ -169,6 +172,6 @@ internal static class RepositorioPersonal
 
 internal sealed record PersonalData(string Role, string First, string Paternal, string Maternal,
     string Email, string Username, string Rfc, string Curp, string Phone, string Number,
-    string Password, string Confirmation);
+    string Password, string Confirmation, DateTime? Birth = null);
 
 internal sealed record PersonalCreated(string Email, string Number);

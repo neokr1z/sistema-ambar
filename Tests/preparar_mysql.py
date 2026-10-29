@@ -16,7 +16,9 @@ client = [a.mysql, '--no-defaults', '--protocol=TCP', '--host=127.0.0.1', '--por
 for filename in ['01_tablas_ambar_original.sql', '02_migracion_y_administrador.sql',
                  '05_rfc_secretarias.sql', '06_validaciones_y_personal.sql',
                  '07_grupos_y_fichas_2026.sql', '06_validaciones_y_personal.sql',
-                 '07_grupos_y_fichas_2026.sql', '08_catalogo_postal.sql']:
+                 '07_grupos_y_fichas_2026.sql', '08_catalogo_postal.sql',
+                 '10_identidad_personal.sql', '10_identidad_personal.sql',
+                 '11_docentes_y_asignaciones_2026.sql', '11_docentes_y_asignaciones_2026.sql']:
     sql = (root/'Sql'/filename).read_text().replace('AMBAR_Control_Escolar', name)
     result = subprocess.run(client, input=sql, text=True, capture_output=True)
     if result.returncode:

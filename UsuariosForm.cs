@@ -17,6 +17,7 @@ public partial class UsuariosForm : Form
         if (!admin.IsAdmin)
             throw new UnauthorizedAccessException("Acceso restringido al Administrador.");
 
+        birthInput.MaxDate = DateTime.Today.AddDays(-1);
         role.SelectedIndex = 0;
         first.TextChanged += PreviewEmail;
         paternal.TextChanged += PreviewEmail;
@@ -74,7 +75,7 @@ public partial class UsuariosForm : Form
             var created = RepositorioPersonal.Create(admin, new PersonalData(
                 role.SelectedItem as string ?? "", first.Text, paternal.Text, maternal.Text,
                 email.Text, username.Text, rfc.Text, curpInput.Text, phone.Text, idNumber.Text,
-                pwd.Text, confirm.Text));
+                pwd.Text, confirm.Text, birthInput.Checked ? birthInput.Value.Date : null));
 
             MessageBox.Show(
                 $"Personal y usuario creados correctamente.\nCorreo: {created.Email}\nNúmero de personal: {created.Number}\nEl correo generado no crea un buzón real.",
