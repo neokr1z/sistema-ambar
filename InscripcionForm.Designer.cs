@@ -388,7 +388,7 @@ partial class InscripcionForm
         birthday.Format = DateTimePickerFormat.Short;
         birthday.Location = new Point(270, 379);
         birthday.Margin = new Padding(4);
-        birthday.MinDate = new DateTime(1926, 1, 1);
+        birthday.MinDate = new DateTime(1926, 1, 1, 0, 0, 0, 0);
         birthday.Name = "birthday";
         birthday.Size = new Size(290, 32);
         birthday.TabIndex = 22;
@@ -551,7 +551,7 @@ partial class InscripcionForm
         addressTab.Location = new Point(4, 52);
         addressTab.Margin = new Padding(4);
         addressTab.Name = "addressTab";
-        addressTab.Size = new Size(1267, 754);
+        addressTab.Size = new Size(1267, 644);
         addressTab.TabIndex = 1;
         addressTab.Text = "02  DOMICILIO";
         // 
@@ -635,12 +635,12 @@ partial class InscripcionForm
         // 
         // neighborhood
         // 
+        neighborhood.DropDownStyle = ComboBoxStyle.DropDownList;
         neighborhood.Font = new Font("Segoe UI", 11F);
         neighborhood.Location = new Point(270, 179);
         neighborhood.Margin = new Padding(4);
-        neighborhood.DropDownStyle = ComboBoxStyle.DropDownList;
         neighborhood.Name = "neighborhood";
-        neighborhood.Size = new Size(250, 32);
+        neighborhood.Size = new Size(250, 33);
         neighborhood.TabIndex = 42;
         // 
         // localityLabel
@@ -752,7 +752,7 @@ partial class InscripcionForm
         enrollmentTab.Location = new Point(4, 52);
         enrollmentTab.Margin = new Padding(4);
         enrollmentTab.Name = "enrollmentTab";
-        enrollmentTab.Size = new Size(1267, 754);
+        enrollmentTab.Size = new Size(1267, 644);
         enrollmentTab.TabIndex = 2;
         enrollmentTab.Text = "03  INSCRIPCIÓN";
         // 
@@ -760,10 +760,10 @@ partial class InscripcionForm
         // 
         plansLabel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         plansLabel.ForeColor = Color.FromArgb(61, 107, 134);
-        plansLabel.Location = new Point(45, 110);
+        plansLabel.Location = new Point(49, 103);
         plansLabel.Margin = new Padding(4, 0, 4, 0);
         plansLabel.Name = "plansLabel";
-        plansLabel.Size = new Size(213, 40);
+        plansLabel.Size = new Size(213, 54);
         plansLabel.TabIndex = 0;
         plansLabel.Text = "Carrera / Plan de estudios";
         plansLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -793,11 +793,11 @@ partial class InscripcionForm
         // groups
         // 
         groups.DropDownStyle = ComboBoxStyle.DropDownList;
+        groups.DropDownWidth = 480;
         groups.Location = new Point(878, 114);
         groups.Margin = new Padding(4);
         groups.Name = "groups";
         groups.Size = new Size(345, 33);
-        groups.DropDownWidth = 480;
         groups.TabIndex = 3;
         // 
         // groupNoteLabel
@@ -811,6 +811,7 @@ partial class InscripcionForm
         groupNoteLabel.TabIndex = 4;
         groupNoteLabel.Text = "Disponibilidad";
         groupNoteLabel.TextAlign = ContentAlignment.MiddleLeft;
+        groupNoteLabel.Visible = false;
         // 
         // groupNote
         // 
@@ -822,6 +823,7 @@ partial class InscripcionForm
         groupNote.TabIndex = 5;
         groupNote.Text = "El sistema ofrecerá grupos vigentes de primer semestre con cupo.";
         groupNote.TextAlign = ContentAlignment.MiddleLeft;
+        groupNote.Visible = false;
         // 
         // controlNoteLabel
         // 
@@ -834,6 +836,7 @@ partial class InscripcionForm
         controlNoteLabel.TabIndex = 6;
         controlNoteLabel.Text = "Número de control";
         controlNoteLabel.TextAlign = ContentAlignment.MiddleLeft;
+        controlNoteLabel.Visible = false;
         // 
         // controlNote
         // 
@@ -845,6 +848,7 @@ partial class InscripcionForm
         controlNote.TabIndex = 7;
         controlNote.Text = "Asignado al guardar; formato temporal AAAA + ID de aspirante";
         controlNote.TextAlign = ContentAlignment.MiddleLeft;
+        controlNote.Visible = false;
         // 
         // periodNoteLabel
         // 
@@ -856,8 +860,8 @@ partial class InscripcionForm
         periodNoteLabel.Size = new Size(205, 40);
         periodNoteLabel.TabIndex = 8;
         periodNoteLabel.Text = "Periodo escolar";
-        periodNoteLabel.Visible = false;
         periodNoteLabel.TextAlign = ContentAlignment.MiddleLeft;
+        periodNoteLabel.Visible = false;
         // 
         // periodNote
         // 
@@ -868,8 +872,8 @@ partial class InscripcionForm
         periodNote.Size = new Size(855, 45);
         periodNote.TabIndex = 9;
         periodNote.Text = "Agosto-Diciembre 2026";
-        periodNote.Visible = false;
         periodNote.TextAlign = ContentAlignment.MiddleLeft;
+        periodNote.Visible = false;
         // 
         // statusNoteLabel
         // 
@@ -882,6 +886,7 @@ partial class InscripcionForm
         statusNoteLabel.TabIndex = 10;
         statusNoteLabel.Text = "Estatus";
         statusNoteLabel.TextAlign = ContentAlignment.MiddleLeft;
+        statusNoteLabel.Visible = false;
         // 
         // statusNote
         // 
@@ -893,6 +898,7 @@ partial class InscripcionForm
         statusNote.TabIndex = 11;
         statusNote.Text = "INSCRITO";
         statusNote.TextAlign = ContentAlignment.MiddleLeft;
+        statusNote.Visible = false;
         // 
         // actions
         // 
@@ -1017,19 +1023,6 @@ partial class InscripcionForm
         actions.ResumeLayout(false);
         header.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)logo).EndInit();
-
-        // Ocultar textos informativos de inscripción
-        groupNoteLabel.Visible = false;
-        groupNote.Visible = false;
-
-        controlNoteLabel.Visible = false;
-        controlNote.Visible = false;
-
-        periodNoteLabel.Visible = false;
-        periodNote.Visible = false;
-
-        statusNoteLabel.Visible = false;
-        statusNote.Visible = false;
         ResumeLayout(false);
     }
 

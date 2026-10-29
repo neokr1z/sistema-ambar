@@ -14,10 +14,10 @@ partial class UsuariosForm
     {
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UsuariosForm));
         body = new Panel();
-        curpLabel = new Label();
-        curpInput = new TextBox();
-        birthLabel = new Label();
+        label2 = new Label();
+        label1 = new Label();
         birthInput = new DateTimePicker();
+        curpInput = new TextBox();
         roleLabel = new Label();
         role = new ComboBox();
         rfcLabel = new Label();
@@ -49,6 +49,7 @@ partial class UsuariosForm
         cancel = new Button();
         save = new Button();
         header = new Panel();
+        menuButton = new Button();
         heading = new Label();
         logo = new PictureBox();
         body.SuspendLayout();
@@ -62,32 +63,10 @@ partial class UsuariosForm
         body.AutoScroll = true;
         body.AutoScrollMinSize = new Size(1150, 630);
         body.BackColor = Color.White;
-        body.Controls.Add(birthLabel);
+        body.Controls.Add(label2);
+        body.Controls.Add(label1);
         body.Controls.Add(birthInput);
-        birthLabel.Name = "birthLabel";
-        birthLabel.Text = "Fecha de nacimiento:";
-        birthLabel.Location = new Point(560, 328);
-        birthLabel.Size = new Size(280, 30);
-        birthInput.Name = "birthInput";
-        birthInput.Location = new Point(845, 328);
-        birthInput.Size = new Size(290, 31);
-        birthInput.Format = DateTimePickerFormat.Short;
-        birthInput.MinDate = new DateTime(1926, 1, 1);
-        birthInput.ShowCheckBox = true;
-        birthInput.Checked = false;
-        birthInput.TabIndex = 10;
-        body.Controls.Add(curpLabel);
         body.Controls.Add(curpInput);
-        curpLabel.Text = "CURP:";
-        curpLabel.Location = new Point(48, 328);
-        curpLabel.Size = new Size(200, 30);
-        curpLabel.Name = "curpLabel";
-        curpInput.Location = new Point(255, 328);
-        curpInput.Size = new Size(265, 31);
-        curpInput.MaxLength = 18;
-        curpInput.CharacterCasing = CharacterCasing.Upper;
-        curpInput.Name = "curpInput";
-        curpInput.TabIndex = 9;
         body.Controls.Add(roleLabel);
         body.Controls.Add(role);
         body.Controls.Add(rfcLabel);
@@ -120,6 +99,48 @@ partial class UsuariosForm
         body.Name = "body";
         body.Size = new Size(1190, 606);
         body.TabIndex = 0;
+        // 
+        // label2
+        // 
+        label2.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+        label2.ForeColor = Color.FromArgb(6, 55, 99);
+        label2.Location = new Point(560, 324);
+        label2.Name = "label2";
+        label2.Size = new Size(195, 34);
+        label2.TabIndex = 17;
+        label2.Text = "Fecha de nacimiento";
+        label2.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // label1
+        // 
+        label1.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+        label1.ForeColor = Color.FromArgb(6, 55, 99);
+        label1.Location = new Point(48, 325);
+        label1.Name = "label1";
+        label1.Size = new Size(195, 34);
+        label1.TabIndex = 16;
+        label1.Text = "CURP";
+        label1.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // birthInput
+        // 
+        birthInput.Checked = false;
+        birthInput.Format = DateTimePickerFormat.Short;
+        birthInput.Location = new Point(845, 328);
+        birthInput.MinDate = new DateTime(1926, 1, 1, 0, 0, 0, 0);
+        birthInput.Name = "birthInput";
+        birthInput.ShowCheckBox = true;
+        birthInput.Size = new Size(290, 30);
+        birthInput.TabIndex = 10;
+        // 
+        // curpInput
+        // 
+        curpInput.CharacterCasing = CharacterCasing.Upper;
+        curpInput.Location = new Point(255, 328);
+        curpInput.MaxLength = 18;
+        curpInput.Name = "curpInput";
+        curpInput.Size = new Size(265, 30);
+        curpInput.TabIndex = 9;
         // 
         // roleLabel
         // 
@@ -454,6 +475,7 @@ partial class UsuariosForm
         // header
         // 
         header.BackColor = Color.White;
+        header.Controls.Add(menuButton);
         header.Controls.Add(heading);
         header.Controls.Add(logo);
         header.Dock = DockStyle.Top;
@@ -462,6 +484,22 @@ partial class UsuariosForm
         header.Size = new Size(1190, 98);
         header.TabIndex = 2;
         header.Resize += HeaderResize;
+        // 
+        // menuButton
+        // 
+        menuButton.BackColor = Color.White;
+        menuButton.Cursor = Cursors.Hand;
+        menuButton.FlatAppearance.BorderSize = 0;
+        menuButton.FlatStyle = FlatStyle.Flat;
+        menuButton.Font = new Font("Segoe UI", 22F, FontStyle.Bold);
+        menuButton.ForeColor = Color.FromArgb(6, 55, 99);
+        menuButton.Location = new Point(12, 17);
+        menuButton.Name = "menuButton";
+        menuButton.Size = new Size(55, 55);
+        menuButton.TabIndex = 4;
+        menuButton.Text = "☰";
+        menuButton.UseVisualStyleBackColor = false;
+        menuButton.Visible = false;
         // 
         // heading
         // 
@@ -516,9 +554,7 @@ partial class UsuariosForm
     private Label heading = null!;
     private Label personalTitle = null!;
     private Panel personalLine = null!;
-    private Label birthLabel = null!;
     private DateTimePicker birthInput = null!;
-    private Label curpLabel = null!;
     private TextBox curpInput = null!;
     private Label accessTitle = null!;
     private Panel accessLine = null!;
@@ -548,4 +584,7 @@ partial class UsuariosForm
     private TextBox pwd = null!;
     private TextBox confirm = null!;
     private PictureBox logo;
+    private Label label2;
+    private Label label1;
+    private Button menuButton;
 }

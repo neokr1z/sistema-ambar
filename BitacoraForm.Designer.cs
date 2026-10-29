@@ -11,11 +11,12 @@ partial class BitacoraForm
     }
     private void InitializeComponent()
     {
+        DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+        DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
         heading = new Label();
         logo = new PictureBox();
-        fromLabel = new Label();
         from = new DateTimePicker();
-        toLabel = new Label();
         to = new DateTimePicker();
         filter = new TextBox();
         search = new Button();
@@ -24,109 +25,237 @@ partial class BitacoraForm
         previous = new Button();
         next = new Button();
         close = new Button();
+        menuButton = new Button();
+        roleLabel = new Label();
+        label1 = new Label();
+        personalLine = new Panel();
+        ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)grid).BeginInit();
         SuspendLayout();
-        heading.Text = "Bitácora de actividad";
-        heading.Location = new Point(270, 24);
-        heading.Size = new Size(886, 62);
+        // 
+        // heading
+        // 
         heading.Font = new Font("Segoe UI", 19F, FontStyle.Bold);
         heading.ForeColor = Color.FromArgb(6, 55, 99);
+        heading.Location = new Point(988, 30);
+        heading.Margin = new Padding(4, 0, 4, 0);
+        heading.Name = "heading";
+        heading.Size = new Size(422, 78);
+        heading.TabIndex = 0;
+        heading.Text = "BITÁCORA DE ACTIVIDAD";
+        // 
+        // logo
+        // 
         logo.Image = Properties.Resources.tecnm_logo;
-        logo.Location = new Point(24, 10);
-        logo.Size = new Size(220, 80);
+        logo.Location = new Point(30, 12);
+        logo.Margin = new Padding(4);
+        logo.Name = "logo";
+        logo.Size = new Size(275, 100);
         logo.SizeMode = PictureBoxSizeMode.Zoom;
-        fromLabel.Name = "fromLabel";
-        fromLabel.Location = new Point(24, 100);
-        fromLabel.Size = new Size(150, 25);
-        fromLabel.Text = "Desde";
-        from.Name = "from";
-        from.Location = new Point(24, 130);
-        from.Size = new Size(180, 30);
+        logo.TabIndex = 1;
+        logo.TabStop = false;
+        // 
+        // from
+        // 
         from.Format = DateTimePickerFormat.Short;
-        toLabel.Name = "toLabel";
-        toLabel.Location = new Point(220, 100);
-        toLabel.Size = new Size(150, 25);
-        toLabel.Text = "Hasta";
-        to.Name = "to";
-        to.Location = new Point(220, 130);
-        to.Size = new Size(180, 30);
+        from.Location = new Point(30, 164);
+        from.Margin = new Padding(4);
+        from.Name = "from";
+        from.Size = new Size(224, 30);
+        from.TabIndex = 3;
+        // 
+        // to
+        // 
         to.Format = DateTimePickerFormat.Short;
+        to.Location = new Point(275, 164);
+        to.Margin = new Padding(4);
+        to.Name = "to";
+        to.Size = new Size(224, 30);
+        to.TabIndex = 5;
+        // 
+        // filter
+        // 
+        filter.Location = new Point(525, 164);
+        filter.Margin = new Padding(4);
         filter.Name = "filter";
-        filter.Location = new Point(420, 130);
-        filter.Size = new Size(460, 30);
         filter.PlaceholderText = "Buscar usuario, actividad o descripción";
-        search.Name = "search";
-        search.Location = new Point(900, 125);
-        search.Size = new Size(250, 40);
-        search.Text = "Consultar";
+        filter.Size = new Size(574, 30);
+        filter.TabIndex = 6;
+        // 
+        // search
+        // 
         search.BackColor = Color.FromArgb(6, 55, 99);
-        search.ForeColor = Color.White;
-        search.FlatStyle = FlatStyle.Flat;
         search.FlatAppearance.BorderSize = 0;
+        search.FlatStyle = FlatStyle.Flat;
+        search.ForeColor = Color.White;
+        search.Location = new Point(1125, 156);
+        search.Margin = new Padding(4);
+        search.Name = "search";
+        search.Size = new Size(312, 50);
+        search.TabIndex = 7;
+        search.Text = "Consultar";
+        search.UseVisualStyleBackColor = false;
         search.Click += SearchClick;
-        grid.Name = "grid";
-        grid.Location = new Point(24, 190);
-        grid.Size = new Size(1128, 450);
-        grid.ReadOnly = true;
+        // 
+        // grid
+        // 
         grid.AllowUserToAddRows = false;
         grid.AllowUserToDeleteRows = false;
-        grid.RowHeadersVisible = false;
-        grid.MultiSelect = false;
+        dataGridViewCellStyle1.BackColor = Color.FromArgb(240, 246, 250);
+        grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+        grid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
         grid.BackgroundColor = Color.White;
         grid.BorderStyle = BorderStyle.None;
-        grid.EnableHeadersVisualStyles = false;
-        grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(6, 55, 99);
-        grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-        grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        dataGridViewCellStyle2.BackColor = Color.FromArgb(6, 55, 99);
+        dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F);
+        dataGridViewCellStyle2.ForeColor = Color.White;
+        dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+        dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+        dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+        grid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
         grid.ColumnHeadersHeight = 40;
+        dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+        dataGridViewCellStyle3.BackColor = SystemColors.Window;
+        dataGridViewCellStyle3.Font = new Font("Segoe UI", 10F);
+        dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
+        dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(180, 213, 234);
+        dataGridViewCellStyle3.SelectionForeColor = Color.Black;
+        dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+        grid.DefaultCellStyle = dataGridViewCellStyle3;
+        grid.EnableHeadersVisualStyles = false;
+        grid.Location = new Point(30, 238);
+        grid.Margin = new Padding(4);
+        grid.MultiSelect = false;
+        grid.Name = "grid";
+        grid.ReadOnly = true;
+        grid.RowHeadersVisible = false;
+        grid.RowHeadersWidth = 51;
         grid.RowTemplate.Height = 38;
-        grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 246, 250);
-        grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(180, 213, 234);
-        grid.DefaultCellStyle.SelectionForeColor = Color.Black;
         grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        grid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        grid.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-        grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-        summary.Name = "summary";
-        summary.Location = new Point(24, 660);
-        summary.Size = new Size(700, 60);
-        summary.Text = "Confirma tu contraseña para consultar.";
+        grid.Size = new Size(1410, 562);
+        grid.TabIndex = 8;
+        // 
+        // summary
+        // 
         summary.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-        previous.Name = "previous";
-        previous.Location = new Point(730, 676);
-        previous.Size = new Size(130, 40);
-        previous.Text = "Anterior";
-        previous.BackColor = Color.FromArgb(6, 55, 99);
-        previous.ForeColor = Color.White;
-        previous.FlatStyle = FlatStyle.Flat;
-        previous.FlatAppearance.BorderSize = 0;
+        summary.Location = new Point(30, 825);
+        summary.Margin = new Padding(4, 0, 4, 0);
+        summary.Name = "summary";
+        summary.Size = new Size(875, 75);
+        summary.TabIndex = 9;
+        summary.Text = "Confirma tu contraseña para consultar.";
+        // 
+        // previous
+        // 
         previous.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+        previous.BackColor = Color.FromArgb(6, 55, 99);
+        previous.FlatAppearance.BorderSize = 0;
+        previous.FlatStyle = FlatStyle.Flat;
+        previous.ForeColor = Color.White;
+        previous.Location = new Point(912, 845);
+        previous.Margin = new Padding(4);
+        previous.Name = "previous";
+        previous.Size = new Size(162, 50);
+        previous.TabIndex = 10;
+        previous.Text = "Anterior";
+        previous.UseVisualStyleBackColor = false;
         previous.Click += PreviousClick;
-        next.Name = "next";
-        next.Location = new Point(875, 676);
-        next.Size = new Size(130, 40);
-        next.Text = "Siguiente";
-        next.BackColor = Color.FromArgb(6, 55, 99);
-        next.ForeColor = Color.White;
-        next.FlatStyle = FlatStyle.Flat;
-        next.FlatAppearance.BorderSize = 0;
+        // 
+        // next
+        // 
         next.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+        next.BackColor = Color.FromArgb(6, 55, 99);
+        next.FlatAppearance.BorderSize = 0;
+        next.FlatStyle = FlatStyle.Flat;
+        next.ForeColor = Color.White;
+        next.Location = new Point(1094, 845);
+        next.Margin = new Padding(4);
+        next.Name = "next";
+        next.Size = new Size(162, 50);
+        next.TabIndex = 11;
+        next.Text = "Siguiente";
+        next.UseVisualStyleBackColor = false;
         next.Click += NextClick;
-        close.Name = "close";
-        close.Location = new Point(1020, 676);
-        close.Size = new Size(132, 40);
-        close.Text = "Cerrar";
-        close.BackColor = Color.FromArgb(6, 55, 99);
-        close.ForeColor = Color.White;
-        close.FlatStyle = FlatStyle.Flat;
-        close.FlatAppearance.BorderSize = 0;
+        // 
+        // close
+        // 
         close.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+        close.BackColor = Color.FromArgb(6, 55, 99);
+        close.FlatAppearance.BorderSize = 0;
+        close.FlatStyle = FlatStyle.Flat;
+        close.ForeColor = Color.White;
+        close.Location = new Point(1275, 845);
+        close.Margin = new Padding(4);
+        close.Name = "close";
+        close.Size = new Size(165, 50);
+        close.TabIndex = 12;
+        close.Text = "Cerrar";
+        close.UseVisualStyleBackColor = false;
         close.Click += CloseClick;
+        // 
+        // menuButton
+        // 
+        menuButton.BackColor = Color.White;
+        menuButton.Cursor = Cursors.Hand;
+        menuButton.FlatAppearance.BorderSize = 0;
+        menuButton.FlatStyle = FlatStyle.Flat;
+        menuButton.Font = new Font("Segoe UI", 22F, FontStyle.Bold);
+        menuButton.ForeColor = Color.FromArgb(6, 55, 99);
+        menuButton.Location = new Point(12, 30);
+        menuButton.Name = "menuButton";
+        menuButton.Size = new Size(55, 55);
+        menuButton.TabIndex = 13;
+        menuButton.Text = "☰";
+        menuButton.UseVisualStyleBackColor = false;
+        menuButton.Visible = false;
+        // 
+        // roleLabel
+        // 
+        roleLabel.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+        roleLabel.ForeColor = Color.FromArgb(6, 55, 99);
+        roleLabel.Location = new Point(30, 125);
+        roleLabel.Name = "roleLabel";
+        roleLabel.Size = new Size(66, 24);
+        roleLabel.TabIndex = 14;
+        roleLabel.Text = "Desde:";
+        roleLabel.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // label1
+        // 
+        label1.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+        label1.ForeColor = Color.FromArgb(6, 55, 99);
+        label1.Location = new Point(275, 125);
+        label1.Name = "label1";
+        label1.Size = new Size(66, 24);
+        label1.TabIndex = 15;
+        label1.Text = "Hasta:";
+        label1.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // personalLine
+        // 
+        personalLine.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        personalLine.BackColor = Color.FromArgb(8, 84, 143);
+        personalLine.Location = new Point(30, 156);
+        personalLine.Name = "personalLine";
+        personalLine.Size = new Size(1109, 2);
+        personalLine.TabIndex = 16;
+        // 
+        // BitacoraForm
+        // 
+        AutoScaleDimensions = new SizeF(120F, 120F);
+        AutoScaleMode = AutoScaleMode.Dpi;
+        BackColor = Color.White;
+        ClientSize = new Size(1475, 950);
+        Controls.Add(personalLine);
+        Controls.Add(label1);
+        Controls.Add(roleLabel);
+        Controls.Add(menuButton);
         Controls.Add(heading);
         Controls.Add(logo);
-        Controls.Add(fromLabel);
         Controls.Add(from);
-        Controls.Add(toLabel);
         Controls.Add(to);
         Controls.Add(filter);
         Controls.Add(search);
@@ -136,22 +265,19 @@ partial class BitacoraForm
         Controls.Add(next);
         Controls.Add(close);
         Font = new Font("Segoe UI", 10F);
-        BackColor = Color.White;
-        AutoScaleDimensions = new SizeF(96F, 96F);
-        AutoScaleMode = AutoScaleMode.Dpi;
-        ClientSize = new Size(1180, 760);
-        MinimumSize = new Size(1196, 799);
-        StartPosition = FormStartPosition.CenterParent;
+        Margin = new Padding(4);
+        MinimumSize = new Size(1490, 987);
         Name = "BitacoraForm";
+        StartPosition = FormStartPosition.CenterParent;
         Text = "AMBAR | Bitácora de actividad";
+        ((System.ComponentModel.ISupportInitialize)logo).EndInit();
+        ((System.ComponentModel.ISupportInitialize)grid).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }
     private Label heading = null!;
     private PictureBox logo = null!;
-    private Label fromLabel = null!;
     private DateTimePicker from = null!;
-    private Label toLabel = null!;
     private DateTimePicker to = null!;
     private TextBox filter = null!;
     private Button search = null!;
@@ -160,4 +286,8 @@ partial class BitacoraForm
     private Button previous = null!;
     private Button next = null!;
     private Button close = null!;
+    private Button menuButton;
+    private Label roleLabel;
+    private Label label1;
+    private Panel personalLine;
 }
