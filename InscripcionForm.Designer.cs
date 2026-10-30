@@ -50,6 +50,7 @@ partial class InscripcionForm
         nss = new TextBox();
         allergiesLabel = new Label();
         allergies = new TextBox();
+        generateNss = new Button();
         addressTab = new TabPage();
         streetLabel = new Label();
         street = new TextBox();
@@ -94,8 +95,6 @@ partial class InscripcionForm
         actions.SuspendLayout();
         header.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
-        generateNss = new Button();
-        nssDemoNote = new Label();
         SuspendLayout();
         // 
         // personalSectionTitle
@@ -202,6 +201,7 @@ partial class InscripcionForm
         personalTab.Controls.Add(nss);
         personalTab.Controls.Add(allergiesLabel);
         personalTab.Controls.Add(allergies);
+        personalTab.Controls.Add(generateNss);
         personalTab.Location = new Point(4, 52);
         personalTab.Margin = new Padding(4);
         personalTab.Name = "personalTab";
@@ -248,6 +248,9 @@ partial class InscripcionForm
         // 
         find.BackColor = Color.FromArgb(6, 55, 99);
         find.Cursor = Cursors.Hand;
+        find.FlatAppearance.BorderSize = 0;
+        find.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        find.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
         find.FlatStyle = FlatStyle.Flat;
         find.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         find.ForeColor = Color.White;
@@ -503,6 +506,7 @@ partial class InscripcionForm
         nss.Margin = new Padding(4);
         nss.MaxLength = 11;
         nss.Name = "nss";
+        nss.PlaceholderText = "Sin NSS: pendiente de asignación";
         nss.Size = new Size(250, 32);
         nss.TabIndex = 32;
         // 
@@ -527,6 +531,24 @@ partial class InscripcionForm
         allergies.Name = "allergies";
         allergies.Size = new Size(858, 32);
         allergies.TabIndex = 34;
+        // 
+        // generateNss
+        // 
+        generateNss.BackColor = Color.FromArgb(6, 55, 99);
+        generateNss.Cursor = Cursors.Hand;
+        generateNss.FlatAppearance.BorderSize = 0;
+        generateNss.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        generateNss.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        generateNss.FlatStyle = FlatStyle.Flat;
+        generateNss.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        generateNss.ForeColor = Color.White;
+        generateNss.Location = new Point(650, 630);
+        generateNss.Name = "generateNss";
+        generateNss.Size = new Size(300, 44);
+        generateNss.TabIndex = 35;
+        generateNss.Text = "Generar NSS";
+        generateNss.UseVisualStyleBackColor = false;
+        generateNss.Click += GenerateNssClick;
         // 
         // addressTab
         // 
@@ -918,6 +940,9 @@ partial class InscripcionForm
         submit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         submit.BackColor = Color.FromArgb(6, 55, 99);
         submit.Cursor = Cursors.Hand;
+        submit.FlatAppearance.BorderSize = 0;
+        submit.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        submit.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
         submit.FlatStyle = FlatStyle.Flat;
         submit.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         submit.ForeColor = Color.White;
@@ -935,6 +960,9 @@ partial class InscripcionForm
         cancel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         cancel.BackColor = Color.FromArgb(6, 55, 99);
         cancel.Cursor = Cursors.Hand;
+        cancel.FlatAppearance.BorderSize = 0;
+        cancel.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        cancel.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
         cancel.FlatStyle = FlatStyle.Flat;
         cancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         cancel.ForeColor = Color.White;
@@ -1025,58 +1053,6 @@ partial class InscripcionForm
         actions.ResumeLayout(false);
         header.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)logo).EndInit();
-        nss.PlaceholderText = "Sin NSS: pendiente de asignación";
-        find.BackColor = Color.FromArgb(6, 55, 99);
-        find.ForeColor = Color.White;
-        find.FlatStyle = FlatStyle.Flat;
-        find.FlatAppearance.BorderSize = 0;
-        find.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
-        find.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
-        find.UseVisualStyleBackColor = false;
-        find.Cursor = Cursors.Hand;
-        find.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        submit.BackColor = Color.FromArgb(6, 55, 99);
-        submit.ForeColor = Color.White;
-        submit.FlatStyle = FlatStyle.Flat;
-        submit.FlatAppearance.BorderSize = 0;
-        submit.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
-        submit.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
-        submit.UseVisualStyleBackColor = false;
-        submit.Cursor = Cursors.Hand;
-        submit.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        cancel.BackColor = Color.FromArgb(6, 55, 99);
-        cancel.ForeColor = Color.White;
-        cancel.FlatStyle = FlatStyle.Flat;
-        cancel.FlatAppearance.BorderSize = 0;
-        cancel.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
-        cancel.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
-        cancel.UseVisualStyleBackColor = false;
-        cancel.Cursor = Cursors.Hand;
-        cancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        generateNss.Name = "generateNss";
-        generateNss.Text = "Generar NSS";
-        generateNss.Location = new Point(650, 630);
-        generateNss.Size = new Size(300, 44);
-        generateNss.TabIndex = 35;
-        generateNss.BackColor = Color.FromArgb(6, 55, 99);
-        generateNss.ForeColor = Color.White;
-        generateNss.FlatStyle = FlatStyle.Flat;
-        generateNss.FlatAppearance.BorderSize = 0;
-        generateNss.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
-        generateNss.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
-        generateNss.UseVisualStyleBackColor = false;
-        generateNss.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        generateNss.Cursor = Cursors.Hand;
-        generateNss.Click += GenerateNssClick;
-        nssDemoNote.Name = "nssDemoNote";
-        nssDemoNote.Text = "Generación de prueba para el proyecto escolar; sin validez ante IMSS.";
-        nssDemoNote.Location = new Point(45, 628);
-        nssDemoNote.Size = new Size(575, 52);
-        nssDemoNote.ForeColor = Color.FromArgb(61, 107, 134);
-        nssDemoNote.Font = new Font("Segoe UI", 9F);
-        nssDemoNote.TextAlign = ContentAlignment.MiddleLeft;
-        personalTab.Controls.Add(generateNss);
-        personalTab.Controls.Add(nssDemoNote);
         ResumeLayout(false);
     }
 
@@ -1154,5 +1130,4 @@ partial class InscripcionForm
     private Button submit = null!;
     private Button cancel = null!;
     private Button generateNss = null!;
-    private Label nssDemoNote = null!;
 }
