@@ -3,13 +3,13 @@ using System.Data;
 namespace AMBAR.Semana4;
 
 // Consulta independiente: muestra incluso grupos llenos, a diferencia del selector de inscripción.
-public sealed class ConsultaGruposForm : Form
+internal sealed class ConsultaGruposForm : Form
 {
     private readonly Sesion actor;
     private readonly DataGridView tabla = new();
     private readonly Label resumen = new();
     private readonly Button lista = new();
-    public ConsultaGruposForm(Sesion sesion)
+    internal ConsultaGruposForm(Sesion sesion)
     {
         if (!sesion.CanSeeStudents) throw new UnauthorizedAccessException("Sin permiso para consultar los grupos.");
         actor=sesion;
