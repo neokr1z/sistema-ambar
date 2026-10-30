@@ -94,7 +94,6 @@ partial class InscripcionForm
         actions.SuspendLayout();
         header.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
-        nssHelp = new Button();
         SuspendLayout();
         // 
         // personalSectionTitle
@@ -1024,21 +1023,6 @@ partial class InscripcionForm
         actions.ResumeLayout(false);
         header.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)logo).EndInit();
-        nssHelp.Name = "nssHelp";
-        nssHelp.Text = "Tramitar NSS en IMSS";
-        nssHelp.Location = new Point(650, 630);
-        nssHelp.Size = new Size(300, 44);
-        nssHelp.Click += NssClick;
-        nssHelp.BackColor = Color.FromArgb(6, 55, 99);
-        nssHelp.ForeColor = Color.White;
-        nssHelp.FlatStyle = FlatStyle.Flat;
-        nssHelp.FlatAppearance.BorderSize = 0;
-        nssHelp.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
-        nssHelp.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
-        nssHelp.UseVisualStyleBackColor = false;
-        nssHelp.Cursor = Cursors.Hand;
-        nssHelp.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        personalTab.Controls.Add(nssHelp);
         nss.PlaceholderText = "Sin NSS: pendiente de asignación";
         find.BackColor = Color.FromArgb(6, 55, 99);
         find.ForeColor = Color.White;
@@ -1067,15 +1051,6 @@ partial class InscripcionForm
         cancel.UseVisualStyleBackColor = false;
         cancel.Cursor = Cursors.Hand;
         cancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-        nssHelp.BackColor = Color.FromArgb(6, 55, 99);
-        nssHelp.ForeColor = Color.White;
-        nssHelp.FlatStyle = FlatStyle.Flat;
-        nssHelp.FlatAppearance.BorderSize = 0;
-        nssHelp.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
-        nssHelp.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
-        nssHelp.UseVisualStyleBackColor = false;
-        nssHelp.Cursor = Cursors.Hand;
-        nssHelp.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         ResumeLayout(false);
     }
 
@@ -1152,5 +1127,4 @@ partial class InscripcionForm
     private Label statusNote = null!;
     private Button submit = null!;
     private Button cancel = null!;
-    private Button nssHelp = null!;
 }

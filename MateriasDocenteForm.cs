@@ -8,6 +8,10 @@ public partial class MateriasDocenteForm : Form
     {
         base.OnLoad(e);if(DesignMode || System.ComponentModel.LicenseManager.UsageMode==System.ComponentModel.LicenseUsageMode.Designtime)return;
         if(actor is null){Close();return;}
+        var area=Screen.FromControl(this).WorkingArea;
+        Size=new Size(Math.Min(Width,area.Width),Math.Min(Height,area.Height));
+        Location=new Point(Math.Clamp(Left,area.Left,Math.Max(area.Left,area.Right-Width)),
+            Math.Clamp(Top,area.Top,Math.Max(area.Top,area.Bottom-Height)));
         try{assignment.Items.AddRange(RepositorioDocente.Assignments(actor).Cast<object>().ToArray());
             if(assignment.Items.Count>0)assignment.SelectedIndex=0;else note.Text="No tienes asignaciones. Administración debe registrar tus materias y grupos.";}
         catch(Exception ex){Problems.Show(ex);}capture.Enabled=assignment.SelectedItem is Asignacion;

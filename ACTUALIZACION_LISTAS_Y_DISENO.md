@@ -13,7 +13,7 @@ Se integra en main la rama visual que se probó en Windows, y se añaden los sig
 
 ## NSS
 
-El campo sigue siendo opcional. Si está vacío se guarda NULL, se muestra pendiente en el expediente y está disponible **Tramitar NSS en IMSS**. No se genera un número inventado ni se afirma que se haya realizado una afiliación.
+El campo sigue siendo opcional. Si está vacío se guarda NULL, se muestra pendiente en el expediente y en edición de expediente está disponible **Tramitar NSS en IMSS** (retirado de inscripción). No se genera un número inventado ni se afirma que se haya realizado una afiliación.
 
 Al capturar un NSS, inscripción y edición validan 11 dígitos ASCII y el dígito de control, rechazan secuencias de un solo dígito y evitan duplicados entre alumnos. La comprobación de duplicados se ejecuta dentro de la transacción bajo el bloqueo compartido de identidad. No se puede confirmar existencia, titularidad ni vigencia ante IMSS mediante el dígito de control. No se imponen reglas de fecha sobre NSS históricos o convencionales.
 
@@ -36,3 +36,7 @@ Editar colores/fuentes en DefaultCellStyle, AlternatingRowsDefaultCellStyle y Co
 - Pendiente en Windows: abrir todos los diseñadores; probar hover y escalado 100/125/150%; inscribir y editar contra MySQL; probar lista y PDF con los roles administrador, secretaria y docente.
 
 No se requieren migraciones SQL nuevas. Se mantienen los scripts y la configuración existentes.
+
+## Ajuste de ventana de Materias y grupos
+
+Se sustituyen coordenadas fijas por TableLayoutPanel: encabezado y selector adaptables, dos tablas que comparten el espacio restante, y una fila inferior reservada a Generar lista de grupo y Cerrar. El tamaño mínimo pasa a 820 × 560; el tamaño inicial se limita al área útil de la pantalla. Se conserva el estilo y los eventos. Compilación C# verificada; la interacción y el escalado deben comprobarse en Windows.
