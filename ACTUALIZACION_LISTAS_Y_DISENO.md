@@ -13,7 +13,7 @@ Se integra en main la rama visual que se probó en Windows, y se añaden los sig
 
 ## NSS
 
-El campo sigue siendo opcional. Si está vacío se guarda NULL, se muestra pendiente en el expediente y en edición de expediente está disponible **Tramitar NSS en IMSS** (retirado de inscripción). No se genera un número inventado ni se afirma que se haya realizado una afiliación.
+El campo sigue siendo opcional. Si está vacío se guarda NULL, se muestra pendiente en el expediente y en edición de expediente está disponible **Tramitar NSS en IMSS** (retirado de inscripción). La opción posterior Generar NSS permite completar el campo con un número de prueba escolar; se identifica como demostración, sin afirmar una afiliación. Consulta GENERACION_NSS_PRUEBA.md.
 
 Al capturar un NSS, inscripción y edición validan 11 dígitos ASCII y el dígito de control, rechazan secuencias de un solo dígito y evitan duplicados entre alumnos. La comprobación de duplicados se ejecuta dentro de la transacción bajo el bloqueo compartido de identidad. No se puede confirmar existencia, titularidad ni vigencia ante IMSS mediante el dígito de control. No se imponen reglas de fecha sobre NSS históricos o convencionales.
 

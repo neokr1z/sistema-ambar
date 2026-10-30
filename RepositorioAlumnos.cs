@@ -5,13 +5,25 @@ namespace AMBAR.Semana4;
 
 internal static class RepositorioAlumnos
 {
+    public static string GenerarNssPrueba(Sesion actor,DateTime nacimiento)
+    {
+        if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("No tienes permiso para inscribir alumnos.");
+        using var c=Db.Connect();Identidad.RequireActive(c,null,actor);
+        using var cmd=Db.Sql(c,"SELECT nss FROM Alumno WHERE nss IS NOT NULL");
+        var ocupados=new HashSet<string>(StringComparer.Ordinal);
+        using var reader=cmd.ExecuteReader();
+        while(reader.Read())ocupados.Add(reader.GetString(0).Trim());
+        // La vista previa no reserva el número. CheckNss vuelve a comprobarlo bajo bloqueo al guardar.
+        return SeguridadSocial.GenerarPrueba(nacimiento,ocupados);
+    }
+
     private static void CheckNss(MySqlConnection c, MySqlTransaction tx, StudentData d)
     {
         if(d.Nss.Length==0)return;
         using var cmd=Db.Sql(c,"SELECT COUNT(*) FROM Alumno WHERE nss=@nss AND Numero_control<>@control",tx);
         Db.Param(cmd,"@nss",d.Nss);Db.Param(cmd,"@control",d.Control);
         if(Convert.ToInt32(cmd.ExecuteScalar())>0)
-            throw new ArgumentException("Ese NSS ya está registrado en otro alumno. Verifica la constancia del IMSS.");
+            throw new ArgumentException("Ese NSS ya está registrado en otro alumno. Verifica el dato o genera otro número si estás usando datos de prueba.");
     }
 
     public static List<Choice> Plans()

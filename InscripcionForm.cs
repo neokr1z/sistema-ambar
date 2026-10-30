@@ -224,6 +224,21 @@ public partial class InscripcionForm : Form
     {
 
     }
+    private void GenerateNssClick(object? sender,EventArgs e)
+    {
+        if(!string.IsNullOrWhiteSpace(nss.Text))
+        {
+            MessageBox.Show(this,"El campo ya tiene un NSS. Bórralo primero si deseas generar uno de prueba.","AMBAR");
+            return;
+        }
+        try
+        {
+            generateNss.Enabled=false;
+            nss.Text=RepositorioAlumnos.GenerarNssPrueba(actor,birthday.Value.Date);
+        }
+        catch(Exception ex){Problems.Show(ex);}
+        finally{generateNss.Enabled=true;}
+    }
 }
 
 

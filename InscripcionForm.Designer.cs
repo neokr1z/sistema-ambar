@@ -94,6 +94,8 @@ partial class InscripcionForm
         actions.SuspendLayout();
         header.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
+        generateNss = new Button();
+        nssDemoNote = new Label();
         SuspendLayout();
         // 
         // personalSectionTitle
@@ -1051,6 +1053,30 @@ partial class InscripcionForm
         cancel.UseVisualStyleBackColor = false;
         cancel.Cursor = Cursors.Hand;
         cancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        generateNss.Name = "generateNss";
+        generateNss.Text = "Generar NSS";
+        generateNss.Location = new Point(650, 630);
+        generateNss.Size = new Size(300, 44);
+        generateNss.TabIndex = 35;
+        generateNss.BackColor = Color.FromArgb(6, 55, 99);
+        generateNss.ForeColor = Color.White;
+        generateNss.FlatStyle = FlatStyle.Flat;
+        generateNss.FlatAppearance.BorderSize = 0;
+        generateNss.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        generateNss.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        generateNss.UseVisualStyleBackColor = false;
+        generateNss.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        generateNss.Cursor = Cursors.Hand;
+        generateNss.Click += GenerateNssClick;
+        nssDemoNote.Name = "nssDemoNote";
+        nssDemoNote.Text = "Generación de prueba para el proyecto escolar; sin validez ante IMSS.";
+        nssDemoNote.Location = new Point(45, 628);
+        nssDemoNote.Size = new Size(575, 52);
+        nssDemoNote.ForeColor = Color.FromArgb(61, 107, 134);
+        nssDemoNote.Font = new Font("Segoe UI", 9F);
+        nssDemoNote.TextAlign = ContentAlignment.MiddleLeft;
+        personalTab.Controls.Add(generateNss);
+        personalTab.Controls.Add(nssDemoNote);
         ResumeLayout(false);
     }
 
@@ -1127,4 +1153,6 @@ partial class InscripcionForm
     private Label statusNote = null!;
     private Button submit = null!;
     private Button cancel = null!;
+    private Button generateNss = null!;
+    private Label nssDemoNote = null!;
 }

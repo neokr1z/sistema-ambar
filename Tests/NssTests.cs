@@ -19,6 +19,23 @@ internal static class NssTests
         Check(SeguridadSocial.Display("12345678903")=="12345678903");
         try{RepositorioListas.Obtener(new Sesion(0,"test","Sin permiso",false),1);throw new Exception("Permitió lista sin rol");}
         catch(UnauthorizedAccessException){n++;}
+        var usados=new HashSet<string>(StringComparer.Ordinal);
+        var birth=new DateTime(2005,1,1);
+        for(int i=0;i<10000;i++)
+        {
+            string generated=SeguridadSocial.GenerarPrueba(birth,usados);
+            if(generated.Length!=11 || generated.Substring(4,2)!="05" || SeguridadSocial.Validate(generated)!=generated || !usados.Add(generated))
+                throw new Exception("Generación NSS incorrecta o duplicada");
+        }
+        Check(usados.Count==10000);
+        try{SeguridadSocial.GenerarPrueba(birth,usados);throw new Exception("No detectó agotamiento");}
+        catch(InvalidOperationException){n++;}
+        foreach(var date in new[]{new DateTime(1925,12,31),DateTime.Today,DateTime.Today.AddDays(1)})
+        {
+            try{SeguridadSocial.GenerarPrueba(date,new HashSet<string>());throw new Exception("Aceptó nacimiento inválido");}
+            catch(ArgumentException){n++;}
+        }
+        Check(SeguridadSocial.Validate(SeguridadSocial.GenerarPrueba(new DateTime(1926,1,1),new HashSet<string>())).Length==11);
         Console.WriteLine($"{n} verificaciones NSS/permisos satisfactorias.");return n;
     }
 }
