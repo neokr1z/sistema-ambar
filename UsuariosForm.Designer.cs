@@ -544,6 +544,24 @@ partial class UsuariosForm
         actions.ResumeLayout(false);
         header.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)logo).EndInit();
+        cancel.BackColor = Color.FromArgb(6, 55, 99);
+        cancel.ForeColor = Color.White;
+        cancel.FlatStyle = FlatStyle.Flat;
+        cancel.FlatAppearance.BorderSize = 0;
+        cancel.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        cancel.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        cancel.UseVisualStyleBackColor = false;
+        cancel.Cursor = Cursors.Hand;
+        cancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        save.BackColor = Color.FromArgb(6, 55, 99);
+        save.ForeColor = Color.White;
+        save.FlatStyle = FlatStyle.Flat;
+        save.FlatAppearance.BorderSize = 0;
+        save.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        save.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        save.UseVisualStyleBackColor = false;
+        save.Cursor = Cursors.Hand;
+        save.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         ResumeLayout(false);
     }
 

@@ -63,6 +63,24 @@ partial class ConfirmarPasswordForm
         StartPosition = FormStartPosition.CenterParent;
         Name = "ConfirmarPasswordForm";
         Text = "AMBAR | Confirma tu contraseña de administrador";
+        accept.BackColor = Color.FromArgb(6, 55, 99);
+        accept.ForeColor = Color.White;
+        accept.FlatStyle = FlatStyle.Flat;
+        accept.FlatAppearance.BorderSize = 0;
+        accept.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        accept.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        accept.UseVisualStyleBackColor = false;
+        accept.Cursor = Cursors.Hand;
+        accept.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        cancel.BackColor = Color.FromArgb(6, 55, 99);
+        cancel.ForeColor = Color.White;
+        cancel.FlatStyle = FlatStyle.Flat;
+        cancel.FlatAppearance.BorderSize = 0;
+        cancel.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        cancel.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        cancel.UseVisualStyleBackColor = false;
+        cancel.Cursor = Cursors.Hand;
+        cancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         ResumeLayout(false);
         PerformLayout();
     }

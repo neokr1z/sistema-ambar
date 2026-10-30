@@ -26,8 +26,8 @@ internal static class Theme
             ForeColor=color??Ink, Margin=new Padding(3,5,3,8) };
 
     public static Button Button(string label, bool primary=true)
-        => new() { Text=label, FlatStyle=FlatStyle.Flat, BackColor=primary?Blue:Color.White,
-            ForeColor=primary?Color.White:Blue, Padding=new Padding(12,7,12,7), AutoSize=true,
+        => new() { Text=label, FlatStyle=FlatStyle.Flat, BackColor=Blue,
+            ForeColor=Color.White, Padding=new Padding(12,7,12,7), AutoSize=true,
             Cursor=Cursors.Hand, Font=new Font("Segoe UI",10,FontStyle.Bold),
             Margin=new Padding(6), MinimumSize=new Size(115,42) };
 

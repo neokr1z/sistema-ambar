@@ -94,6 +94,7 @@ partial class InscripcionForm
         actions.SuspendLayout();
         header.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)logo).BeginInit();
+        nssHelp = new Button();
         SuspendLayout();
         // 
         // personalSectionTitle
@@ -491,7 +492,7 @@ partial class InscripcionForm
         nssLabel.Name = "nssLabel";
         nssLabel.Size = new Size(216, 40);
         nssLabel.TabIndex = 31;
-        nssLabel.Text = "NSS (si ya fue verificado)";
+        nssLabel.Text = "NSS (opcional)";
         nssLabel.TextAlign = ContentAlignment.MiddleLeft;
         // 
         // nss
@@ -1023,6 +1024,58 @@ partial class InscripcionForm
         actions.ResumeLayout(false);
         header.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)logo).EndInit();
+        nssHelp.Name = "nssHelp";
+        nssHelp.Text = "Tramitar NSS en IMSS";
+        nssHelp.Location = new Point(650, 630);
+        nssHelp.Size = new Size(300, 44);
+        nssHelp.Click += NssClick;
+        nssHelp.BackColor = Color.FromArgb(6, 55, 99);
+        nssHelp.ForeColor = Color.White;
+        nssHelp.FlatStyle = FlatStyle.Flat;
+        nssHelp.FlatAppearance.BorderSize = 0;
+        nssHelp.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        nssHelp.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        nssHelp.UseVisualStyleBackColor = false;
+        nssHelp.Cursor = Cursors.Hand;
+        nssHelp.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        personalTab.Controls.Add(nssHelp);
+        nss.PlaceholderText = "Sin NSS: pendiente de asignación";
+        find.BackColor = Color.FromArgb(6, 55, 99);
+        find.ForeColor = Color.White;
+        find.FlatStyle = FlatStyle.Flat;
+        find.FlatAppearance.BorderSize = 0;
+        find.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        find.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        find.UseVisualStyleBackColor = false;
+        find.Cursor = Cursors.Hand;
+        find.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        submit.BackColor = Color.FromArgb(6, 55, 99);
+        submit.ForeColor = Color.White;
+        submit.FlatStyle = FlatStyle.Flat;
+        submit.FlatAppearance.BorderSize = 0;
+        submit.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        submit.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        submit.UseVisualStyleBackColor = false;
+        submit.Cursor = Cursors.Hand;
+        submit.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        cancel.BackColor = Color.FromArgb(6, 55, 99);
+        cancel.ForeColor = Color.White;
+        cancel.FlatStyle = FlatStyle.Flat;
+        cancel.FlatAppearance.BorderSize = 0;
+        cancel.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        cancel.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        cancel.UseVisualStyleBackColor = false;
+        cancel.Cursor = Cursors.Hand;
+        cancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        nssHelp.BackColor = Color.FromArgb(6, 55, 99);
+        nssHelp.ForeColor = Color.White;
+        nssHelp.FlatStyle = FlatStyle.Flat;
+        nssHelp.FlatAppearance.BorderSize = 0;
+        nssHelp.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        nssHelp.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        nssHelp.UseVisualStyleBackColor = false;
+        nssHelp.Cursor = Cursors.Hand;
+        nssHelp.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         ResumeLayout(false);
     }
 
@@ -1099,4 +1152,5 @@ partial class InscripcionForm
     private Label statusNote = null!;
     private Button submit = null!;
     private Button cancel = null!;
+    private Button nssHelp = null!;
 }

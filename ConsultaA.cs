@@ -9,17 +9,7 @@ public partial class ConsultaA : Form
     public ConsultaA()
     {
         InitializeComponent();
-        var horario = new Button {
-            Text = "Ver horario", BackColor = Theme.Sky, ForeColor = Theme.Blue,
-            Font = new Font("Segoe UI",10,FontStyle.Bold), FlatStyle = FlatStyle.Flat,
-            Width = 158, Height = 42, Margin = new Padding(5)
-        };
-        horario.FlatAppearance.BorderSize = 0;
-        horario.Click += (_, _) => {
-            try { using var ventana = new HorarioAlumnoForm(SelectedStudent()); ventana.ShowDialog(this); }
-            catch(Exception ex) { Problems.Show(ex); }
-        };
-        actions.Controls.Add(horario);
+
     }
 
     internal ConsultaA(Sesion session) : this()
@@ -122,6 +112,11 @@ public partial class ConsultaA : Form
     private void grid_CellContentClick(object sender, DataGridViewCellEventArgs e)
     {
 
+    }
+    private void HorarioClick(object? sender,EventArgs e)
+    {
+        try {using var form=new HorarioAlumnoForm(SelectedStudent());form.ShowDialog(this);}
+        catch(Exception ex){Problems.Show(ex);}
     }
 }
 

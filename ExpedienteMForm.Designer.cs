@@ -71,6 +71,7 @@ partial class ExpedienteMForm
         controlStrip.SuspendLayout();
         body.SuspendLayout();
         actions.SuspendLayout();
+        nssHelp = new Button();
         SuspendLayout();
         // 
         // layout
@@ -699,6 +700,49 @@ partial class ExpedienteMForm
         body.ResumeLayout(false);
         body.PerformLayout();
         actions.ResumeLayout(false);
+        nssHelp.Name = "nssHelp";
+        nssHelp.Text = "Tramitar NSS en IMSS";
+        nssHelp.Location = new Point(615, 715);
+        nssHelp.Size = new Size(300, 44);
+        nssHelp.Click += NssClick;
+        nssHelp.BackColor = Color.FromArgb(6, 55, 99);
+        nssHelp.ForeColor = Color.White;
+        nssHelp.FlatStyle = FlatStyle.Flat;
+        nssHelp.FlatAppearance.BorderSize = 0;
+        nssHelp.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        nssHelp.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        nssHelp.UseVisualStyleBackColor = false;
+        nssHelp.Cursor = Cursors.Hand;
+        nssHelp.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        body.Controls.Add(nssHelp);
+        inputNss.PlaceholderText = "Sin NSS: pendiente de asignación";
+        save.BackColor = Color.FromArgb(6, 55, 99);
+        save.ForeColor = Color.White;
+        save.FlatStyle = FlatStyle.Flat;
+        save.FlatAppearance.BorderSize = 0;
+        save.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        save.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        save.UseVisualStyleBackColor = false;
+        save.Cursor = Cursors.Hand;
+        save.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        cancel.BackColor = Color.FromArgb(6, 55, 99);
+        cancel.ForeColor = Color.White;
+        cancel.FlatStyle = FlatStyle.Flat;
+        cancel.FlatAppearance.BorderSize = 0;
+        cancel.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        cancel.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        cancel.UseVisualStyleBackColor = false;
+        cancel.Cursor = Cursors.Hand;
+        cancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        nssHelp.BackColor = Color.FromArgb(6, 55, 99);
+        nssHelp.ForeColor = Color.White;
+        nssHelp.FlatStyle = FlatStyle.Flat;
+        nssHelp.FlatAppearance.BorderSize = 0;
+        nssHelp.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        nssHelp.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        nssHelp.UseVisualStyleBackColor = false;
+        nssHelp.Cursor = Cursors.Hand;
+        nssHelp.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         ResumeLayout(false);
     }
 
@@ -755,6 +799,7 @@ partial class ExpedienteMForm
     private TextBox inputState = null!;
     private Label inputPostalLabel = null!;
     private TextBox inputPostal = null!;
+    private Button nssHelp = null!;
 }
 
 

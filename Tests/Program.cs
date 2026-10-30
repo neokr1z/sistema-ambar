@@ -1,7 +1,7 @@
 using AMBAR.Semana4;
 using System.Text.Json;
 
-int passed=0;
+int passed=NssTests.Run();
 void Check(bool condition,string name)
 {
     if(!condition) throw new Exception("FALLÓ: "+name);
@@ -172,6 +172,21 @@ Exec($"INSERT INTO Horario(Id_asignacion,dia,hora_inicio,hora_fin,aula) VALUES({
 Check(RepositorioDocente.Assignments(teacherSession).Count==1,"asignaciones propias");
 Check(RepositorioDocente.Roster(teacherSession,asignacion,unidad).Rows.Count==25,"lista de alumnos del grupo asignado");
 Check(RepositorioDocente.Schedule(teacherSession,asignacion).Rows.Count==1,"horario operativo");
+Check(RepositorioListas.Obtener(admin,group1).Alumnos.Rows.Count==25,"lista administrativa del grupo");
+Check(RepositorioListas.Obtener(teacherSession,group1,asignacion).Alumnos.Rows.Count==25,"lista docente de grupo propio");
+Deny(()=>RepositorioListas.Obtener(teacherSession,group2,asignacion),"no exporta grupo ajeno con asignación propia");
+Deny(()=>RepositorioListas.Obtener(teacherSession,group1),"docente requiere asignación para lista");
+Deny(()=>RepositorioListas.Obtener(secSession,group1),"secretaria de baja no genera listas");
+var nssAlumno=RepositorioAlumnos.Detail(admin,control)!;
+nssAlumno.Nss="12345678903";RepositorioAlumnos.Update(nssAlumno,admin);
+Check(RepositorioAlumnos.Detail(admin,control)!.Nss=="12345678903","NSS persiste en edición");
+string otherControl=Convert.ToString(RepositorioListas.Obtener(admin,group1).Alumnos.Rows.Cast<System.Data.DataRow>().First(r=>Convert.ToString(r["Control"])!=control)["Control"])!;
+var otherStudent=RepositorioAlumnos.Detail(admin,otherControl)!;
+otherStudent.Nss="12345678903";
+Reject(()=>RepositorioAlumnos.Update(otherStudent,admin),"NSS duplicado se rechaza en edición");
+nssAlumno.Nss="";RepositorioAlumnos.Update(nssAlumno,admin);
+Check(RepositorioAlumnos.Detail(admin,control)!.Nss=="","NSS pendiente no se inventa");
+
 Check(RepositorioDocente.Units(teacherSession,asignacion).Single().Id==unidad,"unidades dinámicas incluso quinta unidad");
 Check(RepositorioDocente.Windows(teacherSession,asignacion).Single().Id==ventana,"captura abierta");
 var otro=Auth.Login("test.colision","PruebaClave123")!;
@@ -204,6 +219,7 @@ Deny(()=>RepositorioBitacora.Query(admin,"",DateTime.Today.AddDays(-1),DateTime.
 RepositorioPersonal.Deactivate(admin,teacherSession.Id);
 Check(Auth.Login("test.docente","PruebaClave123")==null,"baja docente bloquea login");
 Deny(()=>RepositorioDocente.History(teacherSession,asignacion),"baja docente invalida sesión abierta");
+Deny(()=>RepositorioListas.Obtener(teacherSession,group1,asignacion),"baja docente bloquea lista y exportación");
 Check(Number("SELECT COUNT(*) FROM Bitacora WHERE tipo_evento='BAJA_PERSONAL'")==2,"bajas auditadas");
 Check(Number("SELECT COUNT(*) FROM Docente WHERE fecha_nacimiento='1990-01-01' AND nombre='María'") == 1,"fecha de personal persistida");
 var imported=new List<(string User,string Hash)>();

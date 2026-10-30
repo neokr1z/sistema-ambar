@@ -55,8 +55,7 @@ internal sealed class StudentData
         Municipality=Validation.Mandatory(Municipality,"municipio");
         State=Validation.Mandatory(State,"estado");
         if(!Validation.Postal(Postal))throw new ArgumentException("Código postal inválido: introduce 5 dígitos.");
-        if(Nss.Length>0 && (!System.Text.RegularExpressions.Regex.IsMatch(Nss,@"^\d{11}$")))
-            throw new ArgumentException("El NSS debe tener 11 dígitos o quedar vacío hasta su verificación.");
+        Nss=SeguridadSocial.Validate(Nss);
     }
 }
 

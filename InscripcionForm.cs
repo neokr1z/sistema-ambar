@@ -206,10 +206,15 @@ public partial class InscripcionForm : Form
                 throw new ArgumentException("La ficha cambió después de validarla. Vuelve a verificarla.");
             var d = Collect();
             string control = await RepositorioAlumnos.EnrollAsync(d, actor);
-            MessageBox.Show($"Inscripción realizada correctamente.\nNúmero de control: {control}\n\nPuede consultar el expediente y generar el PDF en 'Consulta de alumnos'.",
-                "AMBAR · Inscripción exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
             saving=false;
-            Close();
+            UseWaitCursor=false;
+            Hide();
+            try
+            {
+                using var result=new InscripcionResultadoForm(actor,d.GroupId,control);
+                result.ShowDialog(this);
+            }
+            finally { Close(); }
         }
         catch (Exception ex) { Problems.Show(ex); }
         finally { RestoreSave(); }
@@ -218,6 +223,11 @@ public partial class InscripcionForm : Form
     private void logo_Click(object sender, EventArgs e)
     {
 
+    }
+    private void NssClick(object? sender,EventArgs e)
+    {
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://www.imss.gob.mx/tramites/imss02008") { UseShellExecute=true }); }
+        catch(Exception ex){Problems.Show(ex);}
     }
 }
 

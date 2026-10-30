@@ -5,6 +5,15 @@ namespace AMBAR.Semana4;
 
 internal static class RepositorioAlumnos
 {
+    private static void CheckNss(MySqlConnection c, MySqlTransaction tx, StudentData d)
+    {
+        if(d.Nss.Length==0)return;
+        using var cmd=Db.Sql(c,"SELECT COUNT(*) FROM Alumno WHERE nss=@nss AND Numero_control<>@control",tx);
+        Db.Param(cmd,"@nss",d.Nss);Db.Param(cmd,"@control",d.Control);
+        if(Convert.ToInt32(cmd.ExecuteScalar())>0)
+            throw new ArgumentException("Ese NSS ya está registrado en otro alumno. Verifica la constancia del IMSS.");
+    }
+
     public static List<Choice> Plans()
     {
         var list=new List<Choice>();
@@ -78,6 +87,7 @@ internal static class RepositorioAlumnos
         using var c=Db.Connect();
         using var tx=c.BeginTransaction(IsolationLevel.ReadCommitted);
         Identidad.Check(c,tx,session,d.First,d.Paternal,d.Maternal,d.Curp,aspirantId:d.AspirantId);
+        CheckNss(c,tx,d);
         // Los bloqueos de aspirante y grupo impiden que dos secretarias dupliquen una inscripción.
         string result,status,curp; int? period;
         using(var lockAsp=Db.Sql(c,"SELECT resultado_examen,estatus,curp,periodo_fichas FROM Aspirante WHERE ID_Aspirante=@id FOR UPDATE",tx))
@@ -251,6 +261,7 @@ internal static class RepositorioAlumnos
         using(var own=Db.Sql(c,"SELECT ID_Aspirante FROM Alumno WHERE Numero_control=@control",tx))
         { Db.Param(own,"@control",d.Control); d.AspirantId=Convert.ToInt32(own.ExecuteScalar() ?? throw new ArgumentException("El alumno ya no existe.")); }
         Identidad.Check(c,tx,actor,d.First,d.Paternal,d.Maternal,d.Curp,d.Control,d.AspirantId);
+        CheckNss(c,tx,d);
         using(var guard=Db.Sql(c,"SELECT estatus FROM Alumno WHERE Numero_control=@control FOR UPDATE",tx))
         {
             Db.Param(guard,"@control",d.Control);

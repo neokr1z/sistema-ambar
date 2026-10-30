@@ -81,4 +81,15 @@
     <Compile Update="UsuariosForm.Designer.cs"><DependentUpon>UsuariosForm.cs</DependentUpon></Compile>
     <EmbeddedResource Update="UsuariosForm.resx"><DependentUpon>UsuariosForm.cs</DependentUpon></EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="ListaGrupoForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="ListaGrupoForm.Designer.cs"><DependentUpon>ListaGrupoForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="ListaGrupoForm.resx"><DependentUpon>ListaGrupoForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="InscripcionResultadoForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="InscripcionResultadoForm.Designer.cs"><DependentUpon>InscripcionResultadoForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="InscripcionResultadoForm.resx"><DependentUpon>InscripcionResultadoForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="HorarioAlumnoForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="HorarioAlumnoForm.Designer.cs"><DependentUpon>HorarioAlumnoForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="HorarioAlumnoForm.resx"><DependentUpon>HorarioAlumnoForm.cs</DependentUpon></EmbeddedResource>
+  </ItemGroup>
 </Project>

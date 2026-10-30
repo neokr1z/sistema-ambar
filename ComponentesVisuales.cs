@@ -47,7 +47,30 @@ internal static class ComponentesVisuales
             Font=new Font("Segoe UI",10,FontStyle.Bold),SelectionBackColor=Color.FromArgb(9,76,115)};
         grid.DefaultCellStyle=new DataGridViewCellStyle {Font=new Font("Segoe UI",10),ForeColor=Color.Black,
             BackColor=Color.White,SelectionBackColor=Theme.Sky,SelectionForeColor=Color.Black,Padding=new Padding(5)};
-        grid.RowTemplate.Height=36;
+        grid.BackgroundColor = Color.White;
+        grid.BorderStyle = BorderStyle.None;
+        grid.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+        grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+        grid.EnableHeadersVisualStyles = false;
+        grid.GridColor = Color.FromArgb(222, 233, 241);
+        grid.RowHeadersVisible = false;
+        grid.ColumnHeadersHeight = 48;
+        grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+        grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(6, 55, 99);
+        grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+        grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(6, 55, 99);
+        grid.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+        grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+        grid.ColumnHeadersDefaultCellStyle.Padding = new Padding(10, 6, 10, 6);
+        grid.DefaultCellStyle.BackColor = Color.White;
+        grid.DefaultCellStyle.ForeColor = Color.FromArgb(34, 49, 71);
+        grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(215, 234, 247);
+        grid.DefaultCellStyle.SelectionForeColor = Color.FromArgb(6, 55, 99);
+        grid.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
+        grid.DefaultCellStyle.Padding = new Padding(10, 6, 10, 6);
+        grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 246, 250);
+        grid.RowTemplate.Height = 42;
+        grid.RowTemplate.Height=42;
         foreach(var col in columns)grid.Columns.Add(col,col);
         return grid;
     }

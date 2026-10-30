@@ -194,6 +194,15 @@ partial class LoginForm
         usernameBorder.PerformLayout();
         passwordBorder.ResumeLayout(false);
         passwordBorder.PerformLayout();
+        enter.BackColor = Color.FromArgb(6, 55, 99);
+        enter.ForeColor = Color.White;
+        enter.FlatStyle = FlatStyle.Flat;
+        enter.FlatAppearance.BorderSize = 0;
+        enter.FlatAppearance.MouseOverBackColor = Color.FromArgb(31, 79, 120);
+        enter.FlatAppearance.MouseDownBackColor = Color.FromArgb(3, 36, 66);
+        enter.UseVisualStyleBackColor = false;
+        enter.Cursor = Cursors.Hand;
+        enter.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
         ResumeLayout(false);
     }
 

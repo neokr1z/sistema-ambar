@@ -119,6 +119,11 @@ public partial class ExpedienteMForm : Form
         catch (Exception ex) { Problems.Show(ex); }
         finally { RestoreSave(); }
     }
+    private void NssClick(object? sender,EventArgs e)
+    {
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://www.imss.gob.mx/tramites/imss02008") { UseShellExecute=true }); }
+        catch(Exception ex){Problems.Show(ex);}
+    }
 }
 
 

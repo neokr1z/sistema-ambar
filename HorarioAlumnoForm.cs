@@ -8,131 +8,27 @@ using Size = System.Drawing.Size;
 
 namespace AMBAR.Semana4;
 
-internal sealed record BloqueHorario(
-    string Dia,
-    string HoraInicio,
-    string HoraFin,
-    string Materia,
-    string Aula,
-    string Profesor
-);
-
-internal sealed class HorarioAlumnoForm : Form
+public partial class HorarioAlumnoForm : Form
 {
-    private readonly StudentData alumno;
+    private StudentData alumno = null!;
     private readonly List<BloqueHorario> clases = new();
-
-    private readonly DataGridView tabla = new();
-    private readonly Label titulo = new();
-    private readonly Button btnDescargar = new();
 
     private static readonly string[] DiasOrden =
     {
-        "Lunes", "Martes", "Miércoles", "Jueves", "Viernes"
+        "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"
     };
 
-    internal HorarioAlumnoForm(StudentData alumno)
+    public HorarioAlumnoForm(){InitializeComponent();}
+    internal HorarioAlumnoForm(StudentData alumno):this()
     {
-        this.alumno = alumno;
-
-        Text = "AMBAR | Horario del alumno";
-        StartPosition = FormStartPosition.CenterParent;
-        ClientSize = new Size(1080, 670);
-        MinimumSize = new Size(920, 560);
-        BackColor = Color.White;
-
-        BuildUi();
-        Load += CargarHorario;
+        this.alumno=alumno;
+        summary.Text=$"{alumno.FullName} · {alumno.Control}\n{alumno.Group} · {alumno.Period}";
     }
-
-    private void BuildUi()
-    {
-        titulo.Dock = DockStyle.Top;
-        titulo.Height = 92;
-        titulo.Padding = new Padding(24, 14, 24, 8);
-        titulo.Font = new Font("Segoe UI", 15, FontStyle.Bold);
-        titulo.ForeColor = Theme.Blue;
-        titulo.Text =
-            "HORARIO DEL ALUMNO\n" +
-            $"{alumno.FullName} · {alumno.Control} · {alumno.Group} · {alumno.Period}";
-
-        var topBar = new Panel
-        {
-            Dock = DockStyle.Top,
-            Height = 70,
-            BackColor = Color.White
-        };
-
-        btnDescargar.Text = "Descargar horario PDF";
-        btnDescargar.Size = new Size(220, 42);
-        btnDescargar.Location = new Point(24, 14);
-        btnDescargar.BackColor = Theme.Blue;
-        btnDescargar.ForeColor = Color.White;
-        btnDescargar.FlatStyle = FlatStyle.Flat;
-        btnDescargar.FlatAppearance.BorderSize = 0;
-        btnDescargar.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-        btnDescargar.Click += DescargarPdf;
-
-        topBar.Controls.Add(btnDescargar);
-
-        tabla.Dock = DockStyle.Fill;
-        tabla.BackgroundColor = Color.White;
-        tabla.ReadOnly = true;
-        tabla.AllowUserToAddRows = false;
-        tabla.AllowUserToDeleteRows = false;
-        tabla.AllowUserToResizeRows = false;
-        tabla.RowHeadersVisible = false;
-        tabla.MultiSelect = false;
-        tabla.SelectionMode = DataGridViewSelectionMode.CellSelect;
-        tabla.BorderStyle = BorderStyle.None;
-        tabla.CellBorderStyle = DataGridViewCellBorderStyle.Single;
-        tabla.EnableHeadersVisualStyles = false;
-        tabla.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-        tabla.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-        tabla.DefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Regular);
-        tabla.DefaultCellStyle.BackColor = Color.White;
-        tabla.DefaultCellStyle.ForeColor = Theme.Blue;
-        tabla.ColumnHeadersDefaultCellStyle.BackColor = Theme.Blue;
-        tabla.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-        tabla.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-        tabla.ColumnHeadersHeight = 42;
-        tabla.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-
-        ConstruirColumnas();
-
-        Controls.Add(tabla);
-        Controls.Add(topBar);
-        Controls.Add(titulo);
-    }
-
-    private void ConstruirColumnas()
-    {
-        tabla.Columns.Clear();
-
-        var colHora = new DataGridViewTextBoxColumn
-        {
-            Name = "Hora",
-            HeaderText = "Hora",
-            Width = 85,
-            SortMode = DataGridViewColumnSortMode.NotSortable
-        };
-        tabla.Columns.Add(colHora);
-
-        foreach (var dia in DiasOrden)
-        {
-            var col = new DataGridViewTextBoxColumn
-            {
-                Name = dia,
-                HeaderText = dia,
-                Width = 155,
-                SortMode = DataGridViewColumnSortMode.NotSortable
-            };
-            tabla.Columns.Add(col);
-        }
-    }
-
+    private void CloseClick(object? sender,EventArgs e)=>Close();
     private void CargarHorario(object? sender, EventArgs e)
     {
+        if(DesignMode || System.ComponentModel.LicenseManager.UsageMode==System.ComponentModel.LicenseUsageMode.Designtime)return;
+        if(alumno is null){Close();return;}
         try
         {
             clases.Clear();

@@ -24,5 +24,10 @@ public partial class MateriasDocenteForm : Form
         }catch(Exception ex){Problems.Show(ex);}
     }
     private void CaptureClick(object? sender,EventArgs e){if(assignment.SelectedItem is Asignacion a){using var form=new CapturaCLForm(actor,a.Id);form.ShowDialog(this);}}
+    private void ListClick(object? sender,EventArgs e)
+    {
+        if(assignment.SelectedItem is not Asignacion a){MessageBox.Show("Selecciona una materia y grupo.");return;}
+        using var form=new ListaGrupoForm(actor,a.GrupoId,a.Id);form.ShowDialog(this);
+    }
     private void CloseClick(object? sender,EventArgs e)=>Close();
 }

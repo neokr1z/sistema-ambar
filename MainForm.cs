@@ -5,10 +5,6 @@ public partial class MainForm : Form
 {
     private Sesion session = null!;
     private static readonly bool ModulosDocenteActivos = true;
-    private Panel? teacherPanel;
-    private FlowLayoutPanel? teacherSubjects;
-    private DataGridView? teacherGrades;
-    private Label? teacherSummary;
 
     public MainForm()
     {
@@ -92,6 +88,8 @@ public partial class MainForm : Form
                 button.ForeColor = Theme.Gray;
                 button.FlatStyle = FlatStyle.Flat;
                 button.FlatAppearance.BorderSize = 0;
+                button.FlatAppearance.MouseOverBackColor = Color.FromArgb(202, 226, 242);
+                button.FlatAppearance.MouseDownBackColor = Color.FromArgb(160, 199, 225);
             }
 
             row.BackColor = Theme.Sky;
@@ -99,6 +97,8 @@ public partial class MainForm : Form
 
         selected.BackColor = Theme.Gray;
         selected.ForeColor = Color.White;
+        selected.FlatAppearance.MouseOverBackColor = Color.FromArgb(78, 125, 153);
+        selected.FlatAppearance.MouseDownBackColor = Theme.Blue;
 
         selected.Parent!.BackColor = Theme.Gray;
         selected.Parent.Invalidate();
@@ -334,58 +334,8 @@ public partial class MainForm : Form
         AddTeacherOption("\uE81C", "Historial",
             (_, _) => Open(new HistorialdocForm(session)));
 
-        teacherPanel = new Panel
-        {
-            Location = new Point(25, 365),
-            Size = new Size(825, 455)
-        };
-
-        teacherSummary = new Label
-        {
-            Location = new Point(5, 0),
-            Size = new Size(800, 35),
-            ForeColor = Theme.Gray,
-            Font = new Font("Segoe UI", 11, FontStyle.Bold)
-        };
-
-        teacherSubjects = new FlowLayoutPanel
-        {
-            Location = new Point(5, 40),
-            Size = new Size(805, 112),
-            WrapContents = false,
-            AutoScroll = true
-        };
-
-        var heading = new Label
-        {
-            Text = "Últimas calificaciones registradas",
-            Location = new Point(5, 157),
-            Size = new Size(800, 38),
-            ForeColor = Theme.Gray,
-            Font = new Font("Segoe UI", 15, FontStyle.Bold)
-        };
-
-        teacherGrades = ComponentesVisuales.Grid(
-            "Alumno",
-            "Materia",
-            "Unidad",
-            "Calificación"
-        );
-
-        teacherGrades.Location = new Point(5, 200);
-        teacherGrades.Size = new Size(805, 205);
-
-        teacherPanel.Controls.AddRange(new Control[]
-        {
-        teacherSummary,
-        teacherSubjects,
-        heading,
-        teacherGrades
-        });
-
-        dashboard.Controls.Add(teacherPanel);
+        teacherPanel.Visible = true;
     }
-
 
 
     private void AddTeacherOption(
@@ -427,7 +377,8 @@ public partial class MainForm : Form
         };
 
         button.FlatAppearance.BorderSize = 0;
-        button.FlatAppearance.MouseOverBackColor = Theme.Gray;
+        button.FlatAppearance.MouseOverBackColor = Color.FromArgb(202, 226, 242);
+        button.FlatAppearance.MouseDownBackColor = Color.FromArgb(160, 199, 225);
 
         if (ModulosDocenteActivos)
         {

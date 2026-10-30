@@ -12,6 +12,8 @@
     <Compile Include="../CatalogoPostal.cs" Link="CatalogoPostal.cs" />
     <Compile Include="../CorreoDominio.cs" Link="CorreoDominio.cs" />
     <Compile Include="../Contacto.cs" Link="Contacto.cs" />
+    <Compile Include="../SeguridadSocial.cs" Link="SeguridadSocial.cs" />
+    <Compile Include="../RepositorioListas.cs" Link="RepositorioListas.cs" />
     <Compile Include="../Validation.cs" Link="Validation.cs" />
     <Compile Include="../ModelosEstudiantes.cs" Link="ModelosEstudiantes.cs" />
     <Compile Include="../Identidad.cs" Link="Identidad.cs" />
