@@ -137,7 +137,7 @@ public partial class MainForm : Form
     private void RenewClick(object? sender, EventArgs e)
     {
         SelectMenu(renewButton);
-        Placeholder("Reinscripción");
+        Open(new ReinscripcionForm(session));
     }
 
     private void ReportsClick(object? sender, EventArgs e)
