@@ -27,6 +27,16 @@ INSERT INTO Materia_Reinscripcion(semestre_origen,nombre) VALUES
 (4,'Simulación')
 ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
 
+-- Historial explícito del último semestre cursado, antes del periodo de reinscripción.
+-- No se deduce de grupos 1.º, 3.º o 5.º del periodo actual.
+CREATE TABLE IF NOT EXISTS Historial_Semestre_Reinscripcion (
+    numero_control VARCHAR(20) NOT NULL PRIMARY KEY,
+    semestre_cursado TINYINT UNSIGNED NOT NULL,
+    periodo_origen VARCHAR(50) NOT NULL DEFAULT 'Enero-Junio 2026',
+    CONSTRAINT fk_reins_hist_alumno FOREIGN KEY(numero_control) REFERENCES Alumno(Numero_control),
+    CONSTRAINT ck_reins_hist_sem CHECK(semestre_cursado IN (2,4))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Evidencia de notas finales del periodo ANTERIOR. Sin evidencia completa, NO se reinscribe.
 -- El sistema no crea ni aprueba calificaciones automáticamente.
 CREATE TABLE IF NOT EXISTS Calificacion_Final_Reinscripcion (
@@ -50,6 +60,10 @@ JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
 WHERE pe.nombre_periodo='Agosto-Diciembre 2026' AND s.numero_semestre IN (3,5)
 ORDER BY s.numero_semestre,g.nombre_grupo;
 
+-- Primero registra el semestre realmente cursado, SOLO para alumnos con ese antecedente:
+-- INSERT INTO Historial_Semestre_Reinscripcion(numero_control,semestre_cursado,periodo_origen)
+-- VALUES('NUMERO_CONTROL',2,'Enero-Junio 2026');
+--
 -- Para CAPTURAR notas finales de un alumno existente, usar un INSERT por materia:
 -- INSERT INTO Calificacion_Final_Reinscripcion(numero_control,id_materia_reinscripcion,periodo_origen,calificacion)
 -- SELECT 'NUMERO_CONTROL',id_materia_reinscripcion,'Enero-Junio 2026',85
