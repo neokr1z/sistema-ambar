@@ -138,6 +138,9 @@ public partial class MainForm : Form
     {
         SelectMenu(renewButton);
         Open(new ReinscripcionForm(session));
+        // El formulario guarda en MySQL; al cerrarlo refrescamos los indicadores.
+        SelectMenu(homeButton);
+        Home();
     }
 
     private void ReportsClick(object? sender, EventArgs e)
@@ -258,9 +261,13 @@ public partial class MainForm : Form
 
             // REINSCRIPCIONES
             renewals.Text = Count(
-                "SELECT COUNT(*) FROM Inscripcion " +
-                "WHERE UPPER(tipo_inscripcion) " +
-                "IN ('REINSCRIPCION','REINSCRIPCIÓN')"
+                "SELECT COUNT(DISTINCT i.Numero_control) " +
+                "FROM Inscripcion i " +
+                "JOIN Grupo g ON g.ID_grupo=i.ID_grupo " +
+                "JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo " +
+                "WHERE UPPER(i.tipo_inscripcion) IN ('REINSCRIPCION','REINSCRIPCIÓN') " +
+                "AND UPPER(i.estatus)='INSCRITO' " +
+                "AND p.nombre_periodo='Agosto-Diciembre 2026'"
             );
 
         }
