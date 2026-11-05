@@ -120,13 +120,13 @@ internal sealed class ReinscripcionForm : Form
     private void Guardar()
     {
         if(consulta is null || !consulta.PuedeReinscribir || grupos.SelectedItem is not Choice grupo)return;
-        if(MessageBox.Show(this,$"¿Reinscribir a {consulta.Alumno} al grupo {grupo.Text} del periodo agosto–diciembre 2026?",
+        if(MessageBox.Show(this,$"¿Reinscribir a {consulta.Alumno} al grupo {grupo.Name} del periodo agosto–diciembre 2026?",
             "Confirmar reinscripción",MessageBoxButtons.YesNo,MessageBoxIcon.Question)!=DialogResult.Yes)return;
         try
         {
             guardar.Enabled=false;
             RepositorioReinscripcion.Guardar(actor,consulta.Control,grupo.Id);
-            MessageBox.Show(this,$"Reinscripción registrada correctamente.\nAlumno: {consulta.Alumno}\nGrupo: {grupo.Text}\nPeriodo: Agosto–diciembre 2026",
+            MessageBox.Show(this,$"Reinscripción registrada correctamente.\nAlumno: {consulta.Alumno}\nGrupo: {grupo.Name}\nPeriodo: Agosto–diciembre 2026",
                 "AMBAR | Reinscripción completada",MessageBoxButtons.OK,MessageBoxIcon.Information);
             Buscar();
         }
