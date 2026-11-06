@@ -21,7 +21,7 @@ internal sealed class ConsultaGruposForm : Form
         MinimumSize=new Size(700,440);
         BackColor=Color.White;
         Font=new Font("Segoe UI",10F);
-        var titulo=new Label {Text=reinscripcion ? "GRUPOS | TERCER Y QUINTO SEMESTRE" : "GRUPOS | PRIMER SEMESTRE",Dock=DockStyle.Top,Height=65,Font=new Font("Segoe UI",17F,FontStyle.Bold),ForeColor=Color.FromArgb(6,55,99),Padding=new Padding(20,14,0,0)};
+        var titulo=new Label {Text=reinscripcion ? "GRUPOS | SEGUNDO Y TERCER SEMESTRE" : "GRUPOS | PRIMER SEMESTRE",Dock=DockStyle.Top,Height=65,Font=new Font("Segoe UI",17F,FontStyle.Bold),ForeColor=Color.FromArgb(6,55,99),Padding=new Padding(20,14,0,0)};
         resumen.Text="Seleccione un grupo para consultar alumnos y generar el PDF.";
         resumen.Dock=DockStyle.Top; resumen.Height=44;resumen.Padding=new Padding(20,10,0,0);
         tabla.Dock=DockStyle.Fill;tabla.ReadOnly=true;tabla.AllowUserToResizeRows=false;tabla.AllowUserToOrderColumns=false;tabla.MultiSelect=false;tabla.SelectionMode=DataGridViewSelectionMode.FullRowSelect;tabla.AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.Fill;tabla.AllowUserToAddRows=false;tabla.RowHeadersVisible=false;
@@ -56,7 +56,7 @@ internal sealed class ConsultaGruposForm : Form
                 JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
                 LEFT JOIN Inscripcion i ON i.ID_grupo=g.ID_grupo
                 LEFT JOIN Reinscripcion_Demostracion r ON r.ID_grupo=g.ID_grupo
-                WHERE ((@reinscripcion=1 AND s.numero_semestre IN (3,5))
+                WHERE ((@reinscripcion=1 AND s.numero_semestre IN (2,3))
                    OR (@reinscripcion=0 AND s.numero_semestre=1 AND g.habilitado_fichas=1))
                   AND pe.nombre_periodo='Agosto-Diciembre 2026'
                 GROUP BY g.ID_grupo,g.nombre_grupo,pe.nombre_periodo,g.Capacidad
