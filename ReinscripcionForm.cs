@@ -13,6 +13,7 @@ internal sealed class ReinscripcionForm : Form
     private readonly Label resultado = new();
     private readonly Label informacion = new();
     private readonly ComboBox grupos = new();
+    private readonly ComboBox semestres = new();
     private readonly Button guardar;
     private readonly Button horario;
     private string controlValidado = "";
@@ -88,8 +89,24 @@ internal sealed class ReinscripcionForm : Form
         seleccionar.Controls.Add(horario);
         grupos.SelectedIndexChanged+=(_,_)=>horario.Enabled=grupos.SelectedItem is Choice;
 
+        var elegirSemestre=new FlowLayoutPanel
+        {
+            Dock=DockStyle.Top,Height=66,FlowDirection=FlowDirection.LeftToRight,WrapContents=false
+        };
+        elegirSemestre.Controls.Add(new Label
+        {
+            Text="Semestre de destino",Width=170,Height=40,
+            TextAlign=ContentAlignment.MiddleLeft,ForeColor=Theme.Blue,
+            Font=new Font("Segoe UI",10F,FontStyle.Bold)
+        });
+        semestres.DropDownStyle=ComboBoxStyle.DropDownList;
+        semestres.Width=230;semestres.Enabled=false;
+        semestres.SelectedIndexChanged+=(_,_)=>CambiarSemestre();
+        elegirSemestre.Controls.Add(semestres);
+
         // Agregar de abajo hacia arriba por el orden de DockStyle.Top.
         contenido.Controls.Add(seleccionar);
+        contenido.Controls.Add(elegirSemestre);
         contenido.Controls.Add(campos);
         contenido.Controls.Add(tituloDatos);
         contenido.Controls.Add(resultado);
@@ -138,6 +155,7 @@ internal sealed class ReinscripcionForm : Form
         resultado.Text="";
         nombre.Clear();paterno.Clear();materno.Clear();
         grupos.Items.Clear();grupos.Enabled=false;guardar.Enabled=false;horario.Enabled=false;
+        semestres.Items.Clear();semestres.Enabled=false;
         foreach(var tb in new[]{nombre,paterno,materno})tb.Enabled=false;
     }
 
@@ -158,15 +176,40 @@ internal sealed class ReinscripcionForm : Form
                 return;
             }
             // No existe en la BD es válido: los campos comienzan vacíos.
-            controlValidado=numero;semestreValidado=semestre;
+            controlValidado=numero;
+            if(anio==2025)
+            {
+                semestres.Items.Add(new Choice(2,"2.º semestre · Repetidor"));
+                semestres.Items.Add(new Choice(3,"3.º semestre · Regular"));
+            }
+            else semestres.Items.Add(new Choice(2,"2.º semestre"));
+            semestres.Enabled=anio==2025;
+            semestres.SelectedIndex=semestres.Items.Count-1;
+            semestreValidado=(semestres.SelectedItem as Choice)?.Id??semestre;
             informacion.ForeColor=Color.DarkGreen;
-            informacion.Text=$"Número válido · Generación {anio}\nSemestre de destino: {semestre}.º | Agosto–diciembre 2026";
+            informacion.Text=$"Número válido · Generación {anio}\nDestino: {semestreValidado}.º semestre | Agosto–diciembre 2026";
             resultado.Text="Completa los datos del alumno y selecciona el grupo.";
             foreach(var tb in new[]{nombre,paterno,materno})tb.Enabled=true;
             RefrescarGrupos();
             nombre.Focus();
         }
         catch(Exception ex){informacion.ForeColor=Color.DarkRed;informacion.Text=ex.Message;}
+    }
+
+    private void CambiarSemestre()
+    {
+        if(semestres.SelectedItem is not Choice seleccionado || string.IsNullOrWhiteSpace(controlValidado))return;
+        try
+        {
+            RepositorioReinscripcionDemo.ValidarSemestre(controlValidado,seleccionado.Id);
+            semestreValidado=seleccionado.Id;
+            informacion.Text=$"Número válido · Generación {controlValidado[..4]}\nDestino: {semestreValidado}.º semestre | Agosto–diciembre 2026";
+            resultado.Text=semestreValidado==2 && controlValidado.StartsWith("2025")
+                ? "Segundo semestre (repetidor). Completa los datos y selecciona el grupo."
+                : "Completa los datos del alumno y selecciona el grupo.";
+            RefrescarGrupos();
+        }
+        catch(Exception ex){guardar.Enabled=false;Problems.Show(ex);}
     }
 
     private void RefrescarGrupos()
@@ -208,7 +251,7 @@ internal sealed class ReinscripcionForm : Form
         try
         {
             guardar.Enabled=false;
-            RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id);
+            RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado);
             MessageBox.Show(this,$"Reinscripción de demostración guardada.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
                 "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
             LimpiarCaptura();control.Clear();control.Focus();
