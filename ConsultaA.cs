@@ -5,10 +5,13 @@ namespace AMBAR.Semana4;
 public partial class ConsultaA : Form
 {
     private Sesion actor = null!;
+    private bool ordenAscendente = true;
+    private readonly Button ordenarControl = new();
 
     public ConsultaA()
     {
         InitializeComponent();
+        PrepararOrden();
 
     }
 
@@ -28,6 +31,31 @@ public partial class ConsultaA : Form
         if (DesignMode || System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
         if (actor is null) { Close(); return; }
         LoadData();
+    }
+
+    private void PrepararOrden()
+    {
+        ordenarControl.Name="ordenarControl";
+        ordenarControl.Text="No. control ↑";
+        ordenarControl.AccessibleName="Invertir orden por número de control";
+        ordenarControl.Font=new Font("Segoe UI",9F,FontStyle.Bold);
+        ordenarControl.Size=new Size(135,36);
+        ordenarControl.Location=new Point(1035,20);
+        ordenarControl.Anchor=AnchorStyles.Top|AnchorStyles.Right;
+        ordenarControl.BackColor=Color.FromArgb(6,55,99);
+        ordenarControl.ForeColor=Color.White;
+        ordenarControl.FlatStyle=FlatStyle.Flat;
+        ordenarControl.FlatAppearance.BorderSize=0;
+        ordenarControl.Cursor=Cursors.Hand;
+        ordenarControl.Click+=(_,_)=>
+        {
+            ordenAscendente=!ordenAscendente;
+            ordenarControl.Text=ordenAscendente?"No. control ↑":"No. control ↓";
+            LoadData();
+        };
+        searchBar.Controls.Add(ordenarControl);
+        searchBar.Resize+=(_,_)=>ordenarControl.Left=Math.Max(740,searchBar.ClientSize.Width-ordenarControl.Width-25);
+        ordenarControl.Left=Math.Max(740,searchBar.ClientSize.Width-ordenarControl.Width-25);
     }
 
     private void MenuButton_Click(object? sender, EventArgs e) => Close();
@@ -50,7 +78,7 @@ public partial class ConsultaA : Form
     {
         try
         {
-            DataTable data = RepositorioAlumnos.ListStudents(actor, filter.Text);
+            DataTable data = RepositorioAlumnos.ListStudents(actor, filter.Text, ordenAscendente);
             grid.DataSource = data;
             count.Text = $"Registros: {data.Rows.Count}";
         }
