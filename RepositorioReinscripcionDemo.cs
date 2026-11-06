@@ -20,9 +20,34 @@ internal static class RepositorioReinscripcionDemo
         return numero[..4] switch
         {
             "2025"=>(2025,3),
-            "2024"=>(2024,5),
-            _=>throw new ArgumentException("Para agosto-diciembre 2026 solo se permiten generaciones 2025 (3.º) y 2024 (5.º).")
+            "2026"=>(2026,2),
+            _=>throw new ArgumentException("Para agosto-diciembre 2026 solo se permiten generaciones 2026 (2.º) y 2025 (3.º).")
         };
+    }
+
+    // Impide reinscribir a quien acaba de inscribirse a primer semestre en el periodo actual.
+    public static void VerificarNoPrimerSemestre(Sesion actor,string numero)
+    {
+        if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Sin permiso.");
+        using var c=Db.Connect();Identidad.RequireActive(c,null,actor);
+        VerificarNoPrimerSemestre(c,null,numero);
+    }
+
+    private static void VerificarNoPrimerSemestre(MySqlConnection c,MySqlTransaction? tx,string numero)
+    {
+        using var cmd=Db.Sql(c,"""
+            SELECT COUNT(*) FROM Inscripcion i
+            JOIN Grupo g ON g.ID_grupo=i.ID_grupo
+            JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
+            JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
+            WHERE i.Numero_control=@control
+              AND UPPER(i.estatus)='INSCRITO'
+              AND s.numero_semestre=1
+              AND pe.nombre_periodo=@periodo
+            """,tx);
+        Db.Param(cmd,"@control",numero);Db.Param(cmd,"@periodo",Periodo);
+        if(Convert.ToInt32(cmd.ExecuteScalar())>0)
+            throw new ArgumentException("El alumno ya está inscrito en primer semestre durante agosto–diciembre 2026; no puede reinscribirse en el mismo periodo.");
     }
 
     public static ReinscripcionDemo? Existente(Sesion actor,string numero)
@@ -44,7 +69,7 @@ internal static class RepositorioReinscripcionDemo
 
     public static List<Choice> Grupos(Sesion actor,int semestre)
     {
-        if(semestre is not (3 or 5))throw new ArgumentException("Semestre inválido.");
+        if(semestre is not (2 or 3))throw new ArgumentException("Semestre inválido.");
         if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Sin permiso.");
         using var c=Db.Connect();Identidad.RequireActive(c,null,actor);
         using var cmd=Db.Sql(c,"""
@@ -78,6 +103,7 @@ internal static class RepositorioReinscripcionDemo
         using var c=Db.Connect();
         using var tx=c.BeginTransaction(IsolationLevel.ReadCommitted);
         Identidad.RequireActive(c,tx,actor);
+        VerificarNoPrimerSemestre(c,tx,numero);
         using(var gate=Db.Sql(c,"SELECT id FROM Control_Identidad WHERE id=1 FOR UPDATE",tx))
             if(gate.ExecuteScalar() is null)throw new InvalidOperationException("Ejecuta el script de migración 06.");
         using(var existe=Db.Sql(c,"""
