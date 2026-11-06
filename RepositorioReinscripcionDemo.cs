@@ -25,6 +25,13 @@ internal static class RepositorioReinscripcionDemo
         };
     }
 
+    public static void ValidarSemestre(string numero,int semestre)
+    {
+        var (anio,_) = Inferir(numero);
+        if ((anio==2026 && semestre!=2) || (anio==2025 && semestre is not (2 or 3)))
+            throw new ArgumentException("Semestre de destino incompatible con la generación. 2026: solo 2.º; 2025: 2.º o 3.º.");
+    }
+
     // Impide reinscribir a quien acaba de inscribirse a primer semestre en el periodo actual.
     public static void VerificarNoPrimerSemestre(Sesion actor,string numero)
     {
@@ -92,11 +99,12 @@ internal static class RepositorioReinscripcionDemo
         return items;
     }
 
-    public static void Guardar(Sesion actor,string numero,string nombre,string paterno,string materno,int grupo)
+    public static void Guardar(Sesion actor,string numero,string nombre,string paterno,string materno,int grupo,int semestre)
     {
         if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Sin permiso.");
         numero=numero.Trim();
-        var (anio,semestre)=Inferir(numero);
+        var (anio,_) = Inferir(numero);
+        ValidarSemestre(numero,semestre);
         nombre=Validation.Name(nombre,"nombre",60);
         paterno=Validation.Name(paterno,"apellido paterno");
         materno=Validation.Name(materno,"apellido materno");
