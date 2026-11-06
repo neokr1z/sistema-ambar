@@ -20,7 +20,7 @@ internal sealed class ReinscripcionForm : Form
         actor=session;
         Text=(actor.IsAdmin?"Administrador":"Secretaría")+" | Reinscripción";
         StartPosition=FormStartPosition.CenterParent;
-        MinimumSize=new Size(860,620);ClientSize=new Size(1090,710);
+        MinimumSize=new Size(990,620);ClientSize=new Size(1090,710);
         BackColor=Color.White;
         Font=new Font("Segoe UI",10F);
         NavegacionEnter.Instalar(this);
@@ -108,6 +108,7 @@ internal sealed class ReinscripcionForm : Form
             consulta=datos;
             identificacion.Text=$"{datos.Alumno} | {datos.Control}\n{datos.Carrera} | {datos.SemestreAnterior}.º → {datos.SemestreDestino}.º semestre";
             calificaciones.DataSource=datos.Calificaciones;
+            foreach(DataGridViewRow fila in calificaciones.Rows) fila.Height=32;
             if(calificaciones.Columns.Contains("Calificación"))
                 calificaciones.Columns["Calificación"].DefaultCellStyle.Format="N2";
             estado.ForeColor=datos.PuedeReinscribir?Color.DarkGreen:Color.DarkRed;
