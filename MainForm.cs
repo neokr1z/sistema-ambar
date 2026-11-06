@@ -269,6 +269,11 @@ public partial class MainForm : Form
                 "AND UPPER(i.estatus)='INSCRITO' " +
                 "AND p.nombre_periodo='Agosto-Diciembre 2026'"
             );
+            // Registros del módulo autónomo para pruebas; separados de Inscripción.
+            using (var demo=Db.Sql(c,
+                "SELECT COUNT(*) FROM Reinscripcion_Demostracion " +
+                "WHERE UPPER(estatus)='INSCRITO' AND periodo='Agosto-Diciembre 2026'"))
+                renewals.Text=(Convert.ToInt32(renewals.Text)+Convert.ToInt32(demo.ExecuteScalar())).ToString();
 
         }
         catch

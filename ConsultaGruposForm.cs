@@ -46,12 +46,16 @@ internal sealed class ConsultaGruposForm : Form
             using var cmd=Db.Sql(conexion,"""
                 SELECT g.ID_grupo AS Id, g.nombre_grupo AS Grupo,
                   pe.nombre_periodo AS Periodo, g.Capacidad AS Capacidad,
-                  COUNT(DISTINCT CASE WHEN UPPER(i.estatus)='INSCRITO' THEN i.Numero_control END) AS Inscritos,
-                  GREATEST(0,g.Capacidad-COUNT(DISTINCT CASE WHEN UPPER(i.estatus)='INSCRITO' THEN i.Numero_control END)) AS Disponibles
+                  (COUNT(DISTINCT CASE WHEN UPPER(i.estatus)='INSCRITO' THEN i.Numero_control END)
+                   +COUNT(DISTINCT CASE WHEN UPPER(r.estatus)='INSCRITO' THEN r.numero_control END)) AS Inscritos,
+                  GREATEST(0,g.Capacidad
+                   -COUNT(DISTINCT CASE WHEN UPPER(i.estatus)='INSCRITO' THEN i.Numero_control END)
+                   -COUNT(DISTINCT CASE WHEN UPPER(r.estatus)='INSCRITO' THEN r.numero_control END)) AS Disponibles
                 FROM Grupo g
                 JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
                 JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
                 LEFT JOIN Inscripcion i ON i.ID_grupo=g.ID_grupo
+                LEFT JOIN Reinscripcion_Demostracion r ON r.ID_grupo=g.ID_grupo
                 WHERE ((@reinscripcion=1 AND s.numero_semestre IN (3,5))
                    OR (@reinscripcion=0 AND s.numero_semestre=1 AND g.habilitado_fichas=1))
                   AND pe.nombre_periodo='Agosto-Diciembre 2026'
