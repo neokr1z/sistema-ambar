@@ -88,13 +88,8 @@ internal static class RepositorioReinscripcionDemo
             if(Convert.ToInt32(existe.ExecuteScalar())>0)
                 throw new ArgumentException("Este número de control ya está reinscrito en la demostración.");
         }
-        // Evita reutilizar el número de una cuenta real existente, incluso si no está en la demo.
-        using(var existe=Db.Sql(c,"SELECT COUNT(*) FROM Alumno WHERE Numero_control=@control",tx))
-        {
-            Db.Param(existe,"@control",numero);
-            if(Convert.ToInt32(existe.ExecuteScalar())>0)
-                throw new ArgumentException("Este número de control ya pertenece a un alumno registrado. No se sobrescribirá ni duplicará; usa otro número para la demostración.");
-        }
+        // Se conserva intacto cualquier expediente previo en Alumno.
+        // Esta tabla independiente solo guarda una prueba del número validado.
         int capacidad;
         using(var cmd=Db.Sql(c,"""
             SELECT g.Capacidad FROM Grupo g
