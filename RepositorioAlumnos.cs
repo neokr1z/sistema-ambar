@@ -175,7 +175,7 @@ internal static class RepositorioAlumnos
         return d.Control;
     }
 
-    public static DataTable ListStudents(Sesion session,string filter)
+    public static DataTable ListStudents(Sesion session,string filter,bool ascendente=true)
     {
         if(!session.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
         var t=new DataTable();
@@ -192,9 +192,11 @@ internal static class RepositorioAlumnos
             WHERE (@admin=1 OR UPPER(a.estatus)<>'OCULTO')
                 AND (@filter='' OR a.Numero_control LIKE @like OR a.nombre LIKE @like
                     OR a.apellido_paterno LIKE @like OR a.curp LIKE @like)
-            ORDER BY a.apellido_paterno,a.apellido_materno,a.nombre
+            ORDER BY CASE WHEN @ascendente=1 THEN a.Numero_control END ASC,
+                     CASE WHEN @ascendente=0 THEN a.Numero_control END DESC
             """);
         Db.Param(cmd,"@admin",session.IsAdmin?1:0);
+        Db.Param(cmd,"@ascendente",ascendente?1:0);
         Db.Param(cmd,"@filter",filter.Trim()); Db.Param(cmd,"@like","%"+filter.Trim()+"%");
         using var reader=cmd.ExecuteReader();
         t.Load(reader);

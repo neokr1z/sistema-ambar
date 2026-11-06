@@ -6,23 +6,25 @@ namespace AMBAR.Semana4;
 internal sealed class ConsultaGruposForm : Form
 {
     private readonly Sesion actor;
+    private readonly bool reinscripcion;
     private readonly DataGridView tabla = new();
     private readonly Label resumen = new();
     private readonly Button lista = new();
-    internal ConsultaGruposForm(Sesion sesion)
+    internal ConsultaGruposForm(Sesion sesion, bool paraReinscripcion = false)
     {
         if (!sesion.CanSeeStudents) throw new UnauthorizedAccessException("Sin permiso para consultar los grupos.");
         actor=sesion;
-        Text="AMBAR | Grupos de primer semestre";
+        reinscripcion=paraReinscripcion;
+        Text=reinscripcion ? "AMBAR | Grupos de reinscripción" : "AMBAR | Grupos de primer semestre";
         StartPosition=FormStartPosition.CenterParent;
         ClientSize=new Size(850,510);
         MinimumSize=new Size(700,440);
         BackColor=Color.White;
         Font=new Font("Segoe UI",10F);
-        var titulo=new Label {Text="GRUPOS | PRIMER SEMESTRE",Dock=DockStyle.Top,Height=65,Font=new Font("Segoe UI",17F,FontStyle.Bold),ForeColor=Color.FromArgb(6,55,99),Padding=new Padding(20,14,0,0)};
+        var titulo=new Label {Text=reinscripcion ? "GRUPOS | TERCER Y QUINTO SEMESTRE" : "GRUPOS | PRIMER SEMESTRE",Dock=DockStyle.Top,Height=65,Font=new Font("Segoe UI",17F,FontStyle.Bold),ForeColor=Color.FromArgb(6,55,99),Padding=new Padding(20,14,0,0)};
         resumen.Text="Seleccione un grupo para consultar alumnos y generar el PDF.";
         resumen.Dock=DockStyle.Top; resumen.Height=44;resumen.Padding=new Padding(20,10,0,0);
-        tabla.Dock=DockStyle.Fill;tabla.ReadOnly=true;tabla.MultiSelect=false;tabla.SelectionMode=DataGridViewSelectionMode.FullRowSelect;tabla.AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.Fill;tabla.AllowUserToAddRows=false;tabla.RowHeadersVisible=false;
+        tabla.Dock=DockStyle.Fill;tabla.ReadOnly=true;tabla.AllowUserToResizeRows=false;tabla.AllowUserToOrderColumns=false;tabla.MultiSelect=false;tabla.SelectionMode=DataGridViewSelectionMode.FullRowSelect;tabla.AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.Fill;tabla.AllowUserToAddRows=false;tabla.RowHeadersVisible=false;
         var acciones=new FlowLayoutPanel{Dock=DockStyle.Bottom,Height=68,FlowDirection=FlowDirection.RightToLeft,Padding=new Padding(12)};
         Button Create(string name,EventHandler click)
         {
@@ -50,11 +52,13 @@ internal sealed class ConsultaGruposForm : Form
                 JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
                 JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
                 LEFT JOIN Inscripcion i ON i.ID_grupo=g.ID_grupo
-                WHERE s.numero_semestre=1 AND g.habilitado_fichas=1
+                WHERE ((@reinscripcion=1 AND s.numero_semestre IN (3,5))
+                   OR (@reinscripcion=0 AND s.numero_semestre=1 AND g.habilitado_fichas=1))
                   AND pe.nombre_periodo='Agosto-Diciembre 2026'
                 GROUP BY g.ID_grupo,g.nombre_grupo,pe.nombre_periodo,g.Capacidad
                 ORDER BY g.nombre_grupo
                 """);
+            Db.Param(cmd,"@reinscripcion",reinscripcion ? 1 : 0);
             using var rd=cmd.ExecuteReader();
             var datos=new DataTable();datos.Load(rd);
             tabla.DataSource=datos;
