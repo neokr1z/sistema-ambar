@@ -72,16 +72,16 @@ internal sealed class ReinscripcionForm : Form
 
         var actions=new FlowLayoutPanel{Dock=DockStyle.Bottom,Height=94,Padding=new Padding(20,18,20,10),
             FlowDirection=FlowDirection.RightToLeft,WrapContents=false};
-        var cerrar=Boton("Cerrar",140);cerrar.Click+=(_,_)=>Close();
-        var verGrupos=Boton("Grupos",130);
+        var cerrar=Boton("Cerrar",105);cerrar.Click+=(_,_)=>Close();
+        var verGrupos=Boton("Grupos",115);
         verGrupos.Click+=(_,_)=>{using var ventana=new ConsultaGruposForm(actor, true);ventana.ShowDialog(this);BuscarSiHayAlumno();};
-        guardar=Boton("Confirmar reinscripción",240);guardar.Enabled=false;guardar.Click+=(_,_)=>Guardar();
-        grupos.DropDownStyle=ComboBoxStyle.DropDownList;grupos.Width=360;grupos.Height=38;grupos.TabIndex=2;
+        guardar=Boton("Confirmar reinscripción",225);guardar.Enabled=false;guardar.Click+=(_,_)=>Guardar();
+        grupos.DropDownStyle=ComboBoxStyle.DropDownList;grupos.Width=310;grupos.Height=38;grupos.TabIndex=2;
         actions.Controls.Add(cerrar);
         actions.Controls.Add(verGrupos);
         actions.Controls.Add(guardar);
         actions.Controls.Add(grupos);
-        actions.Controls.Add(new Label{Text="Grupo de destino",Width=145,Height=38,TextAlign=ContentAlignment.MiddleLeft,ForeColor=Color.FromArgb(6,55,99)});
+        actions.Controls.Add(new Label{Text="Grupo de destino",Width=125,Height=38,TextAlign=ContentAlignment.MiddleLeft,ForeColor=Color.FromArgb(6,55,99)});
 
         Controls.Add(calificaciones);
         Controls.Add(subtitulo);Controls.Add(info);Controls.Add(searchRow);Controls.Add(title);Controls.Add(actions);
