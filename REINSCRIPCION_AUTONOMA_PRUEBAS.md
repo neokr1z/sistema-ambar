@@ -5,13 +5,13 @@
 ## Preparar base de datos
 Ejecutar en MySQL Workbench:
 1. Scripts previos de AMBAR, incluyendo `06_validaciones_y_personal.sql` y `07_grupos_y_fichas_2026.sql` (creación de grupos de 3.º y 5.º).
-2. **`Sql/16_reinscripcion_autonoma.sql`**, y a continuación **`Sql/18_reinscripcion_2026_semestres_1_2_3.sql`** para crear los grupos de segundo semestre y actualizar la restricción de generaciones. Este último respalda los datos de demostración de 2024 antes de quitarlos de la tabla activa.
+2. **`Sql/16_reinscripcion_autonoma.sql`**, y a continuación **`Sql/18_reinscripcion_2026_semestres_1_2_3.sql`** para crear los grupos de segundo semestre, seguido de **`Sql/19_reinscripcion_repetidores_2025.sql`** para permitir que la generación 2025 repita 2.º o avance a 3.º. Este último respalda los datos de demostración de 2024 antes de quitarlos de la tabla activa.
 3. Abrir la rama `feature/reinscripcion-autonoma-pruebas-2026` y compilar en Visual Studio.
 
 No hay que ejecutar los scripts 13, 14 o 15 para probar esta modalidad autónoma.
 
 ## Probar el formulario
-- `2025000001`: número de 10 dígitos, comienza con 2025 → **3.º semestre**.
+- `2025000001`: generación 2025 → elegir **2.º (repetidor)** o **3.º (regular)**.
 - `2026000001`: comienza con 2026 → **2.º semestre**, salvo que tenga inscripción activa en primero en el mismo periodo.
 - `2024000001`: rechazar (generación no incluida en este ejercicio).
 - `2025ABC001`: rechazar (no son 10 dígitos numéricos).
@@ -25,9 +25,12 @@ Desde **Reinscripción → Grupos / PDF**, seleccionar grupo 2ISC1/2ISC2 o 3ISC1
 Los registros de demostración se muestran con estatus `DEMO`. El horario viene del grupo: los nombres de docente `NULL` se muestran vacíos.
 
 ## Alcance importante
-Esta funcionalidad es una **demostración autónoma**. La interpretación `2025 → 3.º` y `2026 → 2.º` es una regla simplificada para el periodo agosto–diciembre 2026; no acredita identidad ni materias aprobadas. Los expedientes reales de `Alumno` y el flujo anterior de inscripción permanecen intactos. El contador principal incluye los registros de demostración, pero `Consulta de alumnos` continúa mostrando exclusivamente los expedientes reales.
+Esta funcionalidad es una **demostración autónoma**. La interpretación `2025 → 2.º o 3.º` y `2026 → 2.º` es una regla simplificada para el periodo agosto–diciembre 2026; no acredita identidad ni materias aprobadas. Los expedientes reales de `Alumno` y el flujo anterior de inscripción permanecen intactos. El contador principal incluye los registros de demostración, pero `Consulta de alumnos` continúa mostrando exclusivamente los expedientes reales.
 
 El script SQL crea la tabla nueva `Reinscripcion_Demostracion` para separar el flujo de pruebas.
 
 ## Regla importante de primer semestre
 Si un número tiene inscripción activa de primer semestre en `Agosto-Diciembre 2026`, el módulo lo rechaza tanto al validar como al guardar, aunque comience con 2026. El segundo semestre se crea con dos grupos sin horarios de referencia, hasta que se proporcionen horarios reales. No inventar horarios.
+
+## Ajuste del pizarrón (Semana 6)
+Para generación 2025, quien opera decide si reinscribe a 2.º semestre como repetidor o a 3.º como regular. Para generación 2026, el único semestre de destino es 2.º. Se conserva el bloqueo si el número ya tiene una inscripción activa de 1.º durante agosto–diciembre 2026. El formulario consulta grupos y horarios según el semestre elegido, y el repositorio vuelve a validar antes de guardar. Ejecutar script 19 después de 18 para actualizar CHECK sin eliminar registros.
