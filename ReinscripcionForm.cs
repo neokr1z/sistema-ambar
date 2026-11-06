@@ -61,13 +61,24 @@ internal sealed class ReinscripcionForm : Form
         calificaciones.MultiSelect=false;calificaciones.AllowUserToAddRows=false;
         calificaciones.RowHeadersVisible=false;calificaciones.BackgroundColor=Color.White;
         calificaciones.BorderStyle=BorderStyle.None;
+        // La tabla es de solo consulta; las filas conservan su altura.
+        calificaciones.AllowUserToResizeRows=false;
+        calificaciones.AllowUserToOrderColumns=false;
+        calificaciones.AutoSizeRowsMode=DataGridViewAutoSizeRowsMode.None;
+        calificaciones.RowTemplate.Height=32;
+        calificaciones.AllowUserToResizeColumns=false;
+        calificaciones.ColumnHeadersHeightSizeMode=DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+        calificaciones.ColumnHeadersHeight=38;
 
         var actions=new FlowLayoutPanel{Dock=DockStyle.Bottom,Height=94,Padding=new Padding(20,18,20,10),
             FlowDirection=FlowDirection.RightToLeft,WrapContents=false};
         var cerrar=Boton("Cerrar",140);cerrar.Click+=(_,_)=>Close();
+        var verGrupos=Boton("Grupos",130);
+        verGrupos.Click+=(_,_)=>{using var ventana=new ConsultaGruposForm(actor, true);ventana.ShowDialog(this);BuscarSiHayAlumno();};
         guardar=Boton("Confirmar reinscripción",240);guardar.Enabled=false;guardar.Click+=(_,_)=>Guardar();
         grupos.DropDownStyle=ComboBoxStyle.DropDownList;grupos.Width=360;grupos.Height=38;grupos.TabIndex=2;
         actions.Controls.Add(cerrar);
+        actions.Controls.Add(verGrupos);
         actions.Controls.Add(guardar);
         actions.Controls.Add(grupos);
         actions.Controls.Add(new Label{Text="Grupo de destino",Width=145,Height=38,TextAlign=ContentAlignment.MiddleLeft,ForeColor=Color.FromArgb(6,55,99)});
@@ -115,6 +126,11 @@ internal sealed class ReinscripcionForm : Form
             }
         }
         catch(Exception ex){Problems.Show(ex);}
+    }
+
+    private void BuscarSiHayAlumno()
+    {
+        if(!string.IsNullOrWhiteSpace(control.Text) && consulta is not null)Buscar();
     }
 
     private void Guardar()
