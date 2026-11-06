@@ -148,6 +148,7 @@ internal sealed class ReinscripcionForm : Form
         {
             string numero=control.Text.Trim();
             var (anio,semestre)=RepositorioReinscripcionDemo.Inferir(numero);
+            RepositorioReinscripcionDemo.VerificarNoPrimerSemestre(actor,numero);
             var anterior=RepositorioReinscripcionDemo.Existente(actor,numero);
             if(anterior!=null)
             {
