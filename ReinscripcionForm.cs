@@ -187,16 +187,16 @@ internal sealed class ReinscripcionForm : Form
         {
             string numero=control.Text.Trim();
             var (anio,semestre)=RepositorioReinscripcionDemo.Inferir(numero);
-            RepositorioReinscripcionDemo.VerificarNoPrimerSemestre(actor,numero);
+            RepositorioReinscripcionDemo.VerificarDisponible(actor,numero);
             var anterior=RepositorioReinscripcionDemo.Existente(actor,numero);
             if(anterior!=null)
             {
                 informacion.ForeColor=Color.DarkRed;
-                informacion.Text=$"El número {numero} ya se registró en la demostración.\nGrupo: {anterior.GrupoNombre} · {anterior.Semestre}.º semestre.";
-                resultado.Text="No se permitirá volver a registrarlo.";
+                informacion.Text=$"El número {numero} ya está registrado en el historial anterior.\nGrupo: {anterior.GrupoNombre} · {anterior.Semestre}.º semestre.";
+                resultado.Text="No se duplicará el registro. Para integrarlo al expediente hay que completar sus datos.";
                 return;
             }
-            // No existe en la BD es válido: los campos comienzan vacíos.
+            var alumnoExistente=RepositorioReinscripcionDemo.BuscarAlumno(actor,numero);
             controlValidado=numero;
             if(anio==2025)
             {
@@ -209,8 +209,19 @@ internal sealed class ReinscripcionForm : Form
             semestreValidado=(semestres.SelectedItem as Choice)?.Id??semestre;
             informacion.ForeColor=Color.DarkGreen;
             informacion.Text=$"Número válido · Generación {anio}\nDestino: {semestreValidado}.º semestre | Agosto–diciembre 2026";
-            resultado.Text="Completa los datos del alumno y selecciona el grupo.";
-            foreach(var tb in new[]{nombre,paterno,materno})tb.Enabled=true;
+            resultado.Text=alumnoExistente is null ? "Completa los datos del alumno y selecciona el grupo." : "Expediente encontrado: verifica la información y selecciona el grupo.";
+            foreach(var tb in new[]{nombre,paterno,materno,curp,correo,emergencia})tb.Enabled=alumnoExistente is null;
+            nacimiento.Enabled=alumnoExistente is null;
+            if(alumnoExistente is not null)
+            {
+                nombre.Text=alumnoExistente.Nombre;
+                paterno.Text=alumnoExistente.Paterno;
+                materno.Text=alumnoExistente.Materno;
+                curp.Text=alumnoExistente.Curp;
+                correo.Text=alumnoExistente.Correo;
+                emergencia.Text=alumnoExistente.Emergencia;
+                nacimiento.Value=alumnoExistente.Nacimiento;
+            }
             RefrescarGrupos();
             nombre.Focus();
         }
@@ -272,8 +283,8 @@ internal sealed class ReinscripcionForm : Form
         try
         {
             guardar.Enabled=false;
-            RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado);
-            MessageBox.Show(this,$"Reinscripción de demostración guardada.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
+            RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado,curp.Text,nacimiento.Value,correo.Text,emergencia.Text);
+            MessageBox.Show(this,$"Reinscripción registrada en la base de datos.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
                 "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
             LimpiarCaptura();control.Clear();control.Focus();
         }
