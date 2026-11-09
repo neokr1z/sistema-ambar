@@ -10,6 +10,10 @@ internal sealed class ReinscripcionForm : Form
     private readonly TextBox nombre = new();
     private readonly TextBox paterno = new();
     private readonly TextBox materno = new();
+    private readonly TextBox curp = new();
+    private readonly TextBox correo = new();
+    private readonly TextBox emergencia = new();
+    private readonly DateTimePicker nacimiento = new();
     private readonly Label resultado = new();
     private readonly Label informacion = new();
     private readonly ComboBox grupos = new();
@@ -65,13 +69,27 @@ internal sealed class ReinscripcionForm : Form
             Text="DATOS DEL ALUMNO",Dock=DockStyle.Top,Height=47,
             Font=new Font("Segoe UI",14F,FontStyle.Bold),ForeColor=Theme.Blue
         };
-        var campos=new TableLayoutPanel{Dock=DockStyle.Top,Height=170,ColumnCount=2,RowCount=3};
+        var campos=new TableLayoutPanel{Dock=DockStyle.Top,Height=365,ColumnCount=2,RowCount=7};
         campos.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,25));
         campos.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,75));
         AgregarCampo(campos,0,"Nombre(s)",nombre);
         AgregarCampo(campos,1,"Apellido paterno",paterno);
         AgregarCampo(campos,2,"Apellido materno",materno);
-        foreach(var tb in new[]{nombre,paterno,materno}){tb.Enabled=false;tb.MaxLength=60;tb.Font=new Font("Segoe UI",11F);}
+        AgregarCampo(campos,3,"CURP",curp);
+        AgregarCampo(campos,4,"Correo institucional",correo);
+        AgregarCampo(campos,5,"Teléfono emergencia",emergencia);
+        campos.RowStyles.Add(new RowStyle(SizeType.Absolute,52));
+        campos.Controls.Add(new Label{Text="Fecha de nacimiento",Dock=DockStyle.Fill,
+            TextAlign=ContentAlignment.MiddleLeft,ForeColor=Theme.Blue,
+            Font=new Font("Segoe UI",10F,FontStyle.Bold)},0,6);
+        nacimiento.Dock=DockStyle.Fill;nacimiento.Format=DateTimePickerFormat.Short;
+        nacimiento.MinDate=new DateTime(1926,1,1);nacimiento.MaxDate=DateTime.Today.AddDays(-1);
+        nacimiento.Value=new DateTime(2005,1,1);
+        nacimiento.Margin=new Padding(4,7,28,10);
+        campos.Controls.Add(nacimiento,1,6);
+        foreach(var tb in new[]{nombre,paterno,materno,curp,correo,emergencia})
+        {tb.Enabled=false;tb.MaxLength=120;tb.Font=new Font("Segoe UI",11F);}
+        curp.MaxLength=18;emergencia.MaxLength=25;nacimiento.Enabled=false;
 
         var seleccionar=new FlowLayoutPanel
         {
@@ -153,10 +171,12 @@ internal sealed class ReinscripcionForm : Form
         semestreValidado=0;
         informacion.Text="";
         resultado.Text="";
-        nombre.Clear();paterno.Clear();materno.Clear();
+        nombre.Clear();paterno.Clear();materno.Clear();curp.Clear();correo.Clear();emergencia.Clear();
+        nacimiento.Value=new DateTime(2005,1,1);nacimiento.Enabled=false;
         grupos.Items.Clear();grupos.Enabled=false;guardar.Enabled=false;horario.Enabled=false;
         semestres.Items.Clear();semestres.Enabled=false;
-        foreach(var tb in new[]{nombre,paterno,materno})tb.Enabled=false;
+        foreach(var tb in new[]{nombre,paterno,materno,curp,correo,emergencia})tb.ReadOnly=false;
+        foreach(var tb in new[]{nombre,paterno,materno,curp,correo,emergencia})tb.Enabled=false;
     }
 
     private void ValidarNumero()
@@ -166,7 +186,7 @@ internal sealed class ReinscripcionForm : Form
         {
             string numero=control.Text.Trim();
             var (anio,semestre)=RepositorioReinscripcionDemo.Inferir(numero);
-            RepositorioReinscripcionDemo.VerificarNoPrimerSemestre(actor,numero);
+            RepositorioReinscripcionDemo.VerificarDisponible(actor,numero);
             var anterior=RepositorioReinscripcionDemo.Existente(actor,numero);
             if(anterior!=null)
             {
@@ -175,7 +195,8 @@ internal sealed class ReinscripcionForm : Form
                 resultado.Text="No se permitirá volver a registrarlo.";
                 return;
             }
-            // No existe en la BD es válido: los campos comienzan vacíos.
+            var existente=RepositorioReinscripcionDemo.BuscarAlumno(actor,numero);
+            // El alumno no tiene que estar precargado, pero si existe se reutiliza su identidad.
             controlValidado=numero;
             if(anio==2025)
             {
@@ -189,7 +210,19 @@ internal sealed class ReinscripcionForm : Form
             informacion.ForeColor=Color.DarkGreen;
             informacion.Text=$"Número válido · Generación {anio}\nDestino: {semestreValidado}.º semestre | Agosto–diciembre 2026";
             resultado.Text="Completa los datos del alumno y selecciona el grupo.";
-            foreach(var tb in new[]{nombre,paterno,materno})tb.Enabled=true;
+            foreach(var tb in new[]{nombre,paterno,materno,curp,correo,emergencia})tb.Enabled=true;
+            nacimiento.Enabled=true;
+            if(existente is not null)
+            {
+                nombre.Text=existente.Nombre;paterno.Text=existente.Paterno;materno.Text=existente.Materno;
+                curp.Text=existente.Curp;correo.Text=existente.Correo;emergencia.Text=existente.Emergencia;
+                nacimiento.Value=existente.Nacimiento.Date;
+                foreach(var tb in new[]{nombre,paterno,materno,curp,correo,emergencia})tb.ReadOnly=true;
+                nacimiento.Enabled=false;
+                resultado.Text="Alumno existente en la base de datos. Se reutilizará su expediente.";
+            }
+            else
+                foreach(var tb in new[]{nombre,paterno,materno,curp,correo,emergencia})tb.ReadOnly=false;
             RefrescarGrupos();
             nombre.Focus();
         }
@@ -251,8 +284,8 @@ internal sealed class ReinscripcionForm : Form
         try
         {
             guardar.Enabled=false;
-            RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado);
-            MessageBox.Show(this,$"Reinscripción de demostración guardada.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
+            RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado,curp.Text,nacimiento.Value,correo.Text,emergencia.Text);
+            MessageBox.Show(this,$"Reinscripción guardada en MySQL.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
                 "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
             LimpiarCaptura();control.Clear();control.Focus();
         }
