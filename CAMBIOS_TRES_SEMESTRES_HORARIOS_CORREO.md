@@ -34,28 +34,9 @@ SELECT * FROM vw_AMBAR_Alumnos_Semestre_3 ORDER BY numero_control;
 
 Son **vistas**, no tablas duplicadas; muestran la información actual de `Alumno/Inscripcion` y `Reinscripcion_Demostracion` sin copiar expedientes.
 
-## Enviar horario por correo
+## Horarios
 
-Después de guardar una reinscripción en el formulario autónomo:
-1. Captura el **correo del alumno**.
-2. Pulsa **Enviar horario** y confirma el destinatario.
-3. AMBAR valida el correo y su dominio con el catálogo local, obtiene el horario del grupo de MySQL, crea un PDF y lo adjunta a un mensaje SMTP.
-
-Para habilitar el envío real, configura cuatro **variables de entorno en Windows** antes de iniciar Visual Studio:
-
-```powershell
-[Environment]::SetEnvironmentVariable("AMBAR_SMTP_HOST","smtp.ejemplo.com","User")
-[Environment]::SetEnvironmentVariable("AMBAR_SMTP_PORT","587","User")
-[Environment]::SetEnvironmentVariable("AMBAR_SMTP_USER","cuenta@ejemplo.com","User")
-[Environment]::SetEnvironmentVariable("AMBAR_SMTP_PASSWORD","CLAVE_DE_APLICACION","User")
-```
-
-Sustituye los ejemplos por el servidor, dirección y contraseña de aplicación de un buzón autorizado. **Nunca guardes contraseñas en GitHub, scripts SQL, capturas o appsettings.json.** Para mayor seguridad, introduce el secreto mediante la configuración de Windows en tu propio equipo. Una cuenta SMTP debe permitir autenticación por contraseña de aplicación y STARTTLS en el puerto seleccionado; si tu proveedor exige OAuth2, la integración debe modificarse para usar ese método.
-
-**Requisitos:** `Sql/12_dominios_correo_local.sql` ejecutado y conectividad al servidor SMTP. La validación del dominio es completamente local y **no verifica que la dirección exista**; el envío necesita red. La modalidad anterior de Inscripción y sus expedientes no cambian.
+Se mantiene el botón **Ver horario** del grupo, sin captura de correo y sin envío SMTP.
 
 ## Limitaciones
-- La cuenta del alumno no se guarda todavía como dato persistente en `Reinscripcion_Demostracion`: se captura antes de enviar el correo.
-- El envío solo está habilitado inmediatamente después de guardar la reinscripción en esa ventana.
-- Los horarios del segundo semestre son propuestos para fines escolares, no horarios oficiales confirmados.
-- La modificación del repositorio no equivale a una compilación o prueba con MySQL/SMTP. Validar en Visual Studio antes de usar con alumnado real.
+- La compilación y las pruebas de MySQL deben verificarse en Windows.
