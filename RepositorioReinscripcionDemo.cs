@@ -143,7 +143,7 @@ internal static class RepositorioReinscripcionDemo
         {
             Db.Param(existe,"@control",numero);
             if(Convert.ToInt32(existe.ExecuteScalar())>0)
-                throw new ArgumentException("Este número de control ya está reinscrito en la demostración.");
+                throw new ArgumentException("Este número de control ya está reinscrito.");
         }
         // El módulo conserva su registro mínimo y no inventa CURP ni domicilio.
         // Bloquea inscripciones activas del mismo periodo, aunque no sean de primero.
