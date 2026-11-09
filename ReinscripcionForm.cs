@@ -10,6 +10,10 @@ internal sealed class ReinscripcionForm : Form
     private readonly TextBox nombre = new();
     private readonly TextBox paterno = new();
     private readonly TextBox materno = new();
+    private readonly TextBox curp = new();
+    private readonly TextBox correo = new();
+    private readonly TextBox emergencia = new();
+    private readonly DateTimePicker nacimiento = new();
     private readonly Label resultado = new();
     private readonly Label informacion = new();
     private readonly ComboBox grupos = new();
@@ -65,13 +69,29 @@ internal sealed class ReinscripcionForm : Form
             Text="DATOS DEL ALUMNO",Dock=DockStyle.Top,Height=47,
             Font=new Font("Segoe UI",14F,FontStyle.Bold),ForeColor=Theme.Blue
         };
-        var campos=new TableLayoutPanel{Dock=DockStyle.Top,Height=170,ColumnCount=2,RowCount=3};
+        var campos=new TableLayoutPanel{Dock=DockStyle.Top,Height=355,ColumnCount=2,RowCount=7};
         campos.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,25));
         campos.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,75));
         AgregarCampo(campos,0,"Nombre(s)",nombre);
         AgregarCampo(campos,1,"Apellido paterno",paterno);
         AgregarCampo(campos,2,"Apellido materno",materno);
-        foreach(var tb in new[]{nombre,paterno,materno}){tb.Enabled=false;tb.MaxLength=60;tb.Font=new Font("Segoe UI",11F);}
+        AgregarCampo(campos,3,"CURP",curp);
+        AgregarCampo(campos,4,"Correo institucional",correo);
+        AgregarCampo(campos,5,"Teléfono de emergencia",emergencia);
+        campos.RowStyles.Add(new RowStyle(SizeType.Percent,100F/7));
+        campos.Controls.Add(new Label{Text="Fecha de nacimiento",Dock=DockStyle.Fill,
+            TextAlign=ContentAlignment.MiddleLeft,ForeColor=Theme.Blue,
+            Font=new Font("Segoe UI",10F,FontStyle.Bold)},0,6);
+        nacimiento.Dock=DockStyle.Fill;
+        nacimiento.Format=DateTimePickerFormat.Short;
+        nacimiento.MinDate=new DateTime(1926,1,1);
+        nacimiento.MaxDate=DateTime.Today.AddDays(-1);
+        nacimiento.Value=new DateTime(2005,1,1);
+        nacimiento.Enabled=false;
+        campos.Controls.Add(nacimiento,1,6);
+        foreach(var tb in new[]{nombre,paterno,materno,curp,correo,emergencia})
+        {tb.Enabled=false;tb.MaxLength=tb==curp?18:tb==emergencia?20:120;tb.Font=new Font("Segoe UI",11F);}
+        curp.CharacterCasing=CharacterCasing.Upper;
 
         var seleccionar=new FlowLayoutPanel
         {
@@ -139,7 +159,7 @@ internal sealed class ReinscripcionForm : Form
     }
     private static void AgregarCampo(TableLayoutPanel panel,int fila,string texto,TextBox campo)
     {
-        panel.RowStyles.Add(new RowStyle(SizeType.Percent,33.33F));
+        panel.RowStyles.Add(new RowStyle(SizeType.Percent,100F/7));
         panel.Controls.Add(new Label{Text=texto,Dock=DockStyle.Fill,
             TextAlign=ContentAlignment.MiddleLeft,ForeColor=Theme.Blue,
             Font=new Font("Segoe UI",10F,FontStyle.Bold)},0,fila);
@@ -153,10 +173,11 @@ internal sealed class ReinscripcionForm : Form
         semestreValidado=0;
         informacion.Text="";
         resultado.Text="";
-        nombre.Clear();paterno.Clear();materno.Clear();
+        nombre.Clear();paterno.Clear();materno.Clear();curp.Clear();correo.Clear();emergencia.Clear();
+        nacimiento.Enabled=false;nacimiento.Value=new DateTime(2005,1,1);
         grupos.Items.Clear();grupos.Enabled=false;guardar.Enabled=false;horario.Enabled=false;
         semestres.Items.Clear();semestres.Enabled=false;
-        foreach(var tb in new[]{nombre,paterno,materno})tb.Enabled=false;
+        foreach(var tb in new[]{nombre,paterno,materno,curp,correo,emergencia})tb.Enabled=false;
     }
 
     private void ValidarNumero()
