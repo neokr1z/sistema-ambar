@@ -14,6 +14,7 @@ public partial class ConsultaA : Form
         InitializeComponent();
         PrepararOrden();
         PrepararSemestres();
+        grid.SelectionChanged+=(_,_)=>ActualizarAcciones();
 
     }
 
@@ -132,7 +133,6 @@ public partial class ConsultaA : Form
             DataTable data = RepositorioConsultaSemestres.Listar(actor,semestre,filter.Text,ordenAscendente);
             grid.DataSource = data;
             grid.Columns["Tipo"].Visible=false;
-            grid.SelectionChanged+=(_,_)=>ActualizarAcciones();
             ActualizarAcciones();
             count.Text = $"Registros: {data.Rows.Count}";
         }
