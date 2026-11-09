@@ -2,7 +2,7 @@
 -- Aplicar tras 06, 07, 16, 18 y 19. Solo se modifica la asignación de docentes
 -- de seis materias preexistentes en primero/tercero y se carga el horario de segundo.
 -- No crea nuevos grupos de 1.º/3.º. El 18 crea 2ISC1 y 2ISC2.
--- Los horarios de segundo son una propuesta didáctica (lunes, miércoles y viernes).
+-- Los horarios de segundo son una propuesta didáctica (lunes a viernes).
 USE AMBAR_Control_Escolar;
 SET NAMES utf8mb4;
 DELIMITER $$
@@ -53,42 +53,66 @@ BEGIN
     SELECT ID_grupo INTO v_grupo FROM Grupo WHERE ID_Periodo=v_periodo AND nombre_grupo='2ISC1' LIMIT 1;
     INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
       (v_grupo,'Cálculo Integral','Lunes','07:00:00','08:00:00','G302','Antonio Rodríguez Román'),
+      (v_grupo,'Cálculo Integral','Martes','07:00:00','08:00:00','G302','Antonio Rodríguez Román'),
       (v_grupo,'Cálculo Integral','Miércoles','07:00:00','08:00:00','G302','Antonio Rodríguez Román'),
+      (v_grupo,'Cálculo Integral','Jueves','07:00:00','08:00:00','G302','Antonio Rodríguez Román'),
       (v_grupo,'Cálculo Integral','Viernes','07:00:00','08:00:00','G302','Antonio Rodríguez Román'),
       (v_grupo,'Programación Orientada a Objetos','Lunes','09:00:00','10:00:00','G302','Juan Miguel Hernández Bravo'),
+      (v_grupo,'Programación Orientada a Objetos','Martes','09:00:00','10:00:00','G302','Juan Miguel Hernández Bravo'),
       (v_grupo,'Programación Orientada a Objetos','Miércoles','09:00:00','10:00:00','G302','Juan Miguel Hernández Bravo'),
+      (v_grupo,'Programación Orientada a Objetos','Jueves','09:00:00','10:00:00','G302','Juan Miguel Hernández Bravo'),
       (v_grupo,'Programación Orientada a Objetos','Viernes','09:00:00','10:00:00','G302','Juan Miguel Hernández Bravo'),
       (v_grupo,'Probabilidad y Estadística','Lunes','10:00:00','11:00:00','G302','Gilberto Vales Ortiz'),
+      (v_grupo,'Probabilidad y Estadística','Martes','10:00:00','11:00:00','G302','Gilberto Vales Ortiz'),
       (v_grupo,'Probabilidad y Estadística','Miércoles','10:00:00','11:00:00','G302','Gilberto Vales Ortiz'),
+      (v_grupo,'Probabilidad y Estadística','Jueves','10:00:00','11:00:00','G302','Gilberto Vales Ortiz'),
       (v_grupo,'Probabilidad y Estadística','Viernes','10:00:00','11:00:00','G302','Gilberto Vales Ortiz'),
       (v_grupo,'Contabilidad Financiera','Lunes','08:00:00','09:00:00','G302','Diana Gozos Guadalupe Peña Guzmán'),
+      (v_grupo,'Contabilidad Financiera','Martes','08:00:00','09:00:00','G302','Diana Gozos Guadalupe Peña Guzmán'),
       (v_grupo,'Contabilidad Financiera','Miércoles','08:00:00','09:00:00','G302','Diana Gozos Guadalupe Peña Guzmán'),
+      (v_grupo,'Contabilidad Financiera','Jueves','08:00:00','09:00:00','G302','Diana Gozos Guadalupe Peña Guzmán'),
       (v_grupo,'Contabilidad Financiera','Viernes','08:00:00','09:00:00','G302','Diana Gozos Guadalupe Peña Guzmán'),
       (v_grupo,'Química','Lunes','11:00:00','12:00:00','G302','Esther Gallardo Cabrera'),
+      (v_grupo,'Química','Martes','11:00:00','12:00:00','G302','Esther Gallardo Cabrera'),
       (v_grupo,'Química','Miércoles','11:00:00','12:00:00','G302','Esther Gallardo Cabrera'),
+      (v_grupo,'Química','Jueves','11:00:00','12:00:00','G302','Esther Gallardo Cabrera'),
       (v_grupo,'Química','Viernes','11:00:00','12:00:00','G302','Esther Gallardo Cabrera'),
       (v_grupo,'Álgebra Lineal','Lunes','12:00:00','13:00:00','G302','Luis Alberto Bedolla Melendez'),
+      (v_grupo,'Álgebra Lineal','Martes','12:00:00','13:00:00','G302','Luis Alberto Bedolla Melendez'),
       (v_grupo,'Álgebra Lineal','Miércoles','12:00:00','13:00:00','G302','Luis Alberto Bedolla Melendez'),
+      (v_grupo,'Álgebra Lineal','Jueves','12:00:00','13:00:00','G302','Luis Alberto Bedolla Melendez'),
       (v_grupo,'Álgebra Lineal','Viernes','12:00:00','13:00:00','G302','Luis Alberto Bedolla Melendez');
     SELECT ID_grupo INTO v_grupo FROM Grupo WHERE ID_Periodo=v_periodo AND nombre_grupo='2ISC2' LIMIT 1;
     INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
       (v_grupo,'Cálculo Integral','Lunes','14:00:00','15:00:00','G303','Antonio Rodríguez Román'),
+      (v_grupo,'Cálculo Integral','Martes','14:00:00','15:00:00','G303','Antonio Rodríguez Román'),
       (v_grupo,'Cálculo Integral','Miércoles','14:00:00','15:00:00','G303','Antonio Rodríguez Román'),
+      (v_grupo,'Cálculo Integral','Jueves','14:00:00','15:00:00','G303','Antonio Rodríguez Román'),
       (v_grupo,'Cálculo Integral','Viernes','14:00:00','15:00:00','G303','Antonio Rodríguez Román'),
       (v_grupo,'Programación Orientada a Objetos','Lunes','13:00:00','14:00:00','G303','Daniel Solís Chávez'),
+      (v_grupo,'Programación Orientada a Objetos','Martes','13:00:00','14:00:00','G303','Daniel Solís Chávez'),
       (v_grupo,'Programación Orientada a Objetos','Miércoles','13:00:00','14:00:00','G303','Daniel Solís Chávez'),
+      (v_grupo,'Programación Orientada a Objetos','Jueves','13:00:00','14:00:00','G303','Daniel Solís Chávez'),
       (v_grupo,'Programación Orientada a Objetos','Viernes','13:00:00','14:00:00','G303','Daniel Solís Chávez'),
       (v_grupo,'Probabilidad y Estadística','Lunes','15:00:00','16:00:00','G303','Gilberto Vales Ortiz'),
+      (v_grupo,'Probabilidad y Estadística','Martes','15:00:00','16:00:00','G303','Gilberto Vales Ortiz'),
       (v_grupo,'Probabilidad y Estadística','Miércoles','15:00:00','16:00:00','G303','Gilberto Vales Ortiz'),
+      (v_grupo,'Probabilidad y Estadística','Jueves','15:00:00','16:00:00','G303','Gilberto Vales Ortiz'),
       (v_grupo,'Probabilidad y Estadística','Viernes','15:00:00','16:00:00','G303','Gilberto Vales Ortiz'),
       (v_grupo,'Contabilidad Financiera','Lunes','16:00:00','17:00:00','G303','Diana Gozos Guadalupe Peña Guzmán'),
+      (v_grupo,'Contabilidad Financiera','Martes','16:00:00','17:00:00','G303','Diana Gozos Guadalupe Peña Guzmán'),
       (v_grupo,'Contabilidad Financiera','Miércoles','16:00:00','17:00:00','G303','Diana Gozos Guadalupe Peña Guzmán'),
+      (v_grupo,'Contabilidad Financiera','Jueves','16:00:00','17:00:00','G303','Diana Gozos Guadalupe Peña Guzmán'),
       (v_grupo,'Contabilidad Financiera','Viernes','16:00:00','17:00:00','G303','Diana Gozos Guadalupe Peña Guzmán'),
       (v_grupo,'Química','Lunes','17:00:00','18:00:00','G303','Esther Gallardo Cabrera'),
+      (v_grupo,'Química','Martes','17:00:00','18:00:00','G303','Esther Gallardo Cabrera'),
       (v_grupo,'Química','Miércoles','17:00:00','18:00:00','G303','Esther Gallardo Cabrera'),
+      (v_grupo,'Química','Jueves','17:00:00','18:00:00','G303','Esther Gallardo Cabrera'),
       (v_grupo,'Química','Viernes','17:00:00','18:00:00','G303','Esther Gallardo Cabrera'),
       (v_grupo,'Álgebra Lineal','Lunes','18:00:00','19:00:00','G303','Luis Alberto Bedolla Melendez'),
+      (v_grupo,'Álgebra Lineal','Martes','18:00:00','19:00:00','G303','Luis Alberto Bedolla Melendez'),
       (v_grupo,'Álgebra Lineal','Miércoles','18:00:00','19:00:00','G303','Luis Alberto Bedolla Melendez'),
+      (v_grupo,'Álgebra Lineal','Jueves','18:00:00','19:00:00','G303','Luis Alberto Bedolla Melendez'),
       (v_grupo,'Álgebra Lineal','Viernes','18:00:00','19:00:00','G303','Luis Alberto Bedolla Melendez');
 
     SELECT COUNT(DISTINCT h.profesor) INTO v_docentes
