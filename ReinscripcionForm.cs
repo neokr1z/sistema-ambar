@@ -14,11 +14,6 @@ internal sealed class ReinscripcionForm : Form
     private readonly Label informacion = new();
     private readonly ComboBox grupos = new();
     private readonly ComboBox semestres = new();
-    private readonly TextBox correoAlumno = new();
-    private readonly Button enviarHorario;
-    private string ultimoControl = "";
-    private string ultimoAlumno = "";
-    private int ultimoGrupo;
     private readonly Button guardar;
     private readonly Button horario;
     private string controlValidado = "";
@@ -109,19 +104,7 @@ internal sealed class ReinscripcionForm : Form
         semestres.SelectedIndexChanged+=(_,_)=>CambiarSemestre();
         elegirSemestre.Controls.Add(semestres);
 
-        var correoFila=new FlowLayoutPanel
-        {
-            Dock=DockStyle.Top,Height=70,FlowDirection=FlowDirection.LeftToRight,WrapContents=false
-        };
-        correoFila.Controls.Add(new Label{Text="Correo del alumno",Width=170,Height=40,
-            TextAlign=ContentAlignment.MiddleLeft,ForeColor=Theme.Blue,
-            Font=new Font("Segoe UI",10F,FontStyle.Bold)});
-        correoAlumno.Width=445;correoAlumno.MaxLength=120;
-        correoAlumno.PlaceholderText="Correo válido para recibir el horario en PDF";
-        correoFila.Controls.Add(correoAlumno);
-
         // Agregar de abajo hacia arriba por el orden de DockStyle.Top.
-        contenido.Controls.Add(correoFila);
         contenido.Controls.Add(seleccionar);
         contenido.Controls.Add(elegirSemestre);
         contenido.Controls.Add(campos);
@@ -138,12 +121,9 @@ internal sealed class ReinscripcionForm : Form
         var cerrar=Boton("Cerrar",110);cerrar.Click+=(_,_)=>Close();
         guardar=Boton("Guardar reinscripción",218);
         guardar.Enabled=false;guardar.Click+=(_,_)=>Guardar();
-        enviarHorario=Boton("Enviar horario",170);
-        enviarHorario.Enabled=false;
-        enviarHorario.Click+=EnviarHorarioClick;
         var verGrupos=Boton("Grupos / PDF",160);
         verGrupos.Click+=(_,_)=>{using var f=new ConsultaGruposForm(actor,true);f.ShowDialog(this);RefrescarGrupos();};
-        pie.Controls.Add(cerrar);pie.Controls.Add(enviarHorario);pie.Controls.Add(guardar);pie.Controls.Add(verGrupos);
+        pie.Controls.Add(cerrar);pie.Controls.Add(guardar);pie.Controls.Add(verGrupos);
         Controls.Add(contenido);Controls.Add(encabezado);Controls.Add(pie);
         AcceptButton=validar;
     }
@@ -181,8 +161,6 @@ internal sealed class ReinscripcionForm : Form
 
     private void ValidarNumero()
     {
-        enviarHorario.Enabled=false;
-        ultimoControl="";ultimoGrupo=0;ultimoAlumno="";
         LimpiarCaptura();
         try
         {
@@ -260,33 +238,6 @@ internal sealed class ReinscripcionForm : Form
         f.ShowDialog(this);
     }
 
-    private async void EnviarHorarioClick(object? sender,EventArgs e)
-    {
-        if(string.IsNullOrWhiteSpace(ultimoControl)||ultimoGrupo<=0)
-        {
-            MessageBox.Show(this,"Primero guarda la reinscripción del alumno.","AMBAR");
-            return;
-        }
-        string destinatario=correoAlumno.Text.Trim();
-        if(string.IsNullOrWhiteSpace(destinatario))
-        {
-            MessageBox.Show(this,"Captura el correo del alumno antes de enviar.","AMBAR");
-            return;
-        }
-        if(MessageBox.Show(this,$"¿Enviar el horario en PDF de {ultimoAlumno} a {destinatario}?",
-            "Confirmar envío",MessageBoxButtons.YesNo,MessageBoxIcon.Question)!=DialogResult.Yes)return;
-        try
-        {
-            enviarHorario.Enabled=false;
-            string controlEnviar=ultimoControl,alumnoEnviar=ultimoAlumno;
-            int grupoEnviar=ultimoGrupo;
-            await Task.Run(()=>CorreoHorarioReinscripcion.Enviar(actor,controlEnviar,alumnoEnviar,destinatario,grupoEnviar));
-            MessageBox.Show(this,"Horario PDF enviado correctamente.","AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
-        }
-        catch(Exception ex){Problems.Show(ex);}
-        finally{enviarHorario.Enabled=!string.IsNullOrEmpty(ultimoControl);}
-    }
-
     private void Guardar()
     {
         if(string.IsNullOrWhiteSpace(controlValidado)||control.Text.Trim()!=controlValidado)
@@ -301,9 +252,6 @@ internal sealed class ReinscripcionForm : Form
         {
             guardar.Enabled=false;
             RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado);
-            ultimoControl=controlValidado;ultimoGrupo=grupo.Id;
-            ultimoAlumno=string.Join(" ",new[]{nombre.Text.Trim(),paterno.Text.Trim(),materno.Text.Trim()});
-            enviarHorario.Enabled=true;
             MessageBox.Show(this,$"Reinscripción de demostración guardada.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
                 "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
             LimpiarCaptura();control.Clear();control.Focus();
