@@ -260,6 +260,33 @@ internal sealed class ReinscripcionForm : Form
         f.ShowDialog(this);
     }
 
+    private async void EnviarHorarioClick(object? sender,EventArgs e)
+    {
+        if(string.IsNullOrWhiteSpace(ultimoControl)||ultimoGrupo<=0)
+        {
+            MessageBox.Show(this,"Primero guarda la reinscripción del alumno.","AMBAR");
+            return;
+        }
+        string destinatario=correoAlumno.Text.Trim();
+        if(string.IsNullOrWhiteSpace(destinatario))
+        {
+            MessageBox.Show(this,"Captura el correo del alumno antes de enviar.","AMBAR");
+            return;
+        }
+        if(MessageBox.Show(this,$"¿Enviar el horario en PDF de {ultimoAlumno} a {destinatario}?",
+            "Confirmar envío",MessageBoxButtons.YesNo,MessageBoxIcon.Question)!=DialogResult.Yes)return;
+        try
+        {
+            enviarHorario.Enabled=false;
+            string controlEnviar=ultimoControl,alumnoEnviar=ultimoAlumno;
+            int grupoEnviar=ultimoGrupo;
+            await Task.Run(()=>CorreoHorarioReinscripcion.Enviar(actor,controlEnviar,alumnoEnviar,destinatario,grupoEnviar));
+            MessageBox.Show(this,"Horario PDF enviado correctamente.","AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
+        }
+        catch(Exception ex){Problems.Show(ex);}
+        finally{enviarHorario.Enabled=!string.IsNullOrEmpty(ultimoControl);}
+    }
+
     private void Guardar()
     {
         if(string.IsNullOrWhiteSpace(controlValidado)||control.Text.Trim()!=controlValidado)
