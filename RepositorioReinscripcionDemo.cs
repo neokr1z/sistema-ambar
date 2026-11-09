@@ -237,7 +237,7 @@ internal static class RepositorioReinscripcionDemo
             """,tx))
         {
             Db.Param(cmd,"@grupo",grupo);
-            if(Convert.ToInt32(cmd.ExecuteScalar())>=capacidad)
+            if(Convert.ToInt32(cmd.ExecuteScalar())-(previo?1:0)>=capacidad)
                 throw new ArgumentException("El grupo ya no tiene lugares disponibles.");
         }
         if(!registrado)
