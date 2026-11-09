@@ -171,7 +171,7 @@ internal sealed class ReinscripcionForm : Form
             if(anterior!=null)
             {
                 informacion.ForeColor=Color.DarkRed;
-                informacion.Text=$"El número {numero} ya se registró en la demostración.\nGrupo: {anterior.GrupoNombre} · {anterior.Semestre}.º semestre.";
+                informacion.Text=$"El número {numero} ya está reinscrito.\nGrupo: {anterior.GrupoNombre} · {anterior.Semestre}.º semestre.";
                 resultado.Text="No se permitirá volver a registrarlo.";
                 return;
             }
