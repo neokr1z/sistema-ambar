@@ -38,7 +38,7 @@ internal static class RepositorioListas
               UNION ALL
               SELECT r.numero_control AS Control,
                 CONCAT_WS(' ',r.apellido_paterno,r.apellido_materno,r.nombre) AS Alumno,
-                'PENDIENTE DE EXPEDIENTE' AS Estatus
+                'INSCRITO' AS Estatus
               FROM Reinscripcion_Demostracion r
               WHERE r.ID_grupo=@grupo AND UPPER(r.estatus)='INSCRITO'
             ) AS listado ORDER BY Alumno,Control
