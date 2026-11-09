@@ -112,10 +112,7 @@ internal static class RepositorioReinscripcionDemo
         Db.Param(cmd,"@control",numero);Db.Param(cmd,"@periodo",Periodo);
         if(Convert.ToInt32(cmd.ExecuteScalar())>0)
             throw new ArgumentException("Este número de control ya tiene una inscripción activa en agosto–diciembre 2026.");
-        using var viejo=Db.Sql(c,"SELECT COUNT(*) FROM Reinscripcion_Demostracion WHERE numero_control=@control AND UPPER(estatus)='INSCRITO'",tx);
-        Db.Param(viejo,"@control",numero);
-        if(Convert.ToInt32(viejo.ExecuteScalar())>0)
-            throw new ArgumentException("Este número ya figura reinscrito en los registros anteriores. No se permite duplicarlo.");
+        // Los registros antiguos se pueden completar y migrar al expediente normal.
     }
 
     public static List<Choice> Grupos(Sesion actor,int semestre)
@@ -172,6 +169,28 @@ internal static class RepositorioReinscripcionDemo
         VerificarDisponible(c,tx,numero);
 
         bool registrado;
+        bool previo;
+        int grupoPrevio=0;
+        string nombrePrevio="",paternoPrevio="",maternoPrevio="";
+        using(var old=Db.Sql(c,"""
+            SELECT nombre,apellido_paterno,apellido_materno,ID_grupo
+            FROM Reinscripcion_Demostracion WHERE numero_control=@control FOR UPDATE
+            """,tx))
+        {
+            Db.Param(old,"@control",numero);
+            using var row=old.ExecuteReader();
+            previo=row.Read();
+            if(previo)
+            {
+                nombrePrevio=row.GetString(0);paternoPrevio=row.GetString(1);
+                maternoPrevio=row.GetString(2);grupoPrevio=row.GetInt32(3);
+            }
+        }
+        if(previo && (grupoPrevio!=grupo
+            || !string.Equals(nombrePrevio,nombre,StringComparison.OrdinalIgnoreCase)
+            || !string.Equals(paternoPrevio,paterno,StringComparison.OrdinalIgnoreCase)
+            || !string.Equals(maternoPrevio,materno,StringComparison.OrdinalIgnoreCase)))
+            throw new ArgumentException("El número ya tiene un registro anterior en otro grupo o con otro nombre. Consérvalo y verifica los datos originales.");
         using(var cmd=Db.Sql(c,"""
             SELECT nombre,apellido_paterno,apellido_materno,curp,fecha_nacimiento,
                    correo_institucional,telefono_emergencia
@@ -272,6 +291,13 @@ internal static class RepositorioReinscripcionDemo
                 nuevo.ExecuteNonQuery();
             }
         }
+        if(previo)
+        {
+            using var del=Db.Sql(c,
+                "DELETE FROM Reinscripcion_Demostracion WHERE numero_control=@control",tx);
+            Db.Param(del,"@control",numero);
+            del.ExecuteNonQuery();
+        }
         using(var ins=Db.Sql(c,"""
             INSERT INTO Inscripcion(Numero_control,ID_grupo,tipo_inscripcion,estatus)
             VALUES(@control,@grupo,'REINSCRIPCION','INSCRITO')
@@ -281,7 +307,7 @@ internal static class RepositorioReinscripcionDemo
             ins.ExecuteNonQuery();
         }
         Db.Audit(c,tx,actor.Id,"REINSCRIPCION","ALUMNOS",
-            registrado?"Reinscripción de alumno existente":"Alta de expediente y reinscripción",numero);
+            previo?"Migración de registro antiguo a expediente de alumno":registrado?"Reinscripción de alumno existente":"Alta de expediente y reinscripción",numero);
         tx.Commit();
     }
 
