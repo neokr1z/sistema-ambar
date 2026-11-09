@@ -216,7 +216,9 @@ public partial class ConsultaA : Form
             {
                 var grupo=RepositorioConsultaSemestres.Reinscrito(actor,SelectedControl())
                     ?? throw new ArgumentException("No se encontró la reinscripción.");
-                using var form=new HorarioGrupoDemoForm(actor,grupo.GrupoId,grupo.Nombre);
+                string nombreAlumno=Convert.ToString(grid.CurrentRow?.Cells["Nombre completo"].Value)??"";
+                using var form=new HorarioGrupoDemoForm(actor,grupo.GrupoId,grupo.Nombre,
+                    SelectedControl(),nombreAlumno);
                 form.ShowDialog(this);
             }
             else
