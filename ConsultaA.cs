@@ -7,11 +7,13 @@ public partial class ConsultaA : Form
     private Sesion actor = null!;
     private bool ordenAscendente = true;
     private readonly Button ordenarControl = new();
+    private readonly ComboBox selectorSemestre = new();
 
     public ConsultaA()
     {
         InitializeComponent();
         PrepararOrden();
+        PrepararSemestres();
 
     }
 
@@ -31,6 +33,54 @@ public partial class ConsultaA : Form
         if (DesignMode || System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
         if (actor is null) { Close(); return; }
         LoadData();
+    }
+
+    private void PrepararSemestres()
+    {
+        searchBar.Height=122;
+        var etiqueta=new Label
+        {
+            Text="Semestre:",Font=new Font("Segoe UI",10F,FontStyle.Bold),
+            ForeColor=Theme.Blue,Location=new Point(35,79),Size=new Size(115,30),
+            TextAlign=ContentAlignment.MiddleLeft
+        };
+        selectorSemestre.DropDownStyle=ComboBoxStyle.DropDownList;
+        selectorSemestre.Font=new Font("Segoe UI",10F);
+        selectorSemestre.Location=new Point(155,78);
+        selectorSemestre.Width=190;
+        selectorSemestre.Items.Add(new Choice(0,"Todos (1.º a 3.º)"));
+        selectorSemestre.Items.Add(new Choice(1,"1.º semestre"));
+        selectorSemestre.Items.Add(new Choice(2,"2.º semestre"));
+        selectorSemestre.Items.Add(new Choice(3,"3.º semestre"));
+        selectorSemestre.SelectedIndexChanged+=(_,_)=>
+        {
+            if(actor is not null)LoadData();
+        };
+        searchBar.Controls.Add(etiqueta);
+        searchBar.Controls.Add(selectorSemestre);
+        count.Location=new Point(380,77);
+        count.Size=new Size(185,32);
+        ordenarControl.Top=75;
+        searchBar.Resize+=(_,_)=>ordenarControl.Left=Math.Max(600,searchBar.ClientSize.Width-ordenarControl.Width-25);
+        ordenarControl.Left=Math.Max(600,searchBar.ClientSize.Width-ordenarControl.Width-25);
+        selectorSemestre.SelectedIndex=0;
+    }
+
+    private bool EsReinscripcionSeleccionada()
+        => grid.CurrentRow?.Cells["Tipo"].Value?.ToString()=="REINSCRIPCIÓN";
+
+    private void VerReinscripcion()
+    {
+        if(grid.CurrentRow is null)throw new ArgumentException("Selecciona primero un alumno.");
+        var c=grid.CurrentRow.Cells;
+        MessageBox.Show(this,
+            $"Número de control: {c["No. control"].Value}\n"+
+            $"Alumno: {c["Nombre completo"].Value}\n"+
+            $"Semestre: {c["Semestre"].Value}º\n"+
+            $"Grupo: {c["Grupo"].Value}\n"+
+            "Periodo: Agosto–diciembre 2026\n"+
+            "Registro de reinscripción (datos básicos, sin expediente completo).",
+            "AMBAR | Datos de reinscripción",MessageBoxButtons.OK,MessageBoxIcon.Information);
     }
 
     private void PrepararOrden()
@@ -54,8 +104,8 @@ public partial class ConsultaA : Form
             LoadData();
         };
         searchBar.Controls.Add(ordenarControl);
-        searchBar.Resize+=(_,_)=>ordenarControl.Left=Math.Max(740,searchBar.ClientSize.Width-ordenarControl.Width-25);
-        ordenarControl.Left=Math.Max(740,searchBar.ClientSize.Width-ordenarControl.Width-25);
+        searchBar.Resize+=(_,_)=>ordenarControl.Left=Math.Max(600,searchBar.ClientSize.Width-ordenarControl.Width-25);
+        ordenarControl.Left=Math.Max(600,searchBar.ClientSize.Width-ordenarControl.Width-25);
     }
 
     private void MenuButton_Click(object? sender, EventArgs e) => Close();
@@ -78,11 +128,24 @@ public partial class ConsultaA : Form
     {
         try
         {
-            DataTable data = RepositorioAlumnos.ListStudents(actor, filter.Text, ordenAscendente);
+            int semestre=(selectorSemestre.SelectedItem as Choice)?.Id??0;
+            DataTable data = RepositorioConsultaSemestres.Listar(actor,semestre,filter.Text,ordenAscendente);
             grid.DataSource = data;
+            grid.Columns["Tipo"].Visible=false;
+            grid.SelectionChanged+=(_,_)=>ActualizarAcciones();
+            ActualizarAcciones();
             count.Text = $"Registros: {data.Rows.Count}";
         }
         catch (Exception ex) { Problems.Show(ex); }
+    }
+
+    private void ActualizarAcciones()
+    {
+        bool completo=grid.CurrentRow is not null && !EsReinscripcionSeleccionada();
+        edit.Enabled=completo;pdf.Enabled=completo;hide.Enabled=completo;
+        restore.Enabled=completo && actor?.IsAdmin==true;
+        horario.Enabled=grid.CurrentRow is not null;
+        view.Text=completo?"Ver expediente":"Ver datos";
     }
 
     private StudentData SelectedStudent()
@@ -91,13 +154,15 @@ public partial class ConsultaA : Form
 
     private void View()
     {
-        try { using var f = new ConsultaDForm(actor, SelectedStudent()); f.ShowDialog(this); LoadData(); }
+        try { if(EsReinscripcionSeleccionada())VerReinscripcion();
+              else {using var f = new ConsultaDForm(actor, SelectedStudent()); f.ShowDialog(this); LoadData();} }
         catch (Exception ex) { Problems.Show(ex); }
     }
 
     private void Edit()
     {
-        try { using var f = new ExpedienteMForm(actor, SelectedStudent()); f.ShowDialog(this); LoadData(); }
+        try { if(EsReinscripcionSeleccionada())throw new ArgumentException("Esta reinscripción solo dispone de los datos básicos.");
+              using var f = new ExpedienteMForm(actor, SelectedStudent()); f.ShowDialog(this); LoadData(); }
         catch (Exception ex) { Problems.Show(ex); }
     }
 
@@ -105,6 +170,7 @@ public partial class ConsultaA : Form
     {
         try
         {
+            if(EsReinscripcionSeleccionada())throw new ArgumentException("No hay expediente completo que exportar. Usa Grupos / PDF para la lista.");
             var d = SelectedStudent();
             using var save = new SaveFileDialog
             {
@@ -123,6 +189,7 @@ public partial class ConsultaA : Form
     {
         try
         {
+            if(EsReinscripcionSeleccionada())throw new ArgumentException("La ocultación de expedientes no aplica a registros mínimos.");
             var d = SelectedStudent();
             if (restore && d.Status.ToUpperInvariant() != "OCULTO")
                 throw new ArgumentException("Sólo se restauran registros ocultos.");
@@ -143,7 +210,21 @@ public partial class ConsultaA : Form
     }
     private void HorarioClick(object? sender,EventArgs e)
     {
-        try {using var form=new HorarioAlumnoForm(SelectedStudent());form.ShowDialog(this);}
+        try
+        {
+            if(EsReinscripcionSeleccionada())
+            {
+                var grupo=RepositorioConsultaSemestres.Reinscrito(actor,SelectedControl())
+                    ?? throw new ArgumentException("No se encontró la reinscripción.");
+                using var form=new HorarioGrupoDemoForm(actor,grupo.GrupoId,grupo.Nombre);
+                form.ShowDialog(this);
+            }
+            else
+            {
+                using var form=new HorarioAlumnoForm(SelectedStudent());
+                form.ShowDialog(this);
+            }
+        }
         catch(Exception ex){Problems.Show(ex);}
     }
 }
