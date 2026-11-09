@@ -14,7 +14,8 @@ internal static class CorreoHorarioReinscripcion
     internal static void Enviar(Sesion actor,string control,string alumno,string destinatario,int grupo)
     {
         if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
-        control=RepositorioReinscripcionDemo.Inferir(control) switch { var _ => control.Trim() };
+        RepositorioReinscripcionDemo.Inferir(control);
+        control=control.Trim();
         destinatario=Contacto.Email(destinatario,"correo del alumno");
         CorreoDominio.Current.RequireAsync(destinatario,"correo del alumno").GetAwaiter().GetResult();
 
@@ -81,13 +82,12 @@ internal static class CorreoHorarioReinscripcion
                 {
                     table.ColumnsDefinition(cols=>
                     {
-                        cols.RelativeColumn(1.1f);cols.RelativeColumn(1.1f);
-                        cols.RelativeColumn();cols.RelativeColumn();cols.RelativeColumn(3);
-                        cols.RelativeColumn();cols.RelativeColumn(2);
+                        cols.RelativeColumn(1.1f);cols.RelativeColumn();cols.RelativeColumn();
+                        cols.RelativeColumn(3);cols.RelativeColumn();cols.RelativeColumn(2);
                     });
                     table.Header(h=>
                     {
-                        foreach(var heading in new[]{"Día","Inicio","Fin","Materia","Aula","Docente",""})
+                        foreach(var heading in new[]{"Día","Inicio","Fin","Materia","Aula","Docente"})
                         {
                             // Se remplaza el último encabezado vacío para mantener la tabla compacta.
                             h.Cell().Background("#063763").Padding(5).Text(heading).FontColor("#FFFFFF").Bold();
@@ -96,7 +96,7 @@ internal static class CorreoHorarioReinscripcion
                     foreach(DataRow row in data.Rows)
                     {
                         string fmt(object value)=>value is TimeSpan ts?ts.ToString(@"hh\:mm",CultureInfo.InvariantCulture):Convert.ToString(value)??"";
-                        foreach(string item in new[]{fmt(row[0]),fmt(row[1]),fmt(row[2]),fmt(row[3]),fmt(row[4]),fmt(row[5]),""})
+                        foreach(string item in new[]{fmt(row[0]),fmt(row[1]),fmt(row[2]),fmt(row[3]),fmt(row[4]),fmt(row[5])})
                             table.Cell().BorderBottom(0.5f).BorderColor("#D6DEE8").Padding(4).Text(item);
                     }
                 });
