@@ -1,4 +1,7 @@
 using System.Data;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace AMBAR.Semana4;
 
@@ -6,12 +9,19 @@ namespace AMBAR.Semana4;
 internal sealed class HorarioGrupoDemoForm : Form
 {
     private static readonly string[] Dias = { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes" };
+    private readonly List<(string Materia,string Dia,string Inicio,string Fin,string Aula,string Docente)> clases = new();
+    private readonly string? controlAlumno;
+    private readonly string? nombreAlumno;
+    private readonly string etiquetaGrupo;
 
-    internal HorarioGrupoDemoForm(Sesion actor, int grupo, string etiqueta)
+    internal HorarioGrupoDemoForm(Sesion actor, int grupo, string etiqueta, string? control = null, string? alumno = null)
     {
         if (!actor.CanSeeStudents)
             throw new UnauthorizedAccessException("Sin permiso.");
 
+        controlAlumno = control;
+        nombreAlumno = alumno;
+        etiquetaGrupo = etiqueta;
         Text = "AMBAR | Horario del grupo";
         StartPosition = FormStartPosition.CenterParent;
         ClientSize = new Size(1120, 650);
@@ -75,8 +85,9 @@ internal sealed class HorarioGrupoDemoForm : Form
         var cerrar = new Button
         {
             Text = "Cerrar",
-            Dock = DockStyle.Bottom,
-            Height = 52,
+            Dock = DockStyle.Right,
+            Width = 160,
+            Height = 48,
             BackColor = Theme.Blue,
             ForeColor = Color.White,
             FlatStyle = FlatStyle.Flat,
@@ -85,8 +96,20 @@ internal sealed class HorarioGrupoDemoForm : Form
         cerrar.FlatAppearance.BorderSize = 0;
         cerrar.Click += (_, _) => Close();
 
+        var acciones = new Panel { Dock = DockStyle.Bottom, Height = 58, BackColor = Color.White };
+        var descargar = new Button {
+            Text = "Descargar PDF", Dock = DockStyle.Left, Width = 195,
+            BackColor = Theme.Blue, ForeColor = Color.White,
+            Font = new Font("Segoe UI",10F,FontStyle.Bold),
+            FlatStyle = FlatStyle.Flat, Cursor = Cursors.Hand
+        };
+        descargar.FlatAppearance.BorderSize = 0;
+        descargar.Click += (_,_) => DescargarPdf();
+        acciones.Controls.Add(descargar);
+        acciones.Controls.Add(cerrar);
+
         Controls.Add(tabla);
-        Controls.Add(cerrar);
+        Controls.Add(acciones);
         Controls.Add(titulo);
 
         Shown += (_, _) => Cargar(actor, grupo, tabla);
@@ -109,7 +132,7 @@ internal sealed class HorarioGrupoDemoForm : Form
                 """);
             Db.Param(cmd, "@grupo", grupo);
 
-            var clases = new List<(string Materia, string Dia, string Inicio, string Fin, string Aula, string Docente)>();
+            clases.Clear();
             using (var rd = cmd.ExecuteReader())
                 while (rd.Read())
                     clases.Add((
