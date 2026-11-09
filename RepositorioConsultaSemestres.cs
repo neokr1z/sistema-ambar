@@ -35,7 +35,7 @@ internal static class RepositorioConsultaSemestres
                 SELECT r.numero_control,
                   CONCAT_WS(' ',r.nombre,r.apellido_paterno,r.apellido_materno),
                   '', 'Ingeniería en Sistemas Computacionales',
-                  COALESCE(r.correo_institucional,''),r.estatus,
+                  '',r.estatus,
                   s.numero_semestre,g.nombre_grupo,'REINSCRIPCIÓN'
                 FROM Reinscripcion_Demostracion r
                 JOIN Grupo g ON g.ID_grupo=r.ID_grupo
