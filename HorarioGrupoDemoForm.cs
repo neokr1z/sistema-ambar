@@ -2,6 +2,8 @@ using System.Data;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Color = System.Drawing.Color;
+using Size = System.Drawing.Size;
 
 namespace AMBAR.Semana4;
 
