@@ -252,7 +252,7 @@ internal sealed class ReinscripcionForm : Form
         {
             guardar.Enabled=false;
             RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado);
-            MessageBox.Show(this,$"Reinscripción de demostración guardada.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
+            MessageBox.Show(this,$"Reinscripción guardada correctamente.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
                 "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
             LimpiarCaptura();control.Clear();control.Focus();
         }
