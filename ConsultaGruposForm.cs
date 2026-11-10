@@ -55,7 +55,7 @@ internal sealed class ConsultaGruposForm : Form
                 JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
                 JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
                 LEFT JOIN Inscripcion i ON i.ID_grupo=g.ID_grupo
-                LEFT JOIN Reinscripcion_Demostracion r ON r.ID_grupo=g.ID_grupo
+                LEFT JOIN Reinscripcion r ON r.ID_grupo=g.ID_grupo
                 WHERE ((@reinscripcion=1 AND s.numero_semestre IN (2,3))
                    OR (@reinscripcion=0 AND s.numero_semestre=1 AND g.habilitado_fichas=1))
                   AND pe.nombre_periodo='Agosto-Diciembre 2026'
