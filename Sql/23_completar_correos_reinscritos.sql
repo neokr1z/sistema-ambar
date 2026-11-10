@@ -22,7 +22,7 @@ BEGIN
     DECLARE v_n INT;
     DECLARE cur CURSOR FOR
         SELECT numero_control,nombre,apellido_paterno,apellido_materno
-        FROM Reinscripcion_Demostracion
+        FROM Reinscripcion
         WHERE correo_institucional IS NULL OR TRIM(correo_institucional)=''
         ORDER BY numero_control;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
@@ -57,7 +57,7 @@ BEGIN
               (SELECT COUNT(*) FROM Alumno WHERE correo_institucional=v_candidato)
              +(SELECT COUNT(*) FROM Docente WHERE correo_institucional=v_candidato)
              +(SELECT COUNT(*) FROM Personal_Administrativo WHERE correo_institucional=v_candidato)
-             +(SELECT COUNT(*) FROM Reinscripcion_Demostracion WHERE correo_institucional=v_candidato)
+             +(SELECT COUNT(*) FROM Reinscripcion WHERE correo_institucional=v_candidato)
             INTO v_ocupado;
             IF v_ocupado=0 THEN LEAVE buscar; END IF;
             SET v_n=v_n+1;
@@ -65,7 +65,7 @@ BEGIN
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='No se pudo asignar un correo único.';
             END IF;
         END LOOP;
-        UPDATE Reinscripcion_Demostracion SET correo_institucional=v_candidato
+        UPDATE Reinscripcion SET correo_institucional=v_candidato
         WHERE numero_control=v_control
           AND (correo_institucional IS NULL OR TRIM(correo_institucional)='');
     END LOOP;
@@ -78,5 +78,5 @@ DELIMITER ;
 
 SELECT numero_control, CONCAT_WS(' ',nombre,apellido_paterno,apellido_materno) AS alumno,
        correo_institucional
-FROM Reinscripcion_Demostracion
+FROM Reinscripcion
 ORDER BY numero_control;
