@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS Reinscripcion (
     fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     estatus VARCHAR(20) NOT NULL DEFAULT 'INSCRITO',
     CONSTRAINT ck_reins_demo_generacion CHECK
-       ((anio_ingreso=2025 AND semestre_destino=3)
-        OR (anio_ingreso=2024 AND semestre_destino=5)),
+       ((anio_ingreso=2026 AND semestre_destino=2)
+        OR (anio_ingreso=2025 AND semestre_destino IN (2,3))),
     CONSTRAINT fk_reins_demo_grupo FOREIGN KEY(ID_grupo) REFERENCES Grupo(ID_grupo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
