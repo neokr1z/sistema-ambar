@@ -4,7 +4,7 @@ using MySqlConnector;
 namespace AMBAR.Semana4;
 
 // Operaciones independientes del expediente completo; el alumno queda registrado
-// en Reinscripcion_Demostracion y las acciones se registran en Bitacora.
+// en Reinscripcion y las acciones se registran en Bitacora.
 internal sealed record ReinscritoEditable(string Control,string Nombre,string Paterno,
     string Materno,int Semestre,int Grupo,string Correo,string Estatus);
 
@@ -18,7 +18,7 @@ internal static class RepositorioMantenimientoReinscripcion
         using var cmd=Db.Sql(c,"""
             SELECT numero_control,nombre,apellido_paterno,apellido_materno,
                    semestre_destino,ID_grupo,COALESCE(correo_institucional,''),estatus
-            FROM Reinscripcion_Demostracion WHERE numero_control=@numero
+            FROM Reinscripcion WHERE numero_control=@numero
             """);
         Db.Param(cmd,"@numero",numero);
         using var rd=cmd.ExecuteReader();
@@ -38,7 +38,7 @@ internal static class RepositorioMantenimientoReinscripcion
             SELECT g.ID_grupo,
                    CONCAT(g.nombre_grupo,' · ',COALESCE(g.turno,'SIN TURNO'),
                      ' · ',GREATEST(0,g.Capacidad-
-                         (SELECT COUNT(*) FROM Reinscripcion_Demostracion r
+                         (SELECT COUNT(*) FROM Reinscripcion r
                           WHERE r.ID_grupo=g.ID_grupo AND UPPER(r.estatus)='INSCRITO')-
                          (SELECT COUNT(*) FROM Inscripcion i
                           WHERE i.ID_grupo=g.ID_grupo AND UPPER(i.estatus)='INSCRITO')),
@@ -50,7 +50,7 @@ internal static class RepositorioMantenimientoReinscripcion
               AND p.nombre_periodo=@periodo
               AND UPPER(g.Estatus)='ACTIVO' AND UPPER(p.estatus)='ACTIVO'
               AND (g.ID_grupo=@actual OR g.Capacidad>
-                  (SELECT COUNT(*) FROM Reinscripcion_Demostracion r
+                  (SELECT COUNT(*) FROM Reinscripcion r
                    WHERE r.ID_grupo=g.ID_grupo AND UPPER(r.estatus)='INSCRITO')+
                   (SELECT COUNT(*) FROM Inscripcion i
                    WHERE i.ID_grupo=g.ID_grupo AND UPPER(i.estatus)='INSCRITO'))
@@ -86,7 +86,7 @@ internal static class RepositorioMantenimientoReinscripcion
         using(var cmd=Db.Sql(c,"""
             SELECT nombre,apellido_paterno,apellido_materno,ID_grupo,
                    COALESCE(correo_institucional,''),estatus
-            FROM Reinscripcion_Demostracion
+            FROM Reinscripcion
             WHERE numero_control=@anterior FOR UPDATE
             """,tx))
         {
@@ -103,7 +103,7 @@ internal static class RepositorioMantenimientoReinscripcion
         if(nuevo!=anterior)
         {
             using(var chk=Db.Sql(c,"""
-                SELECT (SELECT COUNT(*) FROM Reinscripcion_Demostracion WHERE numero_control=@numero)
+                SELECT (SELECT COUNT(*) FROM Reinscripcion WHERE numero_control=@numero)
                      + (SELECT COUNT(*) FROM Alumno WHERE Numero_control=@numero)
                 """,tx))
             {
@@ -147,7 +147,7 @@ internal static class RepositorioMantenimientoReinscripcion
         if(grupo!=grupoAnterior)
         {
             using var cmd=Db.Sql(c,"""
-                SELECT (SELECT COUNT(*) FROM Reinscripcion_Demostracion
+                SELECT (SELECT COUNT(*) FROM Reinscripcion
                         WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO')
                      + (SELECT COUNT(*) FROM Inscripcion
                         WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO')
@@ -166,7 +166,7 @@ internal static class RepositorioMantenimientoReinscripcion
             : correoAnterior;
 
         using(var cmd=Db.Sql(c,"""
-            UPDATE Reinscripcion_Demostracion
+            UPDATE Reinscripcion
             SET numero_control=@nuevo,nombre=@nombre,
                 apellido_paterno=@paterno,apellido_materno=@materno,
                 anio_ingreso=@anio,semestre_destino=@semestre,
@@ -199,7 +199,7 @@ internal static class RepositorioMantenimientoReinscripcion
         using(var cmd=Db.Sql(c,"SELECT id FROM Control_Identidad WHERE id=1 FOR UPDATE",tx))
             if(cmd.ExecuteScalar() is null)throw new InvalidOperationException("Falta migración 06.");
         using(var cmd=Db.Sql(c,"""
-            UPDATE Reinscripcion_Demostracion SET estatus='BAJA'
+            UPDATE Reinscripcion SET estatus='BAJA'
             WHERE numero_control=@control AND UPPER(estatus)='INSCRITO'
             """,tx))
         {
