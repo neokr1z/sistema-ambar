@@ -1,8 +1,8 @@
--- AMBAR · Reinscripción autónoma (demostración de Semana 6)
+-- AMBAR · Reinscripción autónoma de alumnos (Semana 6)
 -- Requiere los grupos y horarios de 07_grupos_y_fichas_2026.sql.
--- Los registros NO son expedientes institucionales verificados.
+-- Este módulo guarda registros mínimos independientes del expediente completo.
 USE AMBAR_Control_Escolar;
-CREATE TABLE IF NOT EXISTS Reinscripcion_Demostracion (
+CREATE TABLE IF NOT EXISTS Reinscripcion (
     numero_control VARCHAR(20) NOT NULL PRIMARY KEY,
     nombre VARCHAR(60) NOT NULL,
     apellido_paterno VARCHAR(50) NOT NULL,
@@ -21,5 +21,5 @@ CREATE TABLE IF NOT EXISTS Reinscripcion_Demostracion (
 
 -- No se insertan alumnos predefinidos. Los datos se capturan en la ventana de Reinscripción.
 -- El número de control se valida por su FORMA y AÑO, no por existencia en Alumno.
-SELECT COUNT(*) AS 'Reinscripciones de demostración'
-FROM Reinscripcion_Demostracion;
+SELECT COUNT(*) AS 'Reinscripciones'
+FROM Reinscripcion;
