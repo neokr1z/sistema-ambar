@@ -64,7 +64,7 @@ internal static class RepositorioReinscripcionDemo
         using var cmd=Db.Sql(c,"""
             SELECT r.nombre,r.apellido_paterno,r.apellido_materno,r.anio_ingreso,
               r.semestre_destino,r.ID_grupo,g.nombre_grupo,COALESCE(g.turno,'')
-            FROM Reinscripcion_Demostracion r JOIN Grupo g ON g.ID_grupo=r.ID_grupo
+            FROM Reinscripcion r JOIN Grupo g ON g.ID_grupo=r.ID_grupo
             WHERE r.numero_control=@control
             """);
         Db.Param(cmd,"@control",numero.Trim());
@@ -85,7 +85,7 @@ internal static class RepositorioReinscripcionDemo
             FROM Grupo g
             JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
             JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
-            LEFT JOIN Reinscripcion_Demostracion r ON r.ID_grupo=g.ID_grupo AND UPPER(r.estatus)='INSCRITO'
+            LEFT JOIN Reinscripcion r ON r.ID_grupo=g.ID_grupo AND UPPER(r.estatus)='INSCRITO'
             LEFT JOIN Inscripcion i ON i.ID_grupo=g.ID_grupo AND UPPER(i.estatus)='INSCRITO'
             WHERE s.numero_semestre=@semestre AND p.nombre_periodo=@periodo
               AND UPPER(g.Estatus)='ACTIVO' AND UPPER(p.estatus)='ACTIVO'
@@ -111,7 +111,7 @@ internal static class RepositorioReinscripcionDemo
             string local=parts[0][..Math.Min(parts[0].Length,64-sufijo.Length)];
             string candidato=local+sufijo+"@"+parts[1];
             using var cmd=Db.Sql(c,"""
-                SELECT (SELECT COUNT(*) FROM Reinscripcion_Demostracion WHERE correo_institucional=@correo AND (@excluir IS NULL OR numero_control<>@excluir))
+                SELECT (SELECT COUNT(*) FROM Reinscripcion WHERE correo_institucional=@correo AND (@excluir IS NULL OR numero_control<>@excluir))
                      +(SELECT COUNT(*) FROM Alumno WHERE correo_institucional=@correo)
                      +(SELECT COUNT(*) FROM Docente WHERE correo_institucional=@correo)
                      +(SELECT COUNT(*) FROM Personal_Administrativo WHERE correo_institucional=@correo)
@@ -139,7 +139,7 @@ internal static class RepositorioReinscripcionDemo
         using(var gate=Db.Sql(c,"SELECT id FROM Control_Identidad WHERE id=1 FOR UPDATE",tx))
             if(gate.ExecuteScalar() is null)throw new InvalidOperationException("Ejecuta el script de migración 06.");
         using(var existe=Db.Sql(c,"""
-            SELECT COUNT(*) FROM Reinscripcion_Demostracion WHERE numero_control=@control
+            SELECT COUNT(*) FROM Reinscripcion WHERE numero_control=@control
             """,tx))
         {
             Db.Param(existe,"@control",numero);
@@ -176,7 +176,7 @@ internal static class RepositorioReinscripcionDemo
             capacidad=Convert.ToInt32(value);
         }
         using(var cmd=Db.Sql(c,"""
-            SELECT (SELECT COUNT(*) FROM Reinscripcion_Demostracion
+            SELECT (SELECT COUNT(*) FROM Reinscripcion
                     WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO')
                  + (SELECT COUNT(*) FROM Inscripcion
                     WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO')
@@ -187,7 +187,7 @@ internal static class RepositorioReinscripcionDemo
                 throw new ArgumentException("El grupo no tiene lugares disponibles.");
         }
         using(var cmd=Db.Sql(c,"""
-            INSERT INTO Reinscripcion_Demostracion
+            INSERT INTO Reinscripcion
               (numero_control,nombre,apellido_paterno,apellido_materno,anio_ingreso,semestre_destino,ID_grupo,correo_institucional)
             VALUES(@control,@nombre,@paterno,@materno,@anio,@semestre,@grupo,@correo)
             """,tx))
@@ -209,7 +209,7 @@ internal static class RepositorioReinscripcionDemo
         using var cmd=Db.Sql(c,"""
             SELECT numero_control AS 'No. control',
               CONCAT_WS(' ',nombre,apellido_paterno,apellido_materno) AS 'Alumno'
-            FROM Reinscripcion_Demostracion
+            FROM Reinscripcion
             WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO'
             ORDER BY numero_control
             """);
