@@ -42,7 +42,7 @@ internal static class RepositorioConsultaSemestres
                 JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
                 JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
                 WHERE s.numero_semestre IN (2,3)
-                  AND UPPER(r.estatus)='INSCRITO'
+                  AND UPPER(r.estatus) IN ('INSCRITO','BAJA')
                   AND pe.nombre_periodo='Agosto-Diciembre 2026'
             ) AS registros
             WHERE (@semestre=0 OR registros.`Semestre`=@semestre)
