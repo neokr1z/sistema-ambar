@@ -3,7 +3,7 @@
 ## Funciones habilitadas
 En **Consulta de alumnos** (Administrador o Secretaría), al seleccionar un registro de tipo **REINSCRIPCIÓN** con estado `INSCRITO`:
 - **Modificar**: abre formulario independiente con número de control, nombre(s), apellidos, semestre (2.º o 3.º según generación) y grupo. El correo institucional se conserva o regenera automáticamente si cambia el nombre; no se captura CURP, fecha de nacimiento, domicilio ni NSS.
-- **Dar de baja** (reutiliza el botón «Ocultar registro»): solicita motivo obligatorio y confirmación; cambia `Reinscripcion_Demostracion.estatus` a `BAJA` y registra el movimiento en `Bitacora` dentro de una transacción. No se borran los datos.
+- **Dar de baja** (reutiliza el botón «Ocultar registro»): solicita motivo obligatorio y confirmación; cambia `Reinscripcion.estatus` a `BAJA` y registra el movimiento en `Bitacora` dentro de una transacción. No se borran los datos.
 
 Los registros con `BAJA` **permanecen visibles en Consulta de alumnos**, pero no se cuentan como inscritos ni aparecen en las listas de grupos activos o vistas por semestre. Su lugar en el grupo queda disponible. Los botones Modificar, Dar de baja y Ver horario se deshabilitan para estos registros. No se ha implementado reactivación.
 
@@ -18,7 +18,7 @@ Los expedientes completos de **Inscripción** conservan sus botones originales �
 
 ## Base de datos
 **No se necesita una nueva migración SQL.** Se reutilizan:
-- `Reinscripcion_Demostracion` (incluyendo `estatus` y `correo_institucional`);
+- `Reinscripcion` (incluyendo `estatus` y `correo_institucional`);
 - `Grupo`, `Semestre` y `Periodo_Escolar` para validar destino;
 - `Bitacora` para registrar movimientos;
 - `Control_Identidad` para serializar cambios.
@@ -31,7 +31,7 @@ USE AMBAR_Control_Escolar;
 
 SELECT numero_control, nombre, apellido_paterno, apellido_materno,
        anio_ingreso, semestre_destino, ID_grupo, correo_institucional, estatus
-FROM Reinscripcion_Demostracion
+FROM Reinscripcion
 ORDER BY numero_control;
 
 SELECT Id_bitacora, fecha_hora, tipo_evento, descripcion, id_registro_afectado
