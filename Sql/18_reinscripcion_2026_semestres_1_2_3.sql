@@ -4,16 +4,14 @@
 -- El histórico de generación 2024 se conserva en una tabla de respaldo (no se cuenta en el nuevo módulo).
 USE AMBAR_Control_Escolar;
 
--- 1. Resguardar las reinscripciones de demostración antiguas de 2024 antes de cambiar reglas.
-CREATE TABLE IF NOT EXISTS Reinscripcion_Demostracion_Respaldo_2024 LIKE Reinscripcion_Demostracion;
-INSERT IGNORE INTO Reinscripcion_Demostracion_Respaldo_2024
-SELECT * FROM Reinscripcion_Demostracion WHERE anio_ingreso=2024;
-DELETE FROM Reinscripcion_Demostracion WHERE anio_ingreso=2024;
+-- 1. El histórico de 2024 ya no participa en este módulo.
+-- No se crea ni se vuelve a generar una tabla de respaldo 2024.
+-- La limpieza del respaldo antiguo se hace una sola vez con el script 24.
 
 -- 2. Actualizar la restricción de generación.
-ALTER TABLE Reinscripcion_Demostracion
+ALTER TABLE Reinscripcion
     DROP CHECK ck_reins_demo_generacion;
-ALTER TABLE Reinscripcion_Demostracion
+ALTER TABLE Reinscripcion
     ADD CONSTRAINT ck_reins_demo_generacion CHECK
     ((anio_ingreso=2026 AND semestre_destino=2)
       OR (anio_ingreso=2025 AND semestre_destino=3));
