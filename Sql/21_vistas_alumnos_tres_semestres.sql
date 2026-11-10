@@ -28,7 +28,7 @@ AND p.nombre_periodo='Agosto-Diciembre 2026'
 UNION ALL
 SELECT r.numero_control,CONCAT_WS(' ',r.nombre,r.apellido_paterno,r.apellido_materno),
        g.nombre_grupo,p.nombre_periodo,'REINSCRIPCION'
-FROM Reinscripcion_Demostracion r JOIN Grupo g ON g.ID_grupo=r.ID_grupo
+FROM Reinscripcion r JOIN Grupo g ON g.ID_grupo=r.ID_grupo
 JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
 JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
 WHERE s.numero_semestre=2 AND UPPER(r.estatus)='INSCRITO'
@@ -48,7 +48,7 @@ AND p.nombre_periodo='Agosto-Diciembre 2026'
 UNION ALL
 SELECT r.numero_control,CONCAT_WS(' ',r.nombre,r.apellido_paterno,r.apellido_materno),
        g.nombre_grupo,p.nombre_periodo,'REINSCRIPCION'
-FROM Reinscripcion_Demostracion r JOIN Grupo g ON g.ID_grupo=r.ID_grupo
+FROM Reinscripcion r JOIN Grupo g ON g.ID_grupo=r.ID_grupo
 JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
 JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
 WHERE s.numero_semestre=3 AND UPPER(r.estatus)='INSCRITO'
