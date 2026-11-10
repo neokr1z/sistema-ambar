@@ -37,7 +37,7 @@ internal static class RepositorioConsultaSemestres
                   '', 'Ingeniería en Sistemas Computacionales',
                   COALESCE(r.correo_institucional,''),r.estatus,
                   s.numero_semestre,g.nombre_grupo,'REINSCRIPCIÓN'
-                FROM Reinscripcion_Demostracion r
+                FROM Reinscripcion r
                 JOIN Grupo g ON g.ID_grupo=r.ID_grupo
                 JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
                 JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
@@ -67,7 +67,7 @@ internal static class RepositorioConsultaSemestres
         using var c=Db.Connect();Identidad.RequireActive(c,null,actor);
         using var cmd=Db.Sql(c,"""
             SELECT r.ID_grupo,g.nombre_grupo,pe.nombre_periodo
-            FROM Reinscripcion_Demostracion r
+            FROM Reinscripcion r
             JOIN Grupo g ON g.ID_grupo=r.ID_grupo
             JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
             WHERE r.numero_control=@control AND UPPER(r.estatus)='INSCRITO'
