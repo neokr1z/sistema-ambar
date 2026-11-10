@@ -14,7 +14,7 @@ ALTER TABLE Reinscripcion
 ALTER TABLE Reinscripcion
     ADD CONSTRAINT ck_reins_demo_generacion CHECK
     ((anio_ingreso=2026 AND semestre_destino=2)
-      OR (anio_ingreso=2025 AND semestre_destino=3));
+      OR (anio_ingreso=2025 AND semestre_destino IN (2,3)));
 
 -- 3. Crear grupos de segundo semestre (sin inventar profesores ni horarios).
 DELIMITER $$
