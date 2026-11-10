@@ -80,6 +80,7 @@ public partial class ConsultaA : Form
             $"Semestre: {c["Semestre"].Value}º\n"+
             $"Grupo: {c["Grupo"].Value}\n"+
             "Periodo: Agosto–diciembre 2026\n"+
+            $"Estatus: {c["Estatus"].Value}\n"+
             "Registro de reinscripción (datos básicos, sin expediente completo).",
             "AMBAR | Datos de reinscripción",MessageBoxButtons.OK,MessageBoxIcon.Information);
     }
@@ -114,7 +115,11 @@ public partial class ConsultaA : Form
     private void ViewClick(object? sender, EventArgs e) => View();
     private void EditClick(object? sender, EventArgs e) => Edit();
     private void PdfClick(object? sender, EventArgs e) => Pdf();
-    private void HideClick(object? sender, EventArgs e) => ChangeVisibility(false);
+    private void HideClick(object? sender, EventArgs e)
+    {
+        if(EsReinscripcionSeleccionada())DarDeBajaReinscripcion();
+        else ChangeVisibility(false);
+    }
     private void RestoreClick(object? sender, EventArgs e) => ChangeVisibility(true);
     private void GridDoubleClick(object? sender, DataGridViewCellEventArgs e) => View();
 
@@ -141,11 +146,20 @@ public partial class ConsultaA : Form
 
     private void ActualizarAcciones()
     {
-        bool completo=grid.CurrentRow is not null && !EsReinscripcionSeleccionada();
-        edit.Enabled=completo;pdf.Enabled=completo;hide.Enabled=completo;
+        bool seleccionado=grid.CurrentRow is not null;
+        bool esReinscripcion=seleccionado && EsReinscripcionSeleccionada();
+        bool activo=seleccionado &&
+            string.Equals(Convert.ToString(grid.CurrentRow!.Cells["Estatus"].Value),
+                "INSCRITO",StringComparison.OrdinalIgnoreCase);
+        bool completo=seleccionado && !esReinscripcion;
+        edit.Enabled=completo || (esReinscripcion && activo);
+        pdf.Enabled=completo;
+        hide.Enabled=completo || (esReinscripcion && activo);
+        hide.Text=esReinscripcion?"Dar de baja":"Ocultar registro";
         restore.Enabled=completo && actor?.IsAdmin==true;
-        horario.Enabled=grid.CurrentRow is not null;
-        view.Text=completo?"Ver expediente":"Ver datos";
+        horario.Enabled=seleccionado && (!esReinscripcion || activo);
+        view.Enabled=seleccionado;
+        view.Text=esReinscripcion?"Ver datos":"Ver expediente";
     }
 
     private StudentData SelectedStudent()
@@ -161,8 +175,20 @@ public partial class ConsultaA : Form
 
     private void Edit()
     {
-        try { if(EsReinscripcionSeleccionada())throw new ArgumentException("Esta reinscripción solo dispone de los datos básicos.");
-              using var f = new ExpedienteMForm(actor, SelectedStudent()); f.ShowDialog(this); LoadData(); }
+        try
+        {
+            if(EsReinscripcionSeleccionada())
+            {
+                using var f=new ModificarReinscripcionForm(actor,SelectedControl());
+                if(f.ShowDialog(this)==DialogResult.OK)LoadData();
+            }
+            else
+            {
+                using var f=new ExpedienteMForm(actor,SelectedStudent());
+                f.ShowDialog(this);
+                LoadData();
+            }
+        }
         catch (Exception ex) { Problems.Show(ex); }
     }
 
@@ -183,6 +209,101 @@ public partial class ConsultaA : Form
             MessageBox.Show("El PDF se generó correctamente.", "AMBAR");
         }
         catch (Exception ex) { Problems.Show(ex); }
+    }
+
+    private void DarDeBajaReinscripcion()
+    {
+        try
+        {
+            string controlAlumno=SelectedControl();
+            var alumno=RepositorioMantenimientoReinscripcion.Obtener(actor,controlAlumno);
+            if(!alumno.Estatus.Equals("INSCRITO",StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("El alumno ya está dado de baja.");
+
+            using var ventana=new Form
+            {
+                Text="AMBAR | Dar de baja alumno reinscrito",
+                StartPosition=FormStartPosition.CenterParent,
+                ClientSize=new Size(520,315),MinimumSize=new Size(490,315),
+                FormBorderStyle=FormBorderStyle.FixedDialog,
+                MaximizeBox=false,MinimizeBox=false,BackColor=Color.White,
+                Font=new Font("Segoe UI",10F)
+            };
+            var titulo=new Label
+            {
+                Text=$"DAR DE BAJA\n{alumno.Nombre} {alumno.Paterno} {alumno.Materno}\nControl: {controlAlumno}",
+                Dock=DockStyle.Top,Height=100,ForeColor=Theme.Blue,
+                Font=new Font("Segoe UI",11F,FontStyle.Bold),
+                Padding=new Padding(16,12,12,0)
+            };
+            var motivo=new TextBox
+            {
+                Multiline=true,MaxLength=250,Dock=DockStyle.Fill,
+                ScrollBars=ScrollBars.Vertical,Font=new Font("Segoe UI",11F),
+                Margin=new Padding(15,5,15,5)
+            };
+            var panelMotivo=new Panel{Dock=DockStyle.Fill,Padding=new Padding(15,5,15,8)};
+            panelMotivo.Controls.Add(motivo);
+            var etiqueta=new Label
+            {
+                Text="Motivo de la baja (obligatorio):",
+                Dock=DockStyle.Top,Height=34,Padding=new Padding(16,5,0,0)
+            };
+            var acciones=new FlowLayoutPanel
+            {
+                Dock=DockStyle.Bottom,Height=64,
+                FlowDirection=FlowDirection.RightToLeft,
+                Padding=new Padding(12,9),WrapContents=false
+            };
+            var cancelar=new Button
+            {
+                Text="Cancelar",Width=125,Height=40,
+                DialogResult=DialogResult.Cancel
+            };
+            var confirmar=new Button
+            {
+                Text="Confirmar baja",Width=165,Height=40,
+                BackColor=Theme.Blue,ForeColor=Color.White,
+                FlatStyle=FlatStyle.Flat
+            };
+            confirmar.FlatAppearance.BorderSize=0;
+            cancelar.Click+=(_,_)=>ventana.Close();
+            confirmar.Click+=(_,_)=>
+            {
+                try
+                {
+                    if(string.IsNullOrWhiteSpace(motivo.Text))
+                    {
+                        MessageBox.Show(ventana,"Escribe el motivo de la baja.","AMBAR",
+                            MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                        return;
+                    }
+                    if(MessageBox.Show(ventana,
+                        "¿Confirmar la baja del alumno? Su registro se conservará en MySQL y se liberará su lugar.",
+                        "Confirmación de baja",MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning)!=DialogResult.Yes)return;
+
+                    RepositorioMantenimientoReinscripcion.Baja(actor,controlAlumno,motivo.Text);
+                    ventana.DialogResult=DialogResult.OK;
+                    ventana.Close();
+                }
+                catch(Exception ex){Problems.Show(ex);}
+            };
+            acciones.Controls.Add(cancelar);
+            acciones.Controls.Add(confirmar);
+            ventana.Controls.Add(panelMotivo);
+            ventana.Controls.Add(etiqueta);
+            ventana.Controls.Add(titulo);
+            ventana.Controls.Add(acciones);
+            ventana.CancelButton=cancelar;
+            if(ventana.ShowDialog(this)==DialogResult.OK)
+            {
+                MessageBox.Show(this,"La baja quedó registrada en MySQL y en la Bitácora.",
+                    "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                LoadData();
+            }
+        }
+        catch(Exception ex){Problems.Show(ex);}
     }
 
     private void ChangeVisibility(bool restore)
