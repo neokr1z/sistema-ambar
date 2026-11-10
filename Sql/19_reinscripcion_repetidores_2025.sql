@@ -4,10 +4,10 @@
 USE AMBAR_Control_Escolar;
 
 -- Actualizar la restricción sin borrar alumnos existentes.
-ALTER TABLE Reinscripcion_Demostracion
+ALTER TABLE Reinscripcion
     DROP CHECK ck_reins_demo_generacion;
 
-ALTER TABLE Reinscripcion_Demostracion
+ALTER TABLE Reinscripcion
     ADD CONSTRAINT ck_reins_demo_generacion CHECK
        ((anio_ingreso=2026 AND semestre_destino=2)
         OR (anio_ingreso=2025 AND semestre_destino IN (2,3)));
@@ -17,5 +17,5 @@ SELECT numero_control,anio_ingreso,semestre_destino,
        CASE WHEN anio_ingreso=2025 AND semestre_destino=2
             THEN 'REPETIDOR' ELSE 'REGULAR' END AS situacion,
        periodo,estatus
-FROM Reinscripcion_Demostracion
+FROM Reinscripcion
 ORDER BY numero_control;
