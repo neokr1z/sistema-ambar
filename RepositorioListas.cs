@@ -29,12 +29,19 @@ internal static class RepositorioListas
             nombre=r.GetString(0);periodo=r.GetString(1);
         }
         using var cmd=Db.Sql(c,"""
-            SELECT DISTINCT a.Numero_control AS Control,
+            SELECT Control, Alumno, Estatus FROM (
+              SELECT DISTINCT a.Numero_control AS Control,
                 CONCAT_WS(' ',a.apellido_paterno,a.apellido_materno,a.nombre) AS Alumno,
                 a.estatus AS Estatus
-            FROM Inscripcion i JOIN Alumno a ON a.Numero_control=i.Numero_control
-            WHERE i.ID_grupo=@grupo AND UPPER(i.estatus)='INSCRITO' AND UPPER(a.estatus)='INSCRITO'
-            ORDER BY Alumno,Control
+              FROM Inscripcion i JOIN Alumno a ON a.Numero_control=i.Numero_control
+              WHERE i.ID_grupo=@grupo AND UPPER(i.estatus)='INSCRITO' AND UPPER(a.estatus)='INSCRITO'
+              UNION ALL
+              SELECT r.numero_control AS Control,
+                CONCAT_WS(' ',r.apellido_paterno,r.apellido_materno,r.nombre) AS Alumno,
+                'PENDIENTE DE EXPEDIENTE' AS Estatus
+              FROM Reinscripcion_Demostracion r
+              WHERE r.ID_grupo=@grupo AND UPPER(r.estatus)='INSCRITO'
+            ) AS listado ORDER BY Alumno,Control
             """);
         Db.Param(cmd,"@grupo",grupo);using var rd=cmd.ExecuteReader();var data=new DataTable();data.Load(rd);
         return new(nombre,periodo,data);

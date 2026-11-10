@@ -2,151 +2,260 @@ using System.Data;
 
 namespace AMBAR.Semana4;
 
-// Ventana de reinscripción: número de control → historial → grupo → confirmación.
+// Reinscripción independiente: captura sin expedientes ni calificaciones precargadas.
 internal sealed class ReinscripcionForm : Form
 {
     private readonly Sesion actor;
     private readonly TextBox control = new();
-    private readonly Label identificacion = new();
-    private readonly Label estado = new();
+    private readonly TextBox nombre = new();
+    private readonly TextBox paterno = new();
+    private readonly TextBox materno = new();
+    private readonly Label resultado = new();
+    private readonly Label informacion = new();
     private readonly ComboBox grupos = new();
-    private readonly DataGridView calificaciones = new();
-    private readonly Button guardar = new();
-    private ResumenReinscripcion? consulta;
+    private readonly ComboBox semestres = new();
+    private readonly Button guardar;
+    private readonly Button horario;
+    private string controlValidado = "";
+    private int semestreValidado;
 
     internal ReinscripcionForm(Sesion session)
     {
-        if(!session.CanSeeStudents)throw new UnauthorizedAccessException("Acceso exclusivo de Secretaría y Administración.");
+        if(!session.CanSeeStudents)throw new UnauthorizedAccessException("Acceso exclusivo para Secretaría y Administración.");
         actor=session;
         Text=(actor.IsAdmin?"Administrador":"Secretaría")+" | Reinscripción";
         StartPosition=FormStartPosition.CenterParent;
-        MinimumSize=new Size(990,620);ClientSize=new Size(1090,710);
+        ClientSize=new Size(1080,660);
+        MinimumSize=new Size(920,570);
         BackColor=Color.White;
         Font=new Font("Segoe UI",10F);
         NavegacionEnter.Instalar(this);
 
-        var title=new Label
+        var encabezado=new Label
         {
             Text="REINSCRIPCIÓN | AGOSTO–DICIEMBRE 2026",
-            Dock=DockStyle.Top,Height=80,Font=new Font("Segoe UI",19F,FontStyle.Bold),
-            ForeColor=Color.FromArgb(6,55,99),Padding=new Padding(25,20,0,0)
+            Dock=DockStyle.Top,Height=88,Font=new Font("Segoe UI",19F,FontStyle.Bold),
+            ForeColor=Theme.Blue,Padding=new Padding(26,22,0,0)
         };
-        var searchRow=new FlowLayoutPanel
+        var contenido=new Panel{Dock=DockStyle.Fill,Padding=new Padding(28,8,28,16),AutoScroll=true};
+        var buscador=new FlowLayoutPanel
         {
-            Dock=DockStyle.Top,Height=75,Padding=new Padding(24,14,0,0),
-            FlowDirection=FlowDirection.LeftToRight,WrapContents=false
+            Dock=DockStyle.Top,Height=72,WrapContents=false,
+            FlowDirection=FlowDirection.LeftToRight
         };
-        searchRow.Controls.Add(new Label{Text="Número de control",Width=170,Height=38,TextAlign=ContentAlignment.MiddleLeft,ForeColor=Color.FromArgb(6,55,99)});
-        control.Width=250;control.Height=32;control.MaxLength=20;control.TabIndex=0;
-        searchRow.Controls.Add(control);
-        var buscar=Boton("Buscar alumno",175);
-        buscar.Click+=(_,_)=>Buscar();
-        buscar.TabIndex=1;
-        searchRow.Controls.Add(buscar);
+        buscador.Controls.Add(new Label
+        {Text="Número de control",Width=170,Height=42,TextAlign=ContentAlignment.MiddleLeft,
+         Font=new Font("Segoe UI",10F,FontStyle.Bold),ForeColor=Theme.Blue});
+        control.Width=260;control.MaxLength=20;control.Font=new Font("Segoe UI",12F);
+        buscador.Controls.Add(control);
+        var validar=Boton("Validar número",180);
+        validar.Click+=(_,_)=>ValidarNumero();
+        buscador.Controls.Add(validar);
 
-        var info=new Panel{Dock=DockStyle.Top,Height=110,Padding=new Padding(25,5,25,5)};
-        identificacion.Dock=DockStyle.Top;identificacion.Height=60;
-        identificacion.Font=new Font("Segoe UI",11F,FontStyle.Bold);
-        identificacion.ForeColor=Color.FromArgb(6,55,99);
-        identificacion.Text="Introduce un número de control para consultar el expediente.";
-        estado.Dock=DockStyle.Fill;estado.ForeColor=Color.DarkRed;
-        info.Controls.Add(estado);info.Controls.Add(identificacion);
+        informacion.Dock=DockStyle.Top;informacion.Height=84;
+        informacion.Font=new Font("Segoe UI",11F,FontStyle.Bold);
+        informacion.ForeColor=Theme.Blue;
+        informacion.Text="Escribe un número de control para determinar el semestre correspondiente.";
+        resultado.Dock=DockStyle.Top;resultado.Height=47;
+        resultado.ForeColor=Color.FromArgb(61,107,134);
+        resultado.Text="Los datos personales se capturan después de validar el número.";
 
-        var subtitulo=new Label{Text="CALIFICACIONES FINALES DEL SEMESTRE ANTERIOR",Dock=DockStyle.Top,Height=45,
-            Padding=new Padding(25,8,0,0),ForeColor=Color.FromArgb(6,55,99),
-            Font=new Font("Segoe UI",12F,FontStyle.Bold)};
-        calificaciones.Dock=DockStyle.Fill;calificaciones.ReadOnly=true;
-        calificaciones.AutoSizeColumnsMode=DataGridViewAutoSizeColumnsMode.Fill;
-        calificaciones.SelectionMode=DataGridViewSelectionMode.FullRowSelect;
-        calificaciones.MultiSelect=false;calificaciones.AllowUserToAddRows=false;
-        calificaciones.RowHeadersVisible=false;calificaciones.BackgroundColor=Color.White;
-        calificaciones.BorderStyle=BorderStyle.None;
-        // La tabla es de solo consulta; las filas conservan su altura.
-        calificaciones.AllowUserToResizeRows=false;
-        calificaciones.AllowUserToOrderColumns=false;
-        calificaciones.AutoSizeRowsMode=DataGridViewAutoSizeRowsMode.None;
-        calificaciones.RowTemplate.Height=32;
-        calificaciones.AllowUserToResizeColumns=false;
-        calificaciones.ColumnHeadersHeightSizeMode=DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-        calificaciones.ColumnHeadersHeight=38;
+        var tituloDatos=new Label
+        {
+            Text="DATOS DEL ALUMNO",Dock=DockStyle.Top,Height=47,
+            Font=new Font("Segoe UI",14F,FontStyle.Bold),ForeColor=Theme.Blue
+        };
+        var campos=new TableLayoutPanel{Dock=DockStyle.Top,Height=170,ColumnCount=2,RowCount=3};
+        campos.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,25));
+        campos.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,75));
+        AgregarCampo(campos,0,"Nombre(s)",nombre);
+        AgregarCampo(campos,1,"Apellido paterno",paterno);
+        AgregarCampo(campos,2,"Apellido materno",materno);
+        foreach(var tb in new[]{nombre,paterno,materno}){tb.Enabled=false;tb.MaxLength=60;tb.Font=new Font("Segoe UI",11F);}
 
-        var actions=new FlowLayoutPanel{Dock=DockStyle.Bottom,Height=94,Padding=new Padding(20,18,20,10),
-            FlowDirection=FlowDirection.RightToLeft,WrapContents=false};
-        var cerrar=Boton("Cerrar",105);cerrar.Click+=(_,_)=>Close();
-        var verGrupos=Boton("Grupos",115);
-        verGrupos.Click+=(_,_)=>{using var ventana=new ConsultaGruposForm(actor, true);ventana.ShowDialog(this);BuscarSiHayAlumno();};
-        guardar=Boton("Confirmar reinscripción",225);guardar.Enabled=false;guardar.Click+=(_,_)=>Guardar();
-        grupos.DropDownStyle=ComboBoxStyle.DropDownList;grupos.Width=310;grupos.Height=38;grupos.TabIndex=2;
-        actions.Controls.Add(cerrar);
-        actions.Controls.Add(verGrupos);
-        actions.Controls.Add(guardar);
-        actions.Controls.Add(grupos);
-        actions.Controls.Add(new Label{Text="Grupo de destino",Width=125,Height=38,TextAlign=ContentAlignment.MiddleLeft,ForeColor=Color.FromArgb(6,55,99)});
+        var seleccionar=new FlowLayoutPanel
+        {
+            Dock=DockStyle.Top,Height=75,WrapContents=false,
+            FlowDirection=FlowDirection.LeftToRight
+        };
+        seleccionar.Controls.Add(new Label{Text="Grupo de destino",Width=170,Height=40,
+            TextAlign=ContentAlignment.MiddleLeft,ForeColor=Theme.Blue,
+            Font=new Font("Segoe UI",10F,FontStyle.Bold)});
+        grupos.Width=445;grupos.DropDownStyle=ComboBoxStyle.DropDownList;grupos.Enabled=false;
+        seleccionar.Controls.Add(grupos);
+        horario=Boton("Ver horario",150);
+        horario.Enabled=false;
+        horario.Click+=(_,_)=>VerHorario();
+        seleccionar.Controls.Add(horario);
+        grupos.SelectedIndexChanged+=(_,_)=>horario.Enabled=grupos.SelectedItem is Choice;
 
-        Controls.Add(calificaciones);
-        Controls.Add(subtitulo);Controls.Add(info);Controls.Add(searchRow);Controls.Add(title);Controls.Add(actions);
-        AcceptButton=buscar;
+        var elegirSemestre=new FlowLayoutPanel
+        {
+            Dock=DockStyle.Top,Height=66,FlowDirection=FlowDirection.LeftToRight,WrapContents=false
+        };
+        elegirSemestre.Controls.Add(new Label
+        {
+            Text="Semestre de destino",Width=170,Height=40,
+            TextAlign=ContentAlignment.MiddleLeft,ForeColor=Theme.Blue,
+            Font=new Font("Segoe UI",10F,FontStyle.Bold)
+        });
+        semestres.DropDownStyle=ComboBoxStyle.DropDownList;
+        semestres.Width=230;semestres.Enabled=false;
+        semestres.SelectedIndexChanged+=(_,_)=>CambiarSemestre();
+        elegirSemestre.Controls.Add(semestres);
+
+        // Agregar de abajo hacia arriba por el orden de DockStyle.Top.
+        contenido.Controls.Add(seleccionar);
+        contenido.Controls.Add(elegirSemestre);
+        contenido.Controls.Add(campos);
+        contenido.Controls.Add(tituloDatos);
+        contenido.Controls.Add(resultado);
+        contenido.Controls.Add(informacion);
+        contenido.Controls.Add(buscador);
+
+        var pie=new FlowLayoutPanel
+        {
+            Dock=DockStyle.Bottom,Height=84,FlowDirection=FlowDirection.RightToLeft,
+            WrapContents=false,Padding=new Padding(20,16,20,12)
+        };
+        var cerrar=Boton("Cerrar",110);cerrar.Click+=(_,_)=>Close();
+        guardar=Boton("Guardar reinscripción",218);
+        guardar.Enabled=false;guardar.Click+=(_,_)=>Guardar();
+        var verGrupos=Boton("Grupos / PDF",160);
+        verGrupos.Click+=(_,_)=>{using var f=new ConsultaGruposForm(actor,true);f.ShowDialog(this);RefrescarGrupos();};
+        pie.Controls.Add(cerrar);pie.Controls.Add(guardar);pie.Controls.Add(verGrupos);
+        Controls.Add(contenido);Controls.Add(encabezado);Controls.Add(pie);
+        AcceptButton=validar;
     }
 
     private static Button Boton(string label,int width)
     {
-        var b=new Button{Text=label,Width=width,Height=43,
-            BackColor=Color.FromArgb(6,55,99),ForeColor=Color.White,
-            FlatStyle=FlatStyle.Flat,Font=new Font("Segoe UI",10F,FontStyle.Bold),Cursor=Cursors.Hand};
+        var b=new Button{Text=label,Width=width,Height=43,BackColor=Theme.Blue,
+            ForeColor=Color.White,FlatStyle=FlatStyle.Flat,
+            Font=new Font("Segoe UI",10F,FontStyle.Bold),Cursor=Cursors.Hand};
         b.FlatAppearance.BorderSize=0;
         b.FlatAppearance.MouseOverBackColor=Color.FromArgb(31,79,120);
         return b;
     }
-
-    private void Buscar()
+    private static void AgregarCampo(TableLayoutPanel panel,int fila,string texto,TextBox campo)
     {
-        consulta=null;guardar.Enabled=false;grupos.Items.Clear();calificaciones.DataSource=null;
-        identificacion.Text="";estado.Text="";
-        try
-        {
-            var datos=RepositorioReinscripcion.Consultar(actor,control.Text);
-            consulta=datos;
-            identificacion.Text=$"{datos.Alumno} | {datos.Control}\n{datos.Carrera} | {datos.SemestreAnterior}.º → {datos.SemestreDestino}.º semestre";
-            calificaciones.DataSource=datos.Calificaciones;
-            foreach(DataGridViewRow fila in calificaciones.Rows) fila.Height=32;
-            if(calificaciones.Columns.Contains("Calificación"))
-                calificaciones.Columns["Calificación"].DefaultCellStyle.Format="N2";
-            estado.ForeColor=datos.PuedeReinscribir?Color.DarkGreen:Color.DarkRed;
-            estado.Text=$"{datos.Situacion}. Aprobadas: {datos.Aprobadas}/{datos.TotalMaterias}. Periodo anterior: {datos.PeriodoAnterior}.";
-            if(datos.PuedeReinscribir)
-            {
-                foreach(var grupo in RepositorioReinscripcion.Grupos(actor,datos.SemestreDestino))
-                    grupos.Items.Add(grupo);
-                if(grupos.Items.Count>0)grupos.SelectedIndex=0;
-                guardar.Enabled=grupos.Items.Count>0;
-                if(grupos.Items.Count==0)
-                {
-                    estado.ForeColor=Color.DarkRed;
-                    estado.Text="El alumno cumple los requisitos, pero no hay grupos con cupo para el semestre siguiente.";
-                }
-            }
-        }
-        catch(Exception ex){Problems.Show(ex);}
+        panel.RowStyles.Add(new RowStyle(SizeType.Percent,33.33F));
+        panel.Controls.Add(new Label{Text=texto,Dock=DockStyle.Fill,
+            TextAlign=ContentAlignment.MiddleLeft,ForeColor=Theme.Blue,
+            Font=new Font("Segoe UI",10F,FontStyle.Bold)},0,fila);
+        campo.Dock=DockStyle.Fill;campo.Margin=new Padding(4,7,28,10);
+        panel.Controls.Add(campo,1,fila);
     }
 
-    private void BuscarSiHayAlumno()
+    private void LimpiarCaptura()
     {
-        if(!string.IsNullOrWhiteSpace(control.Text) && consulta is not null)Buscar();
+        controlValidado="";
+        semestreValidado=0;
+        informacion.Text="";
+        resultado.Text="";
+        nombre.Clear();paterno.Clear();materno.Clear();
+        grupos.Items.Clear();grupos.Enabled=false;guardar.Enabled=false;horario.Enabled=false;
+        semestres.Items.Clear();semestres.Enabled=false;
+        foreach(var tb in new[]{nombre,paterno,materno})tb.Enabled=false;
+    }
+
+    private void ValidarNumero()
+    {
+        LimpiarCaptura();
+        try
+        {
+            string numero=control.Text.Trim();
+            var (anio,semestre)=RepositorioReinscripcionDemo.Inferir(numero);
+            RepositorioReinscripcionDemo.VerificarNoPrimerSemestre(actor,numero);
+            var anterior=RepositorioReinscripcionDemo.Existente(actor,numero);
+            if(anterior!=null)
+            {
+                informacion.ForeColor=Color.DarkRed;
+                informacion.Text=$"El número {numero} ya se registró en la demostración.\nGrupo: {anterior.GrupoNombre} · {anterior.Semestre}.º semestre.";
+                resultado.Text="No se permitirá volver a registrarlo.";
+                return;
+            }
+            // No existe en la BD es válido: los campos comienzan vacíos.
+            controlValidado=numero;
+            if(anio==2025)
+            {
+                semestres.Items.Add(new Choice(2,"2.º semestre · Repetidor"));
+                semestres.Items.Add(new Choice(3,"3.º semestre · Regular"));
+            }
+            else semestres.Items.Add(new Choice(2,"2.º semestre"));
+            semestres.Enabled=anio==2025;
+            semestres.SelectedIndex=semestres.Items.Count-1;
+            semestreValidado=(semestres.SelectedItem as Choice)?.Id??semestre;
+            informacion.ForeColor=Color.DarkGreen;
+            informacion.Text=$"Número válido · Generación {anio}\nDestino: {semestreValidado}.º semestre | Agosto–diciembre 2026";
+            resultado.Text="Completa los datos del alumno y selecciona el grupo.";
+            foreach(var tb in new[]{nombre,paterno,materno})tb.Enabled=true;
+            RefrescarGrupos();
+            nombre.Focus();
+        }
+        catch(Exception ex){informacion.ForeColor=Color.DarkRed;informacion.Text=ex.Message;}
+    }
+
+    private void CambiarSemestre()
+    {
+        if(semestres.SelectedItem is not Choice seleccionado || string.IsNullOrWhiteSpace(controlValidado))return;
+        try
+        {
+            RepositorioReinscripcionDemo.ValidarSemestre(controlValidado,seleccionado.Id);
+            semestreValidado=seleccionado.Id;
+            informacion.Text=$"Número válido · Generación {controlValidado[..4]}\nDestino: {semestreValidado}.º semestre | Agosto–diciembre 2026";
+            resultado.Text=semestreValidado==2 && controlValidado.StartsWith("2025")
+                ? "Segundo semestre (repetidor). Completa los datos y selecciona el grupo."
+                : "Completa los datos del alumno y selecciona el grupo.";
+            RefrescarGrupos();
+        }
+        catch(Exception ex){guardar.Enabled=false;Problems.Show(ex);}
+    }
+
+    private void RefrescarGrupos()
+    {
+        if(semestreValidado==0)return;
+        int seleccionado=(grupos.SelectedItem as Choice)?.Id??0;
+        try
+        {
+            grupos.Items.Clear();
+            foreach(var item in RepositorioReinscripcionDemo.Grupos(actor,semestreValidado))grupos.Items.Add(item);
+            var anterior=grupos.Items.OfType<Choice>().FirstOrDefault(x=>x.Id==seleccionado);
+            if(anterior!=null)grupos.SelectedItem=anterior;
+            else if(grupos.Items.Count>0)grupos.SelectedIndex=0;
+            grupos.Enabled=grupos.Items.Count>0;
+            guardar.Enabled=grupos.Enabled;
+            horario.Enabled=grupos.SelectedItem is Choice;
+            if(grupos.Items.Count==0)resultado.Text="No hay grupos disponibles con cupo para este semestre.";
+        }
+        catch(Exception ex){guardar.Enabled=false;Problems.Show(ex);}
+    }
+
+    private void VerHorario()
+    {
+        if(grupos.SelectedItem is not Choice grupo)return;
+        using var f=new HorarioGrupoDemoForm(actor,grupo.Id,grupo.Name);
+        f.ShowDialog(this);
     }
 
     private void Guardar()
     {
-        if(consulta is null || !consulta.PuedeReinscribir || grupos.SelectedItem is not Choice grupo)return;
-        if(MessageBox.Show(this,$"¿Reinscribir a {consulta.Alumno} al grupo {grupo.Name} del periodo agosto–diciembre 2026?",
-            "Confirmar reinscripción",MessageBoxButtons.YesNo,MessageBoxIcon.Question)!=DialogResult.Yes)return;
+        if(string.IsNullOrWhiteSpace(controlValidado)||control.Text.Trim()!=controlValidado)
+        {
+            MessageBox.Show(this,"Primero valida el número de control actual.","AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+            return;
+        }
+        if(grupos.SelectedItem is not Choice grupo)return;
+        if(MessageBox.Show(this,$"¿Registrar reinscripción de {nombre.Text.Trim()} en {grupo.Name}?",
+            "Confirmar",MessageBoxButtons.YesNo,MessageBoxIcon.Question)!=DialogResult.Yes)return;
         try
         {
             guardar.Enabled=false;
-            RepositorioReinscripcion.Guardar(actor,consulta.Control,grupo.Id);
-            MessageBox.Show(this,$"Reinscripción registrada correctamente.\nAlumno: {consulta.Alumno}\nGrupo: {grupo.Name}\nPeriodo: Agosto–diciembre 2026",
-                "AMBAR | Reinscripción completada",MessageBoxButtons.OK,MessageBoxIcon.Information);
-            Buscar();
+            RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado);
+            MessageBox.Show(this,$"Reinscripción de demostración guardada.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
+                "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            LimpiarCaptura();control.Clear();control.Focus();
         }
-        catch(Exception ex){Problems.Show(ex);Buscar();}
+        catch(Exception ex){Problems.Show(ex);guardar.Enabled=grupos.SelectedItem is Choice;}
     }
 }
