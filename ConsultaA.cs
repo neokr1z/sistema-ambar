@@ -253,7 +253,7 @@ public partial class ConsultaA : Form
             {
                 Dock=DockStyle.Bottom,Height=64,
                 FlowDirection=FlowDirection.RightToLeft,
-                Padding=new Padding(12,9),WrapContents=false
+                Padding=new Padding(12,9,12,9),WrapContents=false
             };
             var cancelar=new Button
             {
