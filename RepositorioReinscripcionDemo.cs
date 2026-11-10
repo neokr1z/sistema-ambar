@@ -99,8 +99,8 @@ internal static class RepositorioReinscripcionDemo
         return items;
     }
 
-    private static string GenerarCorreo(MySqlConnection c, MySqlTransaction tx,
-        string nombre,string paterno,string materno)
+    internal static string GenerarCorreo(MySqlConnection c, MySqlTransaction tx,
+        string nombre,string paterno,string materno,string? excluirControl=null)
     {
         // Misma regla local usada para el personal: Nombre + iniciales de apellidos.
         string baseEmail=PersonalAutomatico.EmailBase(nombre,paterno,materno);
@@ -111,12 +111,13 @@ internal static class RepositorioReinscripcionDemo
             string local=parts[0][..Math.Min(parts[0].Length,64-sufijo.Length)];
             string candidato=local+sufijo+"@"+parts[1];
             using var cmd=Db.Sql(c,"""
-                SELECT (SELECT COUNT(*) FROM Reinscripcion_Demostracion WHERE correo_institucional=@correo)
+                SELECT (SELECT COUNT(*) FROM Reinscripcion_Demostracion WHERE correo_institucional=@correo AND (@excluir IS NULL OR numero_control<>@excluir))
                      +(SELECT COUNT(*) FROM Alumno WHERE correo_institucional=@correo)
                      +(SELECT COUNT(*) FROM Docente WHERE correo_institucional=@correo)
                      +(SELECT COUNT(*) FROM Personal_Administrativo WHERE correo_institucional=@correo)
                 """,tx);
             Db.Param(cmd,"@correo",candidato);
+            Db.Param(cmd,"@excluir",excluirControl);
             if(Convert.ToInt32(cmd.ExecuteScalar())==0)return candidato;
         }
         throw new InvalidOperationException("No hay correos institucionales disponibles.");
