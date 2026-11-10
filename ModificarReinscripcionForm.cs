@@ -11,7 +11,6 @@ internal sealed class ModificarReinscripcionForm : Form
     private readonly TextBox materno=new();
     private readonly ComboBox semestre=new();
     private readonly ComboBox grupo=new();
-    private readonly Label aviso=new();
     private readonly Button guardar=new();
 
     internal ModificarReinscripcionForm(Sesion sesion,string control)
@@ -24,8 +23,8 @@ internal sealed class ModificarReinscripcionForm : Form
             throw new ArgumentException("No es posible modificar una reinscripción dada de baja.");
 
         Text=(actor.IsAdmin?"Administrador":"Secretaría")+" | Modificar reinscripción";
-        ClientSize=new Size(780,560);
-        MinimumSize=new Size(720,530);
+        ClientSize=new Size(780,490);
+        MinimumSize=new Size(720,480);
         StartPosition=FormStartPosition.CenterParent;
         BackColor=Color.White;
         Font=new Font("Segoe UI",10F);
@@ -59,12 +58,12 @@ internal sealed class ModificarReinscripcionForm : Form
 
         var cuerpo=new Panel {Dock=DockStyle.Fill,AutoScroll=true,Padding=new Padding(24,12,24,12)};
         var tabla=new TableLayoutPanel {
-            Dock=DockStyle.Top,ColumnCount=2,RowCount=7,
-            Height=366,Padding=new Padding(4)
+            Dock=DockStyle.Top,ColumnCount=2,RowCount=6,
+            Height=306,Padding=new Padding(4)
         };
         tabla.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,220));
         tabla.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));
-        for(int i=0;i<7;i++)tabla.RowStyles.Add(new RowStyle(SizeType.Absolute,51));
+        for(int i=0;i<6;i++)tabla.RowStyles.Add(new RowStyle(SizeType.Absolute,51));
         void Fila(int i,string etiqueta,Control campo)
         {
             tabla.Controls.Add(new Label {
@@ -93,10 +92,6 @@ internal sealed class ModificarReinscripcionForm : Form
         Fila(3,"Apellido materno",materno);
         Fila(4,"Semestre de destino",semestre);
         Fila(5,"Grupo de destino",grupo);
-        aviso.Text="El correo institucional se actualizará automáticamente si cambias el nombre.\n"+
-            "No se solicitarán CURP ni datos de expediente.";
-        aviso.ForeColor=Theme.Blue;aviso.AutoSize=true;aviso.Padding=new Padding(8,8,8,0);
-        tabla.Controls.Add(aviso,0,6);tabla.SetColumnSpan(aviso,2);
         cuerpo.Controls.Add(tabla);
         Controls.Add(cuerpo);Controls.Add(pie);Controls.Add(titulo);
 
@@ -121,13 +116,11 @@ internal sealed class ModificarReinscripcionForm : Form
             semestre.SelectedIndex=semestre.Items.OfType<Choice>().ToList()
                 .FindIndex(x=>x.Id==buscado);
             if(semestre.SelectedIndex<0)semestre.SelectedIndex=0;
-            aviso.ForeColor=Theme.Blue;
-            aviso.Text="El correo se genera automáticamente. Los datos se validarán al guardar.";
+            numero.BackColor=Color.White;
         }
         catch
         {
-            aviso.ForeColor=Color.DarkRed;
-            aviso.Text="Número de control: escribe exactamente 10 dígitos de generación 2025 o 2026.";
+            numero.BackColor=Color.MistyRose;
             guardar.Enabled=false;
             return;
         }
