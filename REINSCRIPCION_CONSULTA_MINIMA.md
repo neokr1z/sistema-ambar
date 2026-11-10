@@ -3,7 +3,7 @@
 ## Alcance
 Esta versión mantiene independiente la reinscripción: pide número de control, nombre(s), apellidos, semestre y grupo. **No solicita CURP, fecha de nacimiento, domicilio ni expediente**. Conserva las reglas de generación 2026 → 2.º; 2025 → 2.º (repetidor) o 3.º. Impide reinscribir a un alumno de primer semestre del mismo periodo y bloquea registros duplicados en la tabla autónoma o con inscripción activa en agosto–diciembre 2026.
 
-La información se conserva en MySQL en `Reinscripcion_Demostracion`, una tabla de inscripción reducida, **independiente de `Alumno`**. El nombre histórico de la tabla se conserva por compatibilidad; la interfaz ya dice «Reinscripción guardada correctamente». Los expedientes originales no se crean ni se alteran.
+La información se conserva en MySQL en `Reinscripcion`, una tabla de inscripción reducida, **independiente de `Alumno`**. El nombre definitivo de la tabla es `Reinscripcion` y la interfaz indica «Reinscripción guardada correctamente». Los expedientes originales no se crean ni se alteran.
 
 El correo se genera **sin pedirlo al alumno** con la regla compartida de AMBAR (`PersonalAutomatico.EmailBase`): nombre(s) + inicial del apellido paterno + inicial del materno + `@acapulco.tecnm.mx`. Ante coincidencias se añade sufijo numérico. Se verifica disponibilidad local frente a correos de alumnado, personal y otras reinscripciones. **No se crea un buzón real ni se envía ningún correo.** El correo queda guardado sin mostrarse en Reinscripción ni Consulta.
 
@@ -19,7 +19,7 @@ Las tres vistas SQL `vw_AMBAR_Alumnos_Semestre_1/2/3` del script 21 siguen dispo
 ```sql
 SELECT numero_control, nombre, apellido_paterno, apellido_materno,
        semestre_destino, ID_grupo, correo_institucional
-FROM Reinscripcion_Demostracion
+FROM Reinscripcion
 ORDER BY numero_control;
 
 SELECT COUNT(*) AS primero FROM vw_AMBAR_Alumnos_Semestre_1;
