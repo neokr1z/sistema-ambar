@@ -119,8 +119,11 @@ internal static class RepositorioCortesDocente
                 FROM Calificacion_Corte
                 WHERE numero_control=@control AND Id_asignacion=@asignacion
                   AND semana IN (5,9,13)
+                  AND NOT EXISTS (
+                      SELECT 1 FROM Calificacion_Corte final
+                      WHERE final.numero_control=@control
+                        AND final.Id_asignacion=@asignacion AND final.semana=17)
                 HAVING COUNT(DISTINCT semana)=3
-                ON DUPLICATE KEY UPDATE id_calificacion_corte=id_calificacion_corte
                 """,tx);
             Db.Param(cmd,"@control",control);Db.Param(cmd,"@asignacion",asignacion);
             if(cmd.ExecuteNonQuery()>0)cerrados++;
