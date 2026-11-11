@@ -209,6 +209,16 @@ internal static class RepositorioCortesDocente
 
         var listado=Lista(c,tx,asignacion,semana).Rows.Cast<DataRow>()
             .Select(x=>Convert.ToString(x["Control"])!).ToHashSet();
+        if(semana is 9 or 13)
+        {
+            int anterior=semana==9?5:9;
+            var previo=Lista(c,tx,asignacion,anterior);
+            foreach(DataRow fila in previo.Rows)
+                if(fila.IsNull("Nota"))
+                    throw new ArgumentException(
+                        $"No puedes iniciar semana {semana}: falta completar semana {anterior} "+
+                        $"del alumno {fila["Control"]}. Debes capturar en orden a todo el grupo.");
+        }
         foreach(var cambio in cambios)
         {
             if(!listado.Contains(cambio.Control))
