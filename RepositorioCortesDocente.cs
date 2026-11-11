@@ -120,9 +120,9 @@ internal static class RepositorioCortesDocente
                 WHERE numero_control=@control AND Id_asignacion=@asignacion
                   AND semana IN (5,9,13)
                   AND NOT EXISTS (
-                      SELECT 1 FROM Calificacion_Corte final
-                      WHERE final.numero_control=@control
-                        AND final.Id_asignacion=@asignacion AND final.semana=17)
+                      SELECT 1 FROM Calificacion_Corte f17
+                      WHERE f17.numero_control=@control
+                        AND f17.Id_asignacion=@asignacion AND f17.semana=17)
                 HAVING COUNT(DISTINCT semana)=3
                 """,tx);
             Db.Param(cmd,"@control",control);Db.Param(cmd,"@asignacion",asignacion);
