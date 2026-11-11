@@ -271,7 +271,7 @@ public partial class MainForm : Form
             );
             // Registros del módulo autónomo para pruebas; separados de Inscripción.
             using (var demo=Db.Sql(c,
-                "SELECT COUNT(*) FROM Reinscripcion_Demostracion " +
+                "SELECT COUNT(*) FROM Reinscripcion " +
                 "WHERE UPPER(estatus)='INSCRITO' AND periodo='Agosto-Diciembre 2026'"))
                 renewals.Text=(Convert.ToInt32(renewals.Text)+Convert.ToInt32(demo.ExecuteScalar())).ToString();
 

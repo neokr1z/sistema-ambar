@@ -64,7 +64,7 @@ internal static class RepositorioReinscripcionDemo
         using var cmd=Db.Sql(c,"""
             SELECT r.nombre,r.apellido_paterno,r.apellido_materno,r.anio_ingreso,
               r.semestre_destino,r.ID_grupo,g.nombre_grupo,COALESCE(g.turno,'')
-            FROM Reinscripcion_Demostracion r JOIN Grupo g ON g.ID_grupo=r.ID_grupo
+            FROM Reinscripcion r JOIN Grupo g ON g.ID_grupo=r.ID_grupo
             WHERE r.numero_control=@control
             """);
         Db.Param(cmd,"@control",numero.Trim());
@@ -85,7 +85,7 @@ internal static class RepositorioReinscripcionDemo
             FROM Grupo g
             JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
             JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
-            LEFT JOIN Reinscripcion_Demostracion r ON r.ID_grupo=g.ID_grupo AND UPPER(r.estatus)='INSCRITO'
+            LEFT JOIN Reinscripcion r ON r.ID_grupo=g.ID_grupo AND UPPER(r.estatus)='INSCRITO'
             LEFT JOIN Inscripcion i ON i.ID_grupo=g.ID_grupo AND UPPER(i.estatus)='INSCRITO'
             WHERE s.numero_semestre=@semestre AND p.nombre_periodo=@periodo
               AND UPPER(g.Estatus)='ACTIVO' AND UPPER(p.estatus)='ACTIVO'
@@ -97,6 +97,30 @@ internal static class RepositorioReinscripcionDemo
         var items=new List<Choice>();using var reader=cmd.ExecuteReader();
         while(reader.Read())items.Add(new Choice(reader.GetInt32(0),reader.GetString(1)));
         return items;
+    }
+
+    internal static string GenerarCorreo(MySqlConnection c, MySqlTransaction tx,
+        string nombre,string paterno,string materno,string? excluirControl=null)
+    {
+        // Misma regla local usada para el personal: Nombre + iniciales de apellidos.
+        string baseEmail=PersonalAutomatico.EmailBase(nombre,paterno,materno);
+        var parts=baseEmail.Split('@');
+        for(int n=1;n<=99999;n++)
+        {
+            string sufijo=n==1?"":n.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            string local=parts[0][..Math.Min(parts[0].Length,64-sufijo.Length)];
+            string candidato=local+sufijo+"@"+parts[1];
+            using var cmd=Db.Sql(c,"""
+                SELECT (SELECT COUNT(*) FROM Reinscripcion WHERE correo_institucional=@correo AND (@excluir IS NULL OR numero_control<>@excluir))
+                     +(SELECT COUNT(*) FROM Alumno WHERE correo_institucional=@correo)
+                     +(SELECT COUNT(*) FROM Docente WHERE correo_institucional=@correo)
+                     +(SELECT COUNT(*) FROM Personal_Administrativo WHERE correo_institucional=@correo)
+                """,tx);
+            Db.Param(cmd,"@correo",candidato);
+            Db.Param(cmd,"@excluir",excluirControl);
+            if(Convert.ToInt32(cmd.ExecuteScalar())==0)return candidato;
+        }
+        throw new InvalidOperationException("No hay correos institucionales disponibles.");
     }
 
     public static void Guardar(Sesion actor,string numero,string nombre,string paterno,string materno,int grupo,int semestre)
@@ -115,15 +139,27 @@ internal static class RepositorioReinscripcionDemo
         using(var gate=Db.Sql(c,"SELECT id FROM Control_Identidad WHERE id=1 FOR UPDATE",tx))
             if(gate.ExecuteScalar() is null)throw new InvalidOperationException("Ejecuta el script de migración 06.");
         using(var existe=Db.Sql(c,"""
-            SELECT COUNT(*) FROM Reinscripcion_Demostracion WHERE numero_control=@control
+            SELECT COUNT(*) FROM Reinscripcion WHERE numero_control=@control
             """,tx))
         {
             Db.Param(existe,"@control",numero);
             if(Convert.ToInt32(existe.ExecuteScalar())>0)
-                throw new ArgumentException("Este número de control ya está reinscrito en la demostración.");
+                throw new ArgumentException("Este número de control ya está reinscrito.");
         }
-        // Se conserva intacto cualquier expediente previo en Alumno.
-        // Esta tabla independiente solo guarda una prueba del número validado.
+        // El módulo conserva su registro mínimo y no inventa CURP ni domicilio.
+        // Bloquea inscripciones activas del mismo periodo, aunque no sean de primero.
+        using(var check=Db.Sql(c,"""
+            SELECT COUNT(*) FROM Inscripcion i JOIN Grupo g ON g.ID_grupo=i.ID_grupo
+            JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
+            WHERE i.Numero_control=@control AND UPPER(i.estatus)='INSCRITO'
+              AND p.nombre_periodo=@periodo
+            """,tx))
+        {
+            Db.Param(check,"@control",numero);Db.Param(check,"@periodo",Periodo);
+            if(Convert.ToInt32(check.ExecuteScalar())>0)
+                throw new ArgumentException("Este número de control ya tiene una inscripción activa en el periodo.");
+        }
+        string correoGenerado=GenerarCorreo(c,tx,nombre,paterno,materno);
         int capacidad;
         using(var cmd=Db.Sql(c,"""
             SELECT g.Capacidad FROM Grupo g
@@ -140,7 +176,7 @@ internal static class RepositorioReinscripcionDemo
             capacidad=Convert.ToInt32(value);
         }
         using(var cmd=Db.Sql(c,"""
-            SELECT (SELECT COUNT(*) FROM Reinscripcion_Demostracion
+            SELECT (SELECT COUNT(*) FROM Reinscripcion
                     WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO')
                  + (SELECT COUNT(*) FROM Inscripcion
                     WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO')
@@ -151,14 +187,15 @@ internal static class RepositorioReinscripcionDemo
                 throw new ArgumentException("El grupo no tiene lugares disponibles.");
         }
         using(var cmd=Db.Sql(c,"""
-            INSERT INTO Reinscripcion_Demostracion
-              (numero_control,nombre,apellido_paterno,apellido_materno,anio_ingreso,semestre_destino,ID_grupo)
-            VALUES(@control,@nombre,@paterno,@materno,@anio,@semestre,@grupo)
+            INSERT INTO Reinscripcion
+              (numero_control,nombre,apellido_paterno,apellido_materno,anio_ingreso,semestre_destino,ID_grupo,correo_institucional)
+            VALUES(@control,@nombre,@paterno,@materno,@anio,@semestre,@grupo,@correo)
             """,tx))
         {
             Db.Param(cmd,"@control",numero);Db.Param(cmd,"@nombre",nombre);
             Db.Param(cmd,"@paterno",paterno);Db.Param(cmd,"@materno",materno);
             Db.Param(cmd,"@anio",anio);Db.Param(cmd,"@semestre",semestre);Db.Param(cmd,"@grupo",grupo);
+            Db.Param(cmd,"@correo",correoGenerado);
             cmd.ExecuteNonQuery();
         }
         Db.Audit(c,tx,actor.Id,"REINSCRIPCION_DEMO","ALUMNOS","Registro de demostración por generación (no verifica historial académico)",numero);
@@ -172,7 +209,7 @@ internal static class RepositorioReinscripcionDemo
         using var cmd=Db.Sql(c,"""
             SELECT numero_control AS 'No. control',
               CONCAT_WS(' ',nombre,apellido_paterno,apellido_materno) AS 'Alumno'
-            FROM Reinscripcion_Demostracion
+            FROM Reinscripcion
             WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO'
             ORDER BY numero_control
             """);

@@ -1,4 +1,9 @@
 using System.Data;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using Color = System.Drawing.Color;
+using Size = System.Drawing.Size;
 
 namespace AMBAR.Semana4;
 
@@ -6,12 +11,19 @@ namespace AMBAR.Semana4;
 internal sealed class HorarioGrupoDemoForm : Form
 {
     private static readonly string[] Dias = { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes" };
+    private readonly List<(string Materia,string Dia,string Inicio,string Fin,string Aula,string Docente)> clases = new();
+    private readonly string? controlAlumno;
+    private readonly string? nombreAlumno;
+    private readonly string etiquetaGrupo;
 
-    internal HorarioGrupoDemoForm(Sesion actor, int grupo, string etiqueta)
+    internal HorarioGrupoDemoForm(Sesion actor, int grupo, string etiqueta, string? control = null, string? alumno = null)
     {
         if (!actor.CanSeeStudents)
             throw new UnauthorizedAccessException("Sin permiso.");
 
+        controlAlumno = control;
+        nombreAlumno = alumno;
+        etiquetaGrupo = etiqueta;
         Text = "AMBAR | Horario del grupo";
         StartPosition = FormStartPosition.CenterParent;
         ClientSize = new Size(1120, 650);
@@ -75,8 +87,9 @@ internal sealed class HorarioGrupoDemoForm : Form
         var cerrar = new Button
         {
             Text = "Cerrar",
-            Dock = DockStyle.Bottom,
-            Height = 52,
+            Dock = DockStyle.Right,
+            Width = 160,
+            Height = 48,
             BackColor = Theme.Blue,
             ForeColor = Color.White,
             FlatStyle = FlatStyle.Flat,
@@ -85,8 +98,20 @@ internal sealed class HorarioGrupoDemoForm : Form
         cerrar.FlatAppearance.BorderSize = 0;
         cerrar.Click += (_, _) => Close();
 
+        var acciones = new Panel { Dock = DockStyle.Bottom, Height = 58, BackColor = Color.White };
+        var descargar = new Button {
+            Text = "Descargar PDF", Dock = DockStyle.Left, Width = 195,
+            BackColor = Theme.Blue, ForeColor = Color.White,
+            Font = new Font("Segoe UI",10F,FontStyle.Bold),
+            FlatStyle = FlatStyle.Flat, Cursor = Cursors.Hand
+        };
+        descargar.FlatAppearance.BorderSize = 0;
+        descargar.Click += (_,_) => DescargarPdf();
+        acciones.Controls.Add(descargar);
+        acciones.Controls.Add(cerrar);
+
         Controls.Add(tabla);
-        Controls.Add(cerrar);
+        Controls.Add(acciones);
         Controls.Add(titulo);
 
         Shown += (_, _) => Cargar(actor, grupo, tabla);
@@ -109,7 +134,7 @@ internal sealed class HorarioGrupoDemoForm : Form
                 """);
             Db.Param(cmd, "@grupo", grupo);
 
-            var clases = new List<(string Materia, string Dia, string Inicio, string Fin, string Aula, string Docente)>();
+            clases.Clear();
             using (var rd = cmd.ExecuteReader())
                 while (rd.Read())
                     clases.Add((
@@ -146,6 +171,108 @@ internal sealed class HorarioGrupoDemoForm : Form
                 MessageBox.Show(this,
                     "Este grupo aún no tiene un horario cargado.",
                     "AMBAR", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex) { Problems.Show(ex); }
+    }
+
+
+    private void DescargarPdf()
+    {
+        if (clases.Count == 0)
+        {
+            MessageBox.Show(this, "Este grupo no tiene horario para exportar.",
+                "AMBAR", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        string identificador = string.IsNullOrWhiteSpace(controlAlumno)
+            ? etiquetaGrupo.Split(' ')[0].Replace(".", "")
+            : controlAlumno;
+        using var dialogo = new SaveFileDialog
+        {
+            Filter = "Documento PDF (*.pdf)|*.pdf",
+            FileName = $"AMBAR_Horario_{identificador}.pdf",
+            Title = "Guardar horario en PDF"
+        };
+        if (dialogo.ShowDialog(this) != DialogResult.OK) return;
+
+        try
+        {
+            var bloques = clases.Select(x => (x.Inicio, x.Fin))
+                .Distinct().OrderBy(x => x.Inicio).ThenBy(x => x.Fin).ToList();
+            var logo = Path.Combine(AppContext.BaseDirectory, "Assets", "membrete.png");
+
+            Document.Create(doc =>
+            {
+                doc.Page(page =>
+                {
+                    page.Size(PageSizes.A4.Landscape());
+                    page.Margin(22);
+                    page.DefaultTextStyle(x => x.FontFamily("Arial").FontSize(9));
+
+                    page.Header().Column(col =>
+                    {
+                        if (File.Exists(logo))
+                            col.Item().Height(48).Image(logo).FitArea();
+
+                        col.Item().AlignCenter()
+                            .Text(string.IsNullOrWhiteSpace(controlAlumno)
+                                ? "HORARIO DEL GRUPO" : "HORARIO DEL ALUMNO")
+                            .Bold().FontSize(16).FontColor("#063763");
+
+                        if (!string.IsNullOrWhiteSpace(nombreAlumno))
+                            col.Item().Text($"Alumno: {nombreAlumno}");
+                        if (!string.IsNullOrWhiteSpace(controlAlumno))
+                            col.Item().Text($"Número de control: {controlAlumno}");
+
+                        col.Item().Text($"Grupo: {etiquetaGrupo}");
+                        col.Item().Text("Periodo: Agosto-Diciembre 2026");
+                    });
+
+                    page.Content().PaddingTop(14).Table(table =>
+                    {
+                        table.ColumnsDefinition(cols =>
+                        {
+                            cols.ConstantColumn(70);
+                            foreach (var _ in Dias) cols.RelativeColumn();
+                        });
+                        table.Header(header =>
+                        {
+                            header.Cell().Background("#063763").Padding(6)
+                                .Text("Hora").FontColor(Colors.White).Bold().AlignCenter();
+                            foreach (var dia in Dias)
+                                header.Cell().Background("#063763").Padding(6)
+                                    .Text(dia).FontColor(Colors.White).Bold().AlignCenter();
+                        });
+
+                        foreach (var bloque in bloques)
+                        {
+                            table.Cell().Border(0.5f).BorderColor("#D6DEE8")
+                                .Padding(6).AlignMiddle().AlignCenter()
+                                .Text($"{bloque.Inicio}\n{bloque.Fin}");
+
+                            foreach (var dia in Dias)
+                            {
+                                var textos = clases.Where(x =>
+                                    x.Inicio == bloque.Inicio && x.Fin == bloque.Fin &&
+                                    NormalizarDia(x.Dia) == dia)
+                                    .Select(x => x.Materia
+                                        + (string.IsNullOrWhiteSpace(x.Aula) ? "" : "\nAula: " + x.Aula)
+                                        + (string.IsNullOrWhiteSpace(x.Docente) ? "" : "\n" + x.Docente));
+
+                                table.Cell().Border(0.5f).BorderColor("#D6DEE8")
+                                    .MinHeight(54).Padding(5).AlignMiddle().AlignCenter()
+                                    .Text(string.Join("\n\n", textos));
+                            }
+                        }
+                    });
+                    page.Footer().AlignRight()
+                        .Text($"Generado: {DateTime.Now:dd/MM/yyyy HH:mm}").FontSize(8);
+                });
+            }).GeneratePdf(dialogo.FileName);
+
+            MessageBox.Show(this, "Horario PDF guardado correctamente.",
+                "AMBAR", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception ex) { Problems.Show(ex); }
     }
