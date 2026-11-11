@@ -53,6 +53,7 @@ DELIMITER ;
 
 -- Relaciona las materias de los horarios con sus docentes reales. No crea personas ficticias.
 -- Las materias faltantes reciben una clave TECNICA, no una clave oficial.
+-- SHA2 sustituye MD5, que no esta disponible de forma predeterminada en MySQL 9.6+.
 DELIMITER $$
 DROP PROCEDURE IF EXISTS ambar_preparar_asignaciones_cortes $$
 CREATE PROCEDURE ambar_preparar_asignaciones_cortes()
@@ -112,7 +113,7 @@ BEGIN
     END IF;
 
     INSERT INTO Materia(ID_Carrera,clave_materia,nombre_materia,creditos,horas_teoricas,horas_practicas,estatus)
-    SELECT DISTINCT g.ID_Carrera,CONCAT('WC26-',LEFT(MD5(h.asignatura),12)),
+    SELECT DISTINCT g.ID_Carrera,CONCAT('WC26-',LEFT(SHA2(h.asignatura,256),12)),
       h.asignatura,NULL,NULL,NULL,'ACTIVO'
     FROM Horario_Referencia h
     JOIN Grupo g ON g.ID_grupo=h.ID_grupo
