@@ -115,7 +115,7 @@ internal static class RepositorioCortesDocente
                 INSERT INTO Calificacion_Corte
                    (numero_control,Id_asignacion,semana,calificacion)
                 SELECT @control,@asignacion,17,
-                       TRUNCATE(SUM(calificacion)/3,2)
+                       IF(TRUNCATE(SUM(calificacion)/3,2)<70,0,TRUNCATE(SUM(calificacion)/3,2))
                 FROM Calificacion_Corte
                 WHERE numero_control=@control AND Id_asignacion=@asignacion
                   AND semana IN (5,9,13)
