@@ -135,6 +135,54 @@ internal static class RepositorioCortesDocente
         return cerrados;
     }
 
+
+    public static DataTable Historial(Sesion actor,int asignacion,int semana=0)
+    {
+        if(semana!=0 && !Semanas.Contains(semana))
+            throw new ArgumentException("Semana no válida.");
+        using var c=Db.Connect();Autorizar(c,null,actor,asignacion);
+        using var cmd=Db.Sql(c,"""
+            SELECT c.numero_control AS Control,
+                COALESCE(CONCAT_WS(' ',a.apellido_paterno,a.apellido_materno,a.nombre),
+                         CONCAT_WS(' ',r.apellido_paterno,r.apellido_materno,r.nombre),
+                         'SIN EXPEDIENTE ACTIVO') AS Alumno,
+                c.semana AS Semana,
+                c.calificacion AS Calificación,
+                c.fecha_actualizacion AS Actualización
+            FROM Calificacion_Corte c
+            LEFT JOIN Alumno a ON a.Numero_control=c.numero_control
+            LEFT JOIN Reinscripcion r ON r.numero_control=c.numero_control
+            WHERE c.Id_asignacion=@asignacion AND (@semana=0 OR c.semana=@semana)
+            ORDER BY Alumno,c.semana
+            """);
+        Db.Param(cmd,"@asignacion",asignacion);Db.Param(cmd,"@semana",semana);
+        using var rd=cmd.ExecuteReader();var table=new DataTable();table.Load(rd);return table;
+    }
+
+    public static DataTable Cambios(Sesion actor,int asignacion,int semana=0)
+    {
+        if(semana!=0 && !Semanas.Contains(semana))
+            throw new ArgumentException("Semana no válida.");
+        using var c=Db.Connect();Autorizar(c,null,actor,asignacion);
+        using var cmd=Db.Sql(c,"""
+            SELECT b.fecha_hora AS Fecha,b.id_registro_afectado AS Control,
+                   b.tipo_evento AS Acción,b.descripcion AS Detalle
+            FROM Bitacora b
+            WHERE b.modulo_afectado='DOCENCIA'
+              AND b.tipo_evento IN ('CAPTURA_CORTE','CIERRE_CALIFICACIONES')
+              AND (
+                    (b.tipo_evento='CAPTURA_CORTE'
+                     AND b.descripcion LIKE CONCAT('Asignación ',@asignacion,'; semana ',IF(@semana=0,'%',@semana),';%'))
+                 OR (b.tipo_evento='CIERRE_CALIFICACIONES'
+                     AND b.id_registro_afectado=CAST(@asignacion AS CHAR)
+                     AND @semana IN (0,17))
+                  )
+            ORDER BY b.fecha_hora DESC,b.Id_bitacora DESC
+            """);
+        Db.Param(cmd,"@asignacion",asignacion);Db.Param(cmd,"@semana",semana);
+        using var rd=cmd.ExecuteReader();var table=new DataTable();table.Load(rd);return table;
+    }
+
     public static void Guardar(Sesion actor,int asignacion,int semana,IReadOnlyList<NotaCambio> cambios)
     {
         if(semana is not (5 or 9 or 13))
@@ -217,7 +265,7 @@ internal static class RepositorioCortesDocente
                 q.ExecuteNonQuery();
             }
             Db.Audit(c,tx,actor.Id,"CAPTURA_CORTE","DOCENCIA",
-                $"Semana {semana}; control {cambio.Control}; anterior "+
+                $"Asignación {asignacion}; semana {semana}; control {cambio.Control}; anterior "+
                 (actual?.ToString("0.##")??"SIN CAPTURA")+
                 $"; valor recibido {cambio.Valor:0.##}; guardado {nota:0.##}.",
                 cambio.Control);
