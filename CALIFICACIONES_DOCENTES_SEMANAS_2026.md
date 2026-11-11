@@ -10,7 +10,7 @@ El script crea la tabla **`Calificacion_Corte`**, índices, restricciones, dos d
 - Semanas **5, 9, 13**: captura manual, corrección permitida hasta el inicio de la semana 17.
 - El primer corte debe estar completo para todo el grupo antes de comenzar el segundo; el segundo debe estar completo antes del tercero. Cada alumno debe tener todos los anteriores.
 - Entrada numérica de 0 a 100, hasta dos decimales. **Cualquier valor menor de 70 se guarda como 0**; los valores de 70 a 100 se guardan sin redondear.
-- **Semana 17**: se calcula automáticamente como promedio aritmético de los tres cortes guardados, **truncado a dos decimales sin redondeo**. Ejemplo 70, 70, 71 → 70.33.
+- **Semana 17**: se calcula automáticamente como promedio aritmético de los tres cortes guardados, **truncado a dos decimales sin redondeo**. Ejemplo 70, 70, 71 → 70.33. Si el promedio final es menor de 70, el resultado definitivo también es **0**.
 - El cierre sucede al acceder al módulo Docente en o después de la semana 17, y al abrir explícitamente la semana 17 de Captura. No hay un evento en segundo plano: si nadie ejecuta AMBAR, las notas no se generan hasta la siguiente apertura.
 - Después de comenzar semana 17, **no se permite capturar ni modificar** semanas 5/9/13 desde la aplicación. La nota final generada es inmutable mediante disparadores MySQL.
 - Si falta uno de los tres cortes al cerrar, la nota final se mantiene **pendiente** en vez de inventar notas; los cortes anteriores tampoco podrán modificarse al haber comenzado semana 17. Resolver cualquier faltante antes de cerrar el periodo.
