@@ -20,14 +20,29 @@ internal static class RepositorioDocente
     {
         using var c=Db.Connect();Teacher(c,null,actor);
         using var cmd=Db.Sql(c,"""
-            SELECT ad.Id_asignacion,m.ID_Materia,m.nombre_materia,g.ID_grupo,g.nombre_grupo,p.ID_Periodo,p.nombre_periodo
+            SELECT ad.Id_asignacion,m.ID_Materia,m.nombre_materia,g.ID_grupo,g.nombre_grupo,p.ID_Periodo,p.nombre_periodo,p.fecha_inicio
             FROM Asignacion_Docente ad JOIN Usuario u ON u.ID_docente=ad.ID_docente
             JOIN Materia m ON m.ID_Materia=ad.ID_Materia JOIN Grupo g ON g.ID_grupo=ad.ID_grupo
             JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo WHERE u.Id_usuario=@actor
             ORDER BY p.fecha_inicio DESC,m.nombre_materia,g.nombre_grupo
             """);Db.Param(cmd,"@actor",actor.Id);
-        var list=new List<Asignacion>();using var r=cmd.ExecuteReader();
-        while(r.Read())list.Add(new(r.GetInt32(0),r.GetInt32(1),r.GetString(2),r.GetInt32(3),r.GetString(4),r.GetInt32(5),r.GetString(6)));
+        var list=new List<Asignacion>();
+        var fechas=new List<(int Id,DateTime Inicio)>();
+        using(var r=cmd.ExecuteReader())
+            while(r.Read())
+            {
+                list.Add(new(r.GetInt32(0),r.GetInt32(1),r.GetString(2),
+                    r.GetInt32(3),r.GetString(4),r.GetInt32(5),r.GetString(6)));
+                fechas.Add((r.GetInt32(0),r.GetDateTime(7).Date));
+            }
+        // Al acceder al modulo docente después de la semana 17, completar
+        // los cierres pendientes automáticamente (sin tarea en segundo plano).
+        using(var fecha=Db.Sql(c,"SELECT CURDATE()"))
+        {
+            DateTime hoy=Convert.ToDateTime(fecha.ExecuteScalar()).Date;
+            foreach(var a in fechas.Where(x=>hoy>=x.Inicio.AddDays(16*7)))
+                RepositorioCortesDocente.CerrarAutomaticamente(actor,a.Id);
+        }
         return list;
     }
     private static void Own(MySqlConnection c,MySqlTransaction? tx,Sesion actor,int assignment,bool write=false)
