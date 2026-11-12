@@ -92,49 +92,79 @@ internal static class RepositorioCortesDocente
         return Lista(c,null,asignacion,semana);
     }
 
-    // Se ejecuta al abrir las calificaciones en o después de semana 17:
-    // no requiere que un usuario permanezca conectado ni un servicio de fondo.
-    public static int CerrarAutomaticamente(Sesion actor,int asignacion)
+    // El cierre NO depende del reloj; solo del guardado de semana 17.
+    private static bool Cerrada(MySqlConnection c,MySqlTransaction? tx,int asignacion)
     {
-        using var c=Db.Connect();
-        using var tx=c.BeginTransaction(IsolationLevel.ReadCommitted);
-        Autorizar(c,tx,actor,asignacion,true);
-        var (inicio,_) = Periodo(c,tx,asignacion);
-        using(var fecha=Db.Sql(c,"SELECT CURDATE()",tx))
-        {
-            var hoy=Convert.ToDateTime(fecha.ExecuteScalar()).Date;
-            if(hoy<inicio.AddDays(16*7))return 0;
-        }
-        int cerrados=0;
-        var alumnos=Lista(c,tx,asignacion,5).Rows.Cast<DataRow>()
-            .Select(x=>Convert.ToString(x["Control"])!).ToArray();
-        foreach(var control in alumnos)
-        {
-            // Truncar a dos decimales, NUNCA redondear.
-            using var cmd=Db.Sql(c,"""
-                INSERT INTO Calificacion_Corte
-                   (numero_control,Id_asignacion,semana,calificacion)
-                SELECT @control,@asignacion,17,
-                       IF(TRUNCATE(SUM(calificacion)/3,2)<70,0,TRUNCATE(SUM(calificacion)/3,2))
-                FROM Calificacion_Corte
-                WHERE numero_control=@control AND Id_asignacion=@asignacion
-                  AND semana IN (5,9,13)
-                  AND NOT EXISTS (
-                      SELECT 1 FROM Calificacion_Corte f17
-                      WHERE f17.numero_control=@control
-                        AND f17.Id_asignacion=@asignacion AND f17.semana=17)
-                HAVING COUNT(DISTINCT semana)=3
-                """,tx);
-            Db.Param(cmd,"@control",control);Db.Param(cmd,"@asignacion",asignacion);
-            if(cmd.ExecuteNonQuery()>0)cerrados++;
-        }
-        if(cerrados>0)
-            Db.Audit(c,tx,actor.Id,"CIERRE_CALIFICACIONES","DOCENCIA",
-                $"Se calcularon {cerrados} calificaciones definitivas de semana 17.",asignacion.ToString());
-        tx.Commit();
-        return cerrados;
+        using var cmd=Db.Sql(c,"SELECT COUNT(*) FROM Calificacion_Corte WHERE Id_asignacion=@a AND semana=17",tx);
+        Db.Param(cmd,"@a",asignacion);
+        return Convert.ToInt32(cmd.ExecuteScalar())>0;
     }
 
+    public static bool EstaCerrada(Sesion actor,int asignacion)
+    {
+        using var c=Db.Connect();
+        Autorizar(c,null,actor,asignacion);
+        return Cerrada(c,null,asignacion);
+    }
+
+    public static (bool Habilitada,string Aviso) Estado(Sesion actor,int asignacion,int semana)
+    {
+        if(!Semanas.Contains(semana))throw new ArgumentException("Semana inválida.");
+        using var c=Db.Connect();Autorizar(c,null,actor,asignacion);
+        if(Cerrada(c,null,asignacion))
+            return (false,"MATERIA CERRADA: ya se registró la semana 17. No se pueden modificar calificaciones.");
+        var alumnos=Lista(c,null,asignacion,semana);
+        if(alumnos.Rows.Count==0)return (false,"Este grupo no tiene alumnos activos.");
+        if(semana==5)return (true,"Semana 5 disponible. Las correcciones se permiten hasta el cierre.");
+        int anterior=semana==9?5:semana==13?9:13;
+        var previos=Lista(c,null,asignacion,anterior);
+        foreach(DataRow fila in previos.Rows)
+            if(fila.IsNull("Nota"))
+                return (false,$"Primero termina semana {anterior} de todo el grupo. Falta: {fila["Control"]}.");
+        return semana==17
+            ? (true,"Semana 17: captura a TODOS los alumnos y confirma el cierre definitivo. Después podrás imprimir la lista final.")
+            : (true,$"Semana {semana} disponible; ya está completa la semana {anterior}.");
+    }
+
+    public static DataTable Finales(Sesion actor,int asignacion)
+    {
+        using var c=Db.Connect();Autorizar(c,null,actor,asignacion);
+        if(!Cerrada(c,null,asignacion))
+            throw new ArgumentException("Debes guardar la semana 17 antes de imprimir las calificaciones finales.");
+        using var cmd=Db.Sql(c,"""
+            SELECT n.numero_control AS Control,
+                   COALESCE(
+                       MAX(CONCAT_WS(' ',a.apellido_paterno,a.apellido_materno,a.nombre)),
+                       MAX(CONCAT_WS(' ',r.apellido_paterno,r.apellido_materno,r.nombre)),
+                       'SIN EXPEDIENTE') AS Alumno,
+                   MAX(CASE WHEN n.semana=5 THEN n.calificacion END) AS Semana5,
+                   MAX(CASE WHEN n.semana=9 THEN n.calificacion END) AS Semana9,
+                   MAX(CASE WHEN n.semana=13 THEN n.calificacion END) AS Semana13,
+                   MAX(CASE WHEN n.semana=17 THEN n.calificacion END) AS Semana17
+            FROM Calificacion_Corte n
+            LEFT JOIN Alumno a ON a.Numero_control=n.numero_control
+            LEFT JOIN Reinscripcion r ON r.numero_control=n.numero_control
+            WHERE n.Id_asignacion=@a
+            GROUP BY n.numero_control
+            ORDER BY Alumno,n.numero_control
+            """);
+        Db.Param(cmd,"@a",asignacion);
+        var result=new DataTable();
+        using(var rd=cmd.ExecuteReader())result.Load(rd);
+        result.Columns.Add("Final",typeof(decimal));
+        foreach(DataRow fila in result.Rows)
+        {
+            if(fila.IsNull("Semana5")||fila.IsNull("Semana9")||
+               fila.IsNull("Semana13")||fila.IsNull("Semana17"))continue;
+            decimal total=Convert.ToDecimal(fila["Semana5"])+
+                Convert.ToDecimal(fila["Semana9"])+
+                Convert.ToDecimal(fila["Semana13"])+
+                Convert.ToDecimal(fila["Semana17"]);
+            decimal promedio=decimal.Truncate(total/4m*100m)/100m;
+            fila["Final"]=promedio<70m?0m:promedio;
+        }
+        return result;
+    }
 
     public static DataTable Historial(Sesion actor,int asignacion,int semana=0)
     {
