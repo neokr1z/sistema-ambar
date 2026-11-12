@@ -215,44 +215,43 @@ internal static class RepositorioCortesDocente
 
     public static void Guardar(Sesion actor,int asignacion,int semana,IReadOnlyList<NotaCambio> cambios)
     {
-        if(semana is not (5 or 9 or 13))
-            throw new ArgumentException("La semana 17 se calcula automáticamente y no admite captura.");
-        if(cambios.Count==0)throw new ArgumentException("No hay cambios para guardar.");
+        if(!Semanas.Contains(semana))throw new ArgumentException("Semana no válida.");
+        if(cambios.Count==0)throw new ArgumentException("No hay calificaciones nuevas para guardar.");
         if(cambios.Select(x=>x.Control).Distinct().Count()!=cambios.Count)
-            throw new ArgumentException("La lista contiene números de control repetidos.");
+            throw new ArgumentException("La lista tiene números de control repetidos.");
         foreach(var x in cambios)
             if(x.Valor<0 || x.Valor>100 || decimal.Truncate(x.Valor*100)!=x.Valor*100)
-                throw new ArgumentException("Captura valores entre 0 y 100, con máximo dos decimales.");
+                throw new ArgumentException("Escribe valores de 0 a 100, con máximo dos decimales.");
 
         using var c=Db.Connect();
         using var tx=c.BeginTransaction(IsolationLevel.ReadCommitted);
+        // Bloquear asignación para serializar capturas y cierre concurrentes.
         Autorizar(c,tx,actor,asignacion,true);
-        var (inicio,fin)=Periodo(c,tx,asignacion);
-        using(var fecha=Db.Sql(c,"SELECT CURDATE()",tx))
-        {
-            DateTime hoy=Convert.ToDateTime(fecha.ExecuteScalar()).Date;
-            if(hoy<inicio.AddDays((semana-1)*7))
-                throw new ArgumentException($"La captura de semana {semana} todavía no está habilitada.");
-            if(hoy>=inicio.AddDays(16*7) || hoy>fin)
-                throw new ArgumentException("Llegó la semana 17: el periodo de captura está cerrado.");
-        }
+        if(Cerrada(c,tx,asignacion))
+            throw new ArgumentException("Semana 17 guardada: todas las calificaciones están cerradas definitivamente.");
 
-        var listado=Lista(c,tx,asignacion,semana).Rows.Cast<DataRow>()
+        var filas=Lista(c,tx,asignacion,semana);
+        var alumnos=filas.Rows.Cast<DataRow>()
             .Select(x=>Convert.ToString(x["Control"])!).ToHashSet();
-        if(semana is 9 or 13)
+        if(alumnos.Count==0)
+            throw new ArgumentException("Este grupo no tiene alumnos activos.");
+        if(semana==17 && (cambios.Count!=alumnos.Count || cambios.Any(x=>x.Original.HasValue)))
+            throw new ArgumentException("Para cerrar captura la semana 17 de TODOS los alumnos juntos.");
+
+        if(semana is 9 or 13 or 17)
         {
-            int anterior=semana==9?5:9;
-            var previo=Lista(c,tx,asignacion,anterior);
-            foreach(DataRow fila in previo.Rows)
+            int anterior=semana==9?5:semana==13?9:13;
+            var previos=Lista(c,tx,asignacion,anterior);
+            foreach(DataRow fila in previos.Rows)
                 if(fila.IsNull("Nota"))
                     throw new ArgumentException(
-                        $"No puedes iniciar semana {semana}: falta completar semana {anterior} "+
-                        $"del alumno {fila["Control"]}. Debes capturar en orden a todo el grupo.");
+                        $"Primero termina semana {anterior} de todo el grupo; falta el alumno {fila["Control"]}.");
         }
         foreach(var cambio in cambios)
         {
-            if(!listado.Contains(cambio.Control))
+            if(!alumnos.Contains(cambio.Control))
                 throw new ArgumentException($"El alumno {cambio.Control} no pertenece al grupo activo.");
+
             using(var prev=Db.Sql(c,"""
                 SELECT COUNT(DISTINCT semana) FROM Calificacion_Corte
                 WHERE numero_control=@control AND Id_asignacion=@asignacion
@@ -262,10 +261,9 @@ internal static class RepositorioCortesDocente
                 Db.Param(prev,"@control",cambio.Control);
                 Db.Param(prev,"@asignacion",asignacion);
                 Db.Param(prev,"@semana",semana);
-                int previos=Convert.ToInt32(prev.ExecuteScalar());
-                int requeridos=semana==5?0:semana==9?1:2;
-                if(previos!=requeridos)
-                    throw new ArgumentException($"No puedes capturar semana {semana} de {cambio.Control}: falta un corte anterior.");
+                int requeridos=semana==5?0:semana==9?1:semana==13?2:3;
+                if(Convert.ToInt32(prev.ExecuteScalar())!=requeridos)
+                    throw new ArgumentException($"No se permiten saltos entre semanas; faltan cortes de {cambio.Control}.");
             }
 
             decimal? actual=null;
@@ -275,34 +273,27 @@ internal static class RepositorioCortesDocente
                 FOR UPDATE
                 """,tx))
             {
-                Db.Param(q,"@control",cambio.Control);Db.Param(q,"@asignacion",asignacion);
+                Db.Param(q,"@control",cambio.Control);
+                Db.Param(q,"@asignacion",asignacion);
                 Db.Param(q,"@semana",semana);
-                var val=q.ExecuteScalar();if(val is not null)actual=Convert.ToDecimal(val);
+                var val=q.ExecuteScalar();
+                if(val is not null)actual=Convert.ToDecimal(val);
             }
             if(actual!=cambio.Original)
-                throw new ArgumentException("La calificación cambió desde otra sesión; recarga antes de guardar.");
-            using(var q=Db.Sql(c,"""
-                SELECT COUNT(*) FROM Calificacion_Corte
-                WHERE numero_control=@control AND Id_asignacion=@asignacion AND semana=17
-                """,tx))
-            {
-                Db.Param(q,"@control",cambio.Control);Db.Param(q,"@asignacion",asignacion);
-                if(Convert.ToInt32(q.ExecuteScalar())>0)
-                    throw new ArgumentException("Esta materia ya tiene calificación final definitiva.");
-            }
-
-            // Menores a 70 se almacenan como 0. Se conserva la precisión válida.
-            decimal nota=cambio.Valor<70?0:cambio.Valor;
-            using(var q=Db.Sql(c,"""
+                throw new ArgumentException("Las calificaciones cambiaron en otra sesión; recarga la lista.");
+            decimal nota=cambio.Valor<70m?0m:cambio.Valor;
+            using(var cmd=Db.Sql(c,"""
                 INSERT INTO Calificacion_Corte
                     (numero_control,Id_asignacion,semana,calificacion)
                 VALUES (@control,@asignacion,@semana,@nota)
                 ON DUPLICATE KEY UPDATE calificacion=VALUES(calificacion)
                 """,tx))
             {
-                Db.Param(q,"@control",cambio.Control);Db.Param(q,"@asignacion",asignacion);
-                Db.Param(q,"@semana",semana);Db.Param(q,"@nota",nota);
-                q.ExecuteNonQuery();
+                Db.Param(cmd,"@control",cambio.Control);
+                Db.Param(cmd,"@asignacion",asignacion);
+                Db.Param(cmd,"@semana",semana);
+                Db.Param(cmd,"@nota",nota);
+                cmd.ExecuteNonQuery();
             }
             Db.Audit(c,tx,actor.Id,"CAPTURA_CORTE","DOCENCIA",
                 $"Asignación {asignacion}; semana {semana}; control {cambio.Control}; anterior "+
@@ -310,6 +301,10 @@ internal static class RepositorioCortesDocente
                 $"; valor recibido {cambio.Valor:0.##}; guardado {nota:0.##}.",
                 cambio.Control);
         }
+        if(semana==17)
+            Db.Audit(c,tx,actor.Id,"CIERRE_CALIFICACIONES","DOCENCIA",
+                $"Semana 17 capturada para {alumnos.Count} alumnos. Cierre definitivo de los cuatro cortes.",
+                asignacion.ToString());
         tx.Commit();
     }
 }
