@@ -23,6 +23,7 @@ public partial class CapturaCLForm : Form
         label4.Width=280;
         window.Width=505;
         heading.Text="Calificaciones por semanas";
+        note.Width=620;
         imprimirFinal.Text="Imprimir finales (PDF)";
         imprimirFinal.Size=new Size(214,50);
         imprimirFinal.Location=new Point(680,844);
@@ -221,7 +222,12 @@ public partial class CapturaCLForm : Form
                 "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
             LoadRoster();
         }
-        catch(Exception ex){Problems.Show(ex);save.Enabled=loadedAssignment>0 && !RepositorioCortesDocente.EstaCerrada(actor,loadedAssignment);}
+        catch(Exception ex)
+        {
+            Problems.Show(ex);
+            try {save.Enabled=loadedAssignment>0 && RepositorioCortesDocente.Estado(actor,loadedAssignment,loadedWeek).Habilitada;}
+            catch {save.Enabled=false;}
+        }
     }
 
     private void ImprimirFinalClick(object? sender,EventArgs e)
