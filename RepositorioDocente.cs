@@ -27,22 +27,12 @@ internal static class RepositorioDocente
             ORDER BY p.fecha_inicio DESC,m.nombre_materia,g.nombre_grupo
             """);Db.Param(cmd,"@actor",actor.Id);
         var list=new List<Asignacion>();
-        var fechas=new List<(int Id,DateTime Inicio)>();
         using(var r=cmd.ExecuteReader())
             while(r.Read())
             {
                 list.Add(new(r.GetInt32(0),r.GetInt32(1),r.GetString(2),
                     r.GetInt32(3),r.GetString(4),r.GetInt32(5),r.GetString(6)));
-                fechas.Add((r.GetInt32(0),r.GetDateTime(7).Date));
             }
-        // Al acceder al modulo docente después de la semana 17, completar
-        // los cierres pendientes automáticamente (sin tarea en segundo plano).
-        using(var fecha=Db.Sql(c,"SELECT CURDATE()"))
-        {
-            DateTime hoy=Convert.ToDateTime(fecha.ExecuteScalar()).Date;
-            foreach(var a in fechas.Where(x=>hoy>=x.Inicio.AddDays(16*7)))
-                RepositorioCortesDocente.CerrarAutomaticamente(actor,a.Id);
-        }
         return list;
     }
     private static void Own(MySqlConnection c,MySqlTransaction? tx,Sesion actor,int assignment,bool write=false)
