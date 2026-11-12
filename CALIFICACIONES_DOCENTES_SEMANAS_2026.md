@@ -5,22 +5,23 @@ Ejecutar **una sola vez** `Sql/25_calificaciones_semanas_5_9_13_17.sql` en MySQL
 
 El script crea la tabla **`Calificacion_Corte`**, índices, restricciones, dos disparadores de protección y completa asignaciones y horarios del docente a partir de `Horario_Referencia`. No altera ni borra las tablas existentes `Calificacion`, `Unidad_Evaluacion`, `Periodo_Captura` ni `Registro_Captura` (datos históricos). El sistema debe tener aplicada la tabla definitiva `Reinscripcion`.
 
-## Reglas
-- El docente solo puede acceder a **sus propias materias y grupos**.
-- Semanas **5, 9, 13**: captura manual, corrección permitida hasta el inicio de la semana 17.
-- El primer corte debe estar completo para todo el grupo antes de comenzar el segundo; el segundo debe estar completo antes del tercero. Cada alumno debe tener todos los anteriores.
-- Entrada numérica de 0 a 100, hasta dos decimales. **Cualquier valor menor de 70 se guarda como 0**; los valores de 70 a 100 se guardan sin redondear.
-- **Semana 17**: se calcula automáticamente como promedio aritmético de los tres cortes guardados, **truncado a dos decimales sin redondeo**. Ejemplo 70, 70, 71 → 70.33. Si el promedio final es menor de 70, el resultado definitivo también es **0**.
-- El cierre sucede al acceder al módulo Docente en o después de la semana 17, y al abrir explícitamente la semana 17 de Captura. No hay un evento en segundo plano: si nadie ejecuta AMBAR, las notas no se generan hasta la siguiente apertura.
-- Después de comenzar semana 17, **no se permite capturar ni modificar** semanas 5/9/13 desde la aplicación. La nota final generada es inmutable mediante disparadores MySQL.
-- Si falta uno de los tres cortes al cerrar, la nota final se mantiene **pendiente** en vez de inventar notas; los cortes anteriores tampoco podrán modificarse al haber comenzado semana 17. Resolver cualquier faltante antes de cerrar el periodo.
+## Reglas definitivas
+- Los cuatro cortes **se capturan manualmente** en el orden **5 → 9 → 13 → 17**. No se puede capturar el siguiente hasta completar para **todo el grupo** el inmediatamente anterior.
+- Se aceptan valores de 0 a 100 con máximo dos decimales. **Cualquier nota inferior a 70 se guarda como 0**; las demás no se redondean.
+- Las semanas 5, 9 y 13 pueden corregirse mientras no se haya completado la 17.
+- La **semana 17 es la cuarta evaluación manual** y se captura de todos los alumnos del grupo en una sola operación; el guardado exige confirmación de **cierre irreversible**.
+- Después de guardar la semana 17, ya no se pueden modificar **ninguno de los cuatro cortes** de esa materia/grupo. El cierre se registra en Bitácora.
+- El promedio final se calcula automáticamente al consultar la lista final, a partir de las **cuatro** notas; se trunca a dos decimales, sin redondeo. Si es inferior a 70, el resultado definitivo es 0.
+- Tras el cierre, la aplicación muestra la lista definitiva y permite exportarla a **PDF** para imprimirla.
+- El inicio de la semana 17 **por fecha no cierra automáticamente** el sistema. No se generan notas sin intervención del docente. El orden de captura se valida sobre los registros ya guardados, no sobre el reloj.
+- La lista digital, horarios y exportación de listas de grupo a PDF continúan funcionando.
 
 ## Calendario de la práctica
 Las semanas se cuentan desde `Periodo_Escolar.fecha_inicio`; en la carga de prueba del script 07 está fijada en **2026-08-01**. Por eso:
 - Semana 5: 2026-08-29
 - Semana 9: 2026-09-26
 - Semana 13: 2026-10-24
-- Semana 17: **2026-11-21** (cierre)
+- Semana 17: **2026-11-21** (referencia de calendario; el cierre depende de guardar la captura)
 
 **No se ha verificado que estas fechas correspondan al calendario oficial del plantel.** Si las semanas se refieren a otro calendario, modificar primero `Periodo_Escolar.fecha_inicio` de manera planificada, sin alterar sin revisión otros procesos.
 
@@ -65,9 +66,10 @@ ORDER BY fecha_hora DESC;
 2. Verificar que la lista incluya inscritos y reinscritos activos.
 3. Capturar 69, 70 y 99.75 en semana 5; comprobar 0, 70 y 99.75.
 4. Intentar capturar semana 9 antes de completar 5 para todo el grupo; comprobar bloqueo.
-5. Capturar semanas 5 → 9 → 13, corregir una calificación y consultar el historial.
-6. Verificar calificación final al llegar a semana 17 y que no se puedan modificar sus cortes.
-7. Exportar lista del docente y el historial a PDF.
-8. Confirmar rechazo de cambios desde otro docente.
+5. Capturar semanas 5 → 9 → 13 y corregir una calificación.
+6. Capturar semana 17 de todo el grupo, confirmar el cierre y comprobar promedio de cuatro cortes.
+7. Verificar que tras el cierre no se puedan editar las semanas 5, 9, 13 o 17.
+8. Exportar el PDF de calificaciones finales, la lista del docente y el historial.
+9. Confirmar rechazo de cambios desde otro docente.
 
 **Estado:** cambios subidos a GitHub. No se ejecutó la migración en el MySQL local ni se verificó la compilación Windows Forms desde esta sesión.
