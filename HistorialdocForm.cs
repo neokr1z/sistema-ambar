@@ -20,7 +20,7 @@ public partial class HistorialdocForm : Form
     private void Clear(){grid.DataSource=null;result=null;detail.Enabled=false;export.Enabled=false;summary.Text="Selecciona filtros y pulsa Consultar.";}
     private void AssignmentChanged()
     {
-        if(filters is null)return;loading=true;Clear();unit.Items.Clear();unit.Items.Add(new Choice(0,"Todas las unidades"));
+        if(filters is null)return;loading=true;Clear();unit.Items.Clear();unit.Items.Add(new Choice(0,"Todas las semanas"));
         try{if(filters.Selected is Asignacion){unit.Items.Add(new Choice(5,"Semana 5"));unit.Items.Add(new Choice(9,"Semana 9"));unit.Items.Add(new Choice(13,"Semana 13"));unit.Items.Add(new Choice(17,"Semana 17 · Final"));}unit.SelectedIndex=0;}
         catch(Exception ex){Problems.Show(ex);}finally{loading=false;}
     }

@@ -8,7 +8,7 @@ using Size = System.Drawing.Size;
 namespace AMBAR.Semana4;
 
 // Horario horizontal: una fila por bloque de hora, días como columnas.
-internal sealed class HorarioGrupoDemoForm : Form
+internal sealed class HorarioGrupoForm : Form
 {
     private static readonly string[] Dias = { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes" };
     private readonly List<(string Materia,string Dia,string Inicio,string Fin,string Aula,string Docente)> clases = new();
@@ -16,7 +16,7 @@ internal sealed class HorarioGrupoDemoForm : Form
     private readonly string? nombreAlumno;
     private readonly string etiquetaGrupo;
 
-    internal HorarioGrupoDemoForm(Sesion actor, int grupo, string etiqueta, string? control = null, string? alumno = null)
+    internal HorarioGrupoForm(Sesion actor, int grupo, string etiqueta, string? control = null, string? alumno = null)
     {
         if (!actor.CanSeeStudents)
             throw new UnauthorizedAccessException("Sin permiso.");

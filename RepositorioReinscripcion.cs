@@ -1,193 +1,219 @@
 using System.Data;
+using System.Text.RegularExpressions;
 using MySqlConnector;
 
 namespace AMBAR.Semana4;
 
-internal sealed record ResumenReinscripcion(string Control, string Alumno, string Carrera,
-    int SemestreAnterior, int SemestreDestino, string PeriodoAnterior, string Situacion,
-    int TotalMaterias, int Aprobadas, int Calificadas, bool PuedeReinscribir, DataTable Calificaciones);
+// Módulo autónomo de reinscripción: registro básico para generaciones 2025 y 2026.
+internal sealed record ReinscripcionBasica(string Control, string Nombre, string Paterno, string Materno,
+    int Anio, int Semestre, int Grupo, string GrupoNombre, string Turno);
 
 internal static class RepositorioReinscripcion
 {
-    internal const string PeriodoDestino = "Agosto-Diciembre 2026";
+    public const string Periodo="Agosto-Diciembre 2026";
 
-    private static void Permiso(MySqlConnection c, MySqlTransaction? tx, Sesion actor)
+    public static (int Anio,int Semestre) Inferir(string numero)
     {
-        if (!actor.CanSeeStudents) throw new UnauthorizedAccessException("No tienes permiso para reinscribir.");
-        Identidad.RequireActive(c,tx,actor);
+        numero=numero.Trim();
+        if(!Regex.IsMatch(numero,@"\A[0-9]{10}\z"))
+            throw new ArgumentException("El número de control debe contener exactamente 10 dígitos.");
+        return numero[..4] switch
+        {
+            "2025"=>(2025,3),
+            "2026"=>(2026,2),
+            _=>throw new ArgumentException("Para agosto-diciembre 2026 solo se permiten generaciones 2026 (2.º) y 2025 (3.º).")
+        };
     }
 
-    // La información del semestre cursado se obtiene de un historial explícito:
-    // jamás se infiere que quien esté en 1.º haya cursado 2.º.
-    public static ResumenReinscripcion Consultar(Sesion actor,string numero)
+    public static void ValidarSemestre(string numero,int semestre)
     {
-        numero=Validation.Mandatory(numero,"número de control");
-        using var c=Db.Connect();
-        Permiso(c,null,actor);
-        string nombre,carrera,estado;int origen;string periodo;
-        using (var cmd=Db.Sql(c,"""
-            SELECT CONCAT_WS(' ',a.nombre,a.apellido_paterno,a.apellido_materno),
-              ca.nombre_carrera,a.estatus,h.semestre_cursado,h.periodo_origen
-            FROM Alumno a
-            JOIN Plan_Estudio pl ON pl.id_plan=a.ID_Plan
-            JOIN Carrera ca ON ca.clave_carrera=pl.clave_carrera
-            LEFT JOIN Historial_Semestre_Reinscripcion h ON h.numero_control=a.Numero_control
-            WHERE a.Numero_control=@control
-            """))
-        {
-            Db.Param(cmd,"@control",numero);
-            using var r=cmd.ExecuteReader();
-            if(!r.Read())throw new ArgumentException("No existe un alumno con ese número de control.");
-            nombre=r.GetString(0);carrera=r.GetString(1);estado=r.GetString(2);
-            if(r.IsDBNull(3))
-                throw new ArgumentException("El alumno no tiene un historial de 2.º o 4.º semestre del periodo anterior. No se puede asumir que aprobó materias; registra primero sus antecedentes académicos.");
-            origen=r.GetInt32(3);periodo=r.GetString(4);
-        }
-        var notas=new DataTable();
-        using(var cmd=Db.Sql(c,"""
-            SELECT m.nombre AS Materia, f.calificacion AS Calificación,
-              CASE WHEN f.calificacion IS NULL THEN 'PENDIENTE'
-                   WHEN f.calificacion<70 THEN 'REPROBADA' ELSE 'APROBADA' END AS Resultado
-            FROM Materia_Reinscripcion m
-            LEFT JOIN Calificacion_Final_Reinscripcion f
-              ON f.id_materia_reinscripcion=m.id_materia_reinscripcion
-              AND f.numero_control=@control AND f.periodo_origen=@periodo
-            WHERE m.semestre_origen=@origen ORDER BY m.nombre
-            """))
-        {
-            Db.Param(cmd,"@control",numero);Db.Param(cmd,"@periodo",periodo);Db.Param(cmd,"@origen",origen);
-            using var r=cmd.ExecuteReader();notas.Load(r);
-        }
-        int total=notas.Rows.Count,calificadas=0,aprobadas=0;
-        foreach(DataRow row in notas.Rows)
-        {
-            if(row["Calificación"]==DBNull.Value)continue;
-            calificadas++;
-            if(Convert.ToDecimal(row["Calificación"])>=70)aprobadas++;
-        }
-        bool already=YaInscrito(c,null,numero);
-        bool elegible=origen is 2 or 4 && total>0 && total==calificadas && calificadas==aprobadas
-            && estado.Equals("INSCRITO",StringComparison.OrdinalIgnoreCase) && !already;
-        string situacion=already?"Ya existe inscripción activa en agosto–diciembre 2026":
-            !estado.Equals("INSCRITO",StringComparison.OrdinalIgnoreCase)?"Alumno sin estatus INSCRITO":
-            total==0?"Sin catálogo de materias":
-            total!=calificadas?"Faltan calificaciones finales":
-            calificadas!=aprobadas?"Tiene materias con calificación inferior a 70":"Apto para reinscripción";
-        return new(numero,nombre,carrera,origen,origen+1,periodo,situacion,
-            total,aprobadas,calificadas,elegible,notas);
+        var (anio,_) = Inferir(numero);
+        if ((anio==2026 && semestre!=2) || (anio==2025 && semestre is not (2 or 3)))
+            throw new ArgumentException("Semestre de destino incompatible con la generación. 2026: solo 2.º; 2025: 2.º o 3.º.");
     }
 
-    private static bool YaInscrito(MySqlConnection c,MySqlTransaction? tx,string control)
+    // Impide reinscribir a quien acaba de inscribirse a primer semestre en el periodo actual.
+    public static void VerificarNoPrimerSemestre(Sesion actor,string numero)
+    {
+        if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Sin permiso.");
+        using var c=Db.Connect();Identidad.RequireActive(c,null,actor);
+        VerificarNoPrimerSemestre(c,null,numero);
+    }
+
+    private static void VerificarNoPrimerSemestre(MySqlConnection c,MySqlTransaction? tx,string numero)
     {
         using var cmd=Db.Sql(c,"""
             SELECT COUNT(*) FROM Inscripcion i
             JOIN Grupo g ON g.ID_grupo=i.ID_grupo
-            JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
-            WHERE i.Numero_control=@control AND UPPER(i.estatus)='INSCRITO'
-              AND p.nombre_periodo=@periodo
+            JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
+            JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
+            WHERE i.Numero_control=@control
+              AND UPPER(i.estatus)='INSCRITO'
+              AND s.numero_semestre=1
+              AND pe.nombre_periodo=@periodo
             """,tx);
-        Db.Param(cmd,"@control",control);Db.Param(cmd,"@periodo",PeriodoDestino);
-        return Convert.ToInt32(cmd.ExecuteScalar())>0;
+        Db.Param(cmd,"@control",numero);Db.Param(cmd,"@periodo",Periodo);
+        if(Convert.ToInt32(cmd.ExecuteScalar())>0)
+            throw new ArgumentException("El alumno ya está inscrito en primer semestre durante agosto–diciembre 2026; no puede reinscribirse en el mismo periodo.");
     }
 
-    public static List<Choice> Grupos(Sesion actor, int destino)
+    public static ReinscripcionBasica? Existente(Sesion actor,string numero)
     {
-        if(destino is not (3 or 5))return new();
-        using var c=Db.Connect();Permiso(c,null,actor);
+        if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Sin permiso.");
+        using var c=Db.Connect();Identidad.RequireActive(c,null,actor);
+        using var cmd=Db.Sql(c,"""
+            SELECT r.nombre,r.apellido_paterno,r.apellido_materno,r.anio_ingreso,
+              r.semestre_destino,r.ID_grupo,g.nombre_grupo,COALESCE(g.turno,'')
+            FROM Reinscripcion r JOIN Grupo g ON g.ID_grupo=r.ID_grupo
+            WHERE r.numero_control=@control
+            """);
+        Db.Param(cmd,"@control",numero.Trim());
+        using var rd=cmd.ExecuteReader();
+        if(!rd.Read())return null;
+        return new(numero.Trim(),rd.GetString(0),rd.GetString(1),rd.GetString(2),
+            rd.GetInt32(3),rd.GetInt32(4),rd.GetInt32(5),rd.GetString(6),rd.GetString(7));
+    }
+
+    public static List<Choice> Grupos(Sesion actor,int semestre)
+    {
+        if(semestre is not (2 or 3))throw new ArgumentException("Semestre inválido.");
+        if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Sin permiso.");
+        using var c=Db.Connect();Identidad.RequireActive(c,null,actor);
         using var cmd=Db.Sql(c,"""
             SELECT g.ID_grupo,CONCAT(g.nombre_grupo,' · ',COALESCE(g.turno,'SIN TURNO'),
-                ' · ',GREATEST(0,g.Capacidad-COUNT(i.Id_inscripcion)),' lugares') AS etiqueta
+              ' · ',GREATEST(0,g.Capacidad-COUNT(DISTINCT r.numero_control)-COUNT(DISTINCT i.Numero_control)),' lugares')
             FROM Grupo g
             JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
             JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
+            LEFT JOIN Reinscripcion r ON r.ID_grupo=g.ID_grupo AND UPPER(r.estatus)='INSCRITO'
             LEFT JOIN Inscripcion i ON i.ID_grupo=g.ID_grupo AND UPPER(i.estatus)='INSCRITO'
-            WHERE s.numero_semestre=@destino AND p.nombre_periodo=@periodo
+            WHERE s.numero_semestre=@semestre AND p.nombre_periodo=@periodo
               AND UPPER(g.Estatus)='ACTIVO' AND UPPER(p.estatus)='ACTIVO'
             GROUP BY g.ID_grupo,g.nombre_grupo,g.turno,g.Capacidad
-            HAVING COUNT(i.Id_inscripcion)<g.Capacidad
+            HAVING COUNT(DISTINCT r.numero_control)+COUNT(DISTINCT i.Numero_control)<g.Capacidad
             ORDER BY g.turno,g.nombre_grupo
             """);
-        Db.Param(cmd,"@destino",destino);Db.Param(cmd,"@periodo",PeriodoDestino);
-        var grupos=new List<Choice>();using var r=cmd.ExecuteReader();
-        while(r.Read())grupos.Add(new Choice(r.GetInt32(0),r.GetString(1)));
-        return grupos;
+        Db.Param(cmd,"@semestre",semestre);Db.Param(cmd,"@periodo",Periodo);
+        var items=new List<Choice>();using var reader=cmd.ExecuteReader();
+        while(reader.Read())items.Add(new Choice(reader.GetInt32(0),reader.GetString(1)));
+        return items;
     }
 
-    public static void Guardar(Sesion actor,string numero,int idGrupo)
+    internal static string GenerarCorreo(MySqlConnection c, MySqlTransaction tx,
+        string nombre,string paterno,string materno,string? excluirControl=null)
     {
+        // Misma regla local usada para el personal: Nombre + iniciales de apellidos.
+        string baseEmail=PersonalAutomatico.EmailBase(nombre,paterno,materno);
+        var parts=baseEmail.Split('@');
+        for(int n=1;n<=99999;n++)
+        {
+            string sufijo=n==1?"":n.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            string local=parts[0][..Math.Min(parts[0].Length,64-sufijo.Length)];
+            string candidato=local+sufijo+"@"+parts[1];
+            using var cmd=Db.Sql(c,"""
+                SELECT (SELECT COUNT(*) FROM Reinscripcion WHERE correo_institucional=@correo AND (@excluir IS NULL OR numero_control<>@excluir))
+                     +(SELECT COUNT(*) FROM Alumno WHERE correo_institucional=@correo)
+                     +(SELECT COUNT(*) FROM Docente WHERE correo_institucional=@correo)
+                     +(SELECT COUNT(*) FROM Personal_Administrativo WHERE correo_institucional=@correo)
+                """,tx);
+            Db.Param(cmd,"@correo",candidato);
+            Db.Param(cmd,"@excluir",excluirControl);
+            if(Convert.ToInt32(cmd.ExecuteScalar())==0)return candidato;
+        }
+        throw new InvalidOperationException("No hay correos institucionales disponibles.");
+    }
+
+    public static void Guardar(Sesion actor,string numero,string nombre,string paterno,string materno,int grupo,int semestre)
+    {
+        if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Sin permiso.");
+        numero=numero.Trim();
+        var (anio,_) = Inferir(numero);
+        ValidarSemestre(numero,semestre);
+        nombre=Validation.Name(nombre,"nombre",60);
+        paterno=Validation.Name(paterno,"apellido paterno");
+        materno=Validation.Name(materno,"apellido materno");
         using var c=Db.Connect();
         using var tx=c.BeginTransaction(IsolationLevel.ReadCommitted);
-        Permiso(c,tx,actor);
-        // Bloqueo compartido de identidad para serializar inscripciones de la aplicación.
-        using(var lockCmd=Db.Sql(c,"SELECT id FROM Control_Identidad WHERE id=1 FOR UPDATE",tx))
-            if(lockCmd.ExecuteScalar() is null)throw new InvalidOperationException("Falta Control_Identidad. Ejecuta la migración 06.");
-        // Bloquear alumno y revalidar todos los requisitos DENTRO de la transacción.
-        string estatus,periodoOrigen;int origen;
-        using(var cmd=Db.Sql(c,"""
-            SELECT a.estatus,h.semestre_cursado,h.periodo_origen
-            FROM Alumno a JOIN Historial_Semestre_Reinscripcion h
-              ON h.numero_control=a.Numero_control
-            WHERE a.Numero_control=@control FOR UPDATE
+        Identidad.RequireActive(c,tx,actor);
+        VerificarNoPrimerSemestre(c,tx,numero);
+        using(var gate=Db.Sql(c,"SELECT id FROM Control_Identidad WHERE id=1 FOR UPDATE",tx))
+            if(gate.ExecuteScalar() is null)throw new InvalidOperationException("Ejecuta el script de migración 06.");
+        using(var existe=Db.Sql(c,"""
+            SELECT COUNT(*) FROM Reinscripcion WHERE numero_control=@control
             """,tx))
         {
-            Db.Param(cmd,"@control",numero);using var r=cmd.ExecuteReader();
-            if(!r.Read())throw new ArgumentException("Alumno sin historial académico para reinscripción.");
-            estatus=r.GetString(0);origen=r.GetInt32(1);periodoOrigen=r.GetString(2);
+            Db.Param(existe,"@control",numero);
+            if(Convert.ToInt32(existe.ExecuteScalar())>0)
+                throw new ArgumentException("Este número de control ya está reinscrito.");
         }
-        if(estatus.ToUpperInvariant()!="INSCRITO" || origen is not (2 or 4))
-            throw new ArgumentException("El alumno no reúne los requisitos de reinscripción.");
-        if(YaInscrito(c,tx,numero))throw new ArgumentException("El alumno ya tiene una inscripción activa en este periodo.");
-        int total,aprobadas;
-        using(var cmd=Db.Sql(c,"""
-            SELECT COUNT(*) AS total,
-              COUNT(CASE WHEN f.calificacion>=70 THEN 1 END) AS aprobadas
-            FROM Materia_Reinscripcion m
-            LEFT JOIN Calificacion_Final_Reinscripcion f
-              ON f.id_materia_reinscripcion=m.id_materia_reinscripcion
-              AND f.numero_control=@control AND f.periodo_origen=@origenPeriodo
-            WHERE m.semestre_origen=@origen
+        // El módulo conserva su registro mínimo y no inventa CURP ni domicilio.
+        // Bloquea inscripciones activas del mismo periodo, aunque no sean de primero.
+        using(var check=Db.Sql(c,"""
+            SELECT COUNT(*) FROM Inscripcion i JOIN Grupo g ON g.ID_grupo=i.ID_grupo
+            JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
+            WHERE i.Numero_control=@control AND UPPER(i.estatus)='INSCRITO'
+              AND p.nombre_periodo=@periodo
             """,tx))
         {
-            Db.Param(cmd,"@control",numero);Db.Param(cmd,"@origenPeriodo",periodoOrigen);Db.Param(cmd,"@origen",origen);
-            using var r=cmd.ExecuteReader();r.Read();
-            total=r.GetInt32(0);aprobadas=r.GetInt32(1);
+            Db.Param(check,"@control",numero);Db.Param(check,"@periodo",Periodo);
+            if(Convert.ToInt32(check.ExecuteScalar())>0)
+                throw new ArgumentException("Este número de control ya tiene una inscripción activa en el periodo.");
         }
-        if(total==0 || total!=aprobadas)
-            throw new ArgumentException("Debe aprobar todas las materias del semestre anterior con 70 o más. Revisa las calificaciones faltantes y reprobadas.");
-        int capacity;
+        string correoGenerado=GenerarCorreo(c,tx,nombre,paterno,materno);
+        int capacidad;
         using(var cmd=Db.Sql(c,"""
             SELECT g.Capacidad FROM Grupo g
             JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
             JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
-            JOIN Carrera ca ON ca.ID_Carrera=g.ID_Carrera
-            JOIN Plan_Estudio pl ON pl.clave_carrera=ca.clave_carrera
-            JOIN Alumno a ON a.ID_Plan=pl.id_plan
-            WHERE g.ID_grupo=@grupo AND a.Numero_control=@control
-              AND s.numero_semestre=@destino AND p.nombre_periodo=@periodo
-              AND UPPER(g.Estatus)='ACTIVO' AND UPPER(p.estatus)='ACTIVO'
-            FOR UPDATE
+            WHERE g.ID_grupo=@grupo AND s.numero_semestre=@semestre
+              AND p.nombre_periodo=@periodo AND UPPER(g.Estatus)='ACTIVO'
+              AND UPPER(p.estatus)='ACTIVO' FOR UPDATE
             """,tx))
         {
-            Db.Param(cmd,"@grupo",idGrupo);Db.Param(cmd,"@control",numero);
-            Db.Param(cmd,"@destino",origen+1);Db.Param(cmd,"@periodo",PeriodoDestino);
-            object? value=cmd.ExecuteScalar();
-            if(value is null)throw new ArgumentException("Grupo inválido para el semestre siguiente, carrera o periodo.");
-            capacity=Convert.ToInt32(value);
-        }
-        using(var cmd=Db.Sql(c,"SELECT COUNT(*) FROM Inscripcion WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO'",tx))
-        {
-            Db.Param(cmd,"@grupo",idGrupo);
-            if(Convert.ToInt32(cmd.ExecuteScalar())>=capacity)
-                throw new ArgumentException("El grupo ya no tiene lugares disponibles.");
+            Db.Param(cmd,"@grupo",grupo);Db.Param(cmd,"@semestre",semestre);Db.Param(cmd,"@periodo",Periodo);
+            var value=cmd.ExecuteScalar();
+            if(value is null)throw new ArgumentException("El grupo no pertenece al semestre correspondiente.");
+            capacidad=Convert.ToInt32(value);
         }
         using(var cmd=Db.Sql(c,"""
-            INSERT INTO Inscripcion(Numero_control,ID_grupo,tipo_inscripcion,estatus)
-            VALUES(@control,@grupo,'REINSCRIPCION','INSCRITO')
+            SELECT (SELECT COUNT(*) FROM Reinscripcion
+                    WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO')
+                 + (SELECT COUNT(*) FROM Inscripcion
+                    WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO')
             """,tx))
         {
-            Db.Param(cmd,"@control",numero);Db.Param(cmd,"@grupo",idGrupo);cmd.ExecuteNonQuery();
+            Db.Param(cmd,"@grupo",grupo);
+            if(Convert.ToInt32(cmd.ExecuteScalar())>=capacidad)
+                throw new ArgumentException("El grupo no tiene lugares disponibles.");
         }
-        Db.Audit(c,tx,actor.Id,"REINSCRIPCION","ALUMNOS",$"Reinscripción de semestre {origen} a {origen+1} en {PeriodoDestino}",numero);
+        using(var cmd=Db.Sql(c,"""
+            INSERT INTO Reinscripcion
+              (numero_control,nombre,apellido_paterno,apellido_materno,anio_ingreso,semestre_destino,ID_grupo,correo_institucional)
+            VALUES(@control,@nombre,@paterno,@materno,@anio,@semestre,@grupo,@correo)
+            """,tx))
+        {
+            Db.Param(cmd,"@control",numero);Db.Param(cmd,"@nombre",nombre);
+            Db.Param(cmd,"@paterno",paterno);Db.Param(cmd,"@materno",materno);
+            Db.Param(cmd,"@anio",anio);Db.Param(cmd,"@semestre",semestre);Db.Param(cmd,"@grupo",grupo);
+            Db.Param(cmd,"@correo",correoGenerado);
+            cmd.ExecuteNonQuery();
+        }
+        Db.Audit(c,tx,actor.Id,"REINSCRIPCION","ALUMNOS","Reinscripción autónoma de alumno por generación 2025/2026",numero);
         tx.Commit();
+    }
+
+    public static DataTable Lista(Sesion actor,int grupo)
+    {
+        if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Sin permiso.");
+        using var c=Db.Connect();Identidad.RequireActive(c,null,actor);
+        using var cmd=Db.Sql(c,"""
+            SELECT numero_control AS 'No. control',
+              CONCAT_WS(' ',nombre,apellido_paterno,apellido_materno) AS 'Alumno'
+            FROM Reinscripcion
+            WHERE ID_grupo=@grupo AND UPPER(estatus)='INSCRITO'
+            ORDER BY numero_control
+            """);
+        Db.Param(cmd,"@grupo",grupo);
+        var data=new DataTable();using var reader=cmd.ExecuteReader();data.Load(reader);return data;
     }
 }

@@ -58,7 +58,7 @@ internal static class RepositorioMantenimientoReinscripcion
             """);
         Db.Param(cmd,"@semestre",semestre);
         Db.Param(cmd,"@actual",grupoActual);
-        Db.Param(cmd,"@periodo",RepositorioReinscripcionDemo.Periodo);
+        Db.Param(cmd,"@periodo",RepositorioReinscripcion.Periodo);
         var result=new List<Choice>();using var rd=cmd.ExecuteReader();
         while(rd.Read())result.Add(new Choice(rd.GetInt32(0),rd.GetString(1)));
         return result;
@@ -69,8 +69,8 @@ internal static class RepositorioMantenimientoReinscripcion
     {
         if(!actor.CanSeeStudents)throw new UnauthorizedAccessException("Acceso no autorizado.");
         anterior=anterior.Trim();nuevo=nuevo.Trim();
-        var (generacion,_) = RepositorioReinscripcionDemo.Inferir(nuevo);
-        RepositorioReinscripcionDemo.ValidarSemestre(nuevo,semestre);
+        var (generacion,_) = RepositorioReinscripcion.Inferir(nuevo);
+        RepositorioReinscripcion.ValidarSemestre(nuevo,semestre);
         nombre=Validation.Name(nombre,"nombre",60);
         paterno=Validation.Name(paterno,"apellido paterno");
         materno=Validation.Name(materno,"apellido materno");
@@ -122,7 +122,7 @@ internal static class RepositorioMantenimientoReinscripcion
             """,tx))
         {
             Db.Param(chk,"@numero",nuevo);
-            Db.Param(chk,"@periodo",RepositorioReinscripcionDemo.Periodo);
+            Db.Param(chk,"@periodo",RepositorioReinscripcion.Periodo);
             if(Convert.ToInt32(chk.ExecuteScalar())>0)
                 throw new ArgumentException("Este número de control ya tiene una inscripción activa.");
         }
@@ -139,7 +139,7 @@ internal static class RepositorioMantenimientoReinscripcion
             """,tx))
         {
             Db.Param(cmd,"@grupo",grupo);Db.Param(cmd,"@semestre",semestre);
-            Db.Param(cmd,"@periodo",RepositorioReinscripcionDemo.Periodo);
+            Db.Param(cmd,"@periodo",RepositorioReinscripcion.Periodo);
             var value=cmd.ExecuteScalar();
             if(value is null)throw new ArgumentException("El grupo elegido no corresponde al semestre.");
             capacidad=Convert.ToInt32(value);
@@ -162,7 +162,7 @@ internal static class RepositorioMantenimientoReinscripcion
         bool cambiarCorreo=originalNombre!=nombre || originalPaterno!=paterno ||
             originalMaterno!=materno || string.IsNullOrWhiteSpace(correoAnterior);
         string correo=cambiarCorreo
-            ? RepositorioReinscripcionDemo.GenerarCorreo(c,tx,nombre,paterno,materno,anterior)
+            ? RepositorioReinscripcion.GenerarCorreo(c,tx,nombre,paterno,materno,anterior)
             : correoAnterior;
 
         using(var cmd=Db.Sql(c,"""

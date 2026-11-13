@@ -10,20 +10,8 @@
     <RootNamespace>AMBAR.Semana4</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Tests/**/*.cs" />
-    <EmbeddedResource Remove="Tests/**/*" />
-    <None Remove="Tests/**/*" />
-    <PackageReference Include="libphonenumber-csharp" Version="9.0.42" />
-    <PackageReference Include="MySqlConnector" Version="2.4.0" />
-    <PackageReference Include="QuestPDF" Version="2024.3.1" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Assets\*.png" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="EVIDENCIAS_SEMANA4.md" />
-    <None Remove="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="CambiarPasswordForm.cs"><SubType>Form</SubType></Compile>

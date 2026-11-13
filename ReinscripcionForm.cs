@@ -165,9 +165,9 @@ internal sealed class ReinscripcionForm : Form
         try
         {
             string numero=control.Text.Trim();
-            var (anio,semestre)=RepositorioReinscripcionDemo.Inferir(numero);
-            RepositorioReinscripcionDemo.VerificarNoPrimerSemestre(actor,numero);
-            var anterior=RepositorioReinscripcionDemo.Existente(actor,numero);
+            var (anio,semestre)=RepositorioReinscripcion.Inferir(numero);
+            RepositorioReinscripcion.VerificarNoPrimerSemestre(actor,numero);
+            var anterior=RepositorioReinscripcion.Existente(actor,numero);
             if(anterior!=null)
             {
                 informacion.ForeColor=Color.DarkRed;
@@ -201,7 +201,7 @@ internal sealed class ReinscripcionForm : Form
         if(semestres.SelectedItem is not Choice seleccionado || string.IsNullOrWhiteSpace(controlValidado))return;
         try
         {
-            RepositorioReinscripcionDemo.ValidarSemestre(controlValidado,seleccionado.Id);
+            RepositorioReinscripcion.ValidarSemestre(controlValidado,seleccionado.Id);
             semestreValidado=seleccionado.Id;
             informacion.Text=$"Número válido · Generación {controlValidado[..4]}\nDestino: {semestreValidado}.º semestre | Agosto–diciembre 2026";
             resultado.Text=semestreValidado==2 && controlValidado.StartsWith("2025")
@@ -219,7 +219,7 @@ internal sealed class ReinscripcionForm : Form
         try
         {
             grupos.Items.Clear();
-            foreach(var item in RepositorioReinscripcionDemo.Grupos(actor,semestreValidado))grupos.Items.Add(item);
+            foreach(var item in RepositorioReinscripcion.Grupos(actor,semestreValidado))grupos.Items.Add(item);
             var anterior=grupos.Items.OfType<Choice>().FirstOrDefault(x=>x.Id==seleccionado);
             if(anterior!=null)grupos.SelectedItem=anterior;
             else if(grupos.Items.Count>0)grupos.SelectedIndex=0;
@@ -234,7 +234,7 @@ internal sealed class ReinscripcionForm : Form
     private void VerHorario()
     {
         if(grupos.SelectedItem is not Choice grupo)return;
-        using var f=new HorarioGrupoDemoForm(actor,grupo.Id,grupo.Name);
+        using var f=new HorarioGrupoForm(actor,grupo.Id,grupo.Name);
         f.ShowDialog(this);
     }
 
@@ -251,7 +251,7 @@ internal sealed class ReinscripcionForm : Form
         try
         {
             guardar.Enabled=false;
-            RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado);
+            RepositorioReinscripcion.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado);
             MessageBox.Show(this,$"Reinscripción guardada correctamente.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
                 "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
             LimpiarCaptura();control.Clear();control.Focus();

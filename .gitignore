@@ -16,3 +16,8 @@ appsettings.*.local.json
 # Archivos temporales
 *.log
 *.tmp
+
+# Configuracion local y credenciales: nunca incluir en Git
+/appsettings.json
+/credenciales_iniciales.txt
+/Sql/catalogo_postal_datos.sql

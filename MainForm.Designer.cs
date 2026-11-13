@@ -1046,7 +1046,7 @@ partial class MainForm
         teacherMateria.HeaderText = "Materia";
         teacherGrades.Columns.Add(teacherMateria);
         teacherUnidad.Name = "Unidad";
-        teacherUnidad.HeaderText = "Unidad";
+        teacherUnidad.HeaderText = "Semana";
         teacherGrades.Columns.Add(teacherUnidad);
         teacherNota.Name = "Calificación";
         teacherNota.HeaderText = "Calificación";
