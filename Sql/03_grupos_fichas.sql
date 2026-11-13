@@ -1,3 +1,4 @@
+-- AMBAR | 03/08 | Carrera, semestres 1 y 3, horarios iniciales y 50 fichas.
 -- Instalación operativa: horarios de primer y tercer semestre ISC, agosto-diciembre 2026.
 -- Segundo semestre se prepara en script 18; horarios finales de los seis grupos, en script 20. Capacidad: 25.
 -- Ejecutar después de 06. Reejecutable, transaccional; conserva fichas ya utilizadas.

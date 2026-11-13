@@ -1,20 +1,31 @@
--- AMBAR | Ajuste de Reinscripción autónoma: 2026 → 2.º y 2025 → 3.º.
--- Ejecutar una vez DESPUÉS de Sql/16_reinscripcion_autonoma.sql y Sql/07_grupos_y_fichas_2026.sql.
--- Periodo de destino: Agosto-Diciembre 2026.
--- El histórico de generación 2024 se conserva en una tabla de respaldo (no se cuenta en el nuevo módulo).
+-- AMBAR | 04/08 | Reinscripcion minima 2025/2026 + dos grupos de 2.º.
+-- Crear la tabla definitiva directamente: sin respaldos ni migraciones de demostracion.
+-- AMBAR · Reinscripción autónoma de alumnos (Semana 6)
+-- Requiere los grupos y horarios de 07_grupos_y_fichas_2026.sql.
+-- Este módulo guarda registros mínimos independientes del expediente completo.
 USE AMBAR_Control_Escolar;
+CREATE TABLE IF NOT EXISTS Reinscripcion (
+    numero_control VARCHAR(20) NOT NULL PRIMARY KEY,
+    nombre VARCHAR(60) NOT NULL,
+    apellido_paterno VARCHAR(50) NOT NULL,
+    apellido_materno VARCHAR(50) NOT NULL,
+    anio_ingreso SMALLINT UNSIGNED NOT NULL,
+    semestre_destino TINYINT UNSIGNED NOT NULL,
+    ID_grupo INT NOT NULL,
+    periodo VARCHAR(50) NOT NULL DEFAULT 'Agosto-Diciembre 2026',
+    correo_institucional VARCHAR(120) NULL UNIQUE,
+    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estatus VARCHAR(20) NOT NULL DEFAULT 'INSCRITO',
+    CONSTRAINT ck_reins_generacion CHECK
+       ((anio_ingreso=2026 AND semestre_destino=2)
+        OR (anio_ingreso=2025 AND semestre_destino IN (2,3))),
+    CONSTRAINT fk_reins_grupo FOREIGN KEY(ID_grupo) REFERENCES Grupo(ID_grupo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 1. El histórico de 2024 ya no participa en este módulo.
--- No se crea ni se vuelve a generar una tabla de respaldo 2024.
--- La limpieza del respaldo antiguo se hace una sola vez con el script 24.
-
--- 2. Actualizar la restricción de generación.
-ALTER TABLE Reinscripcion
-    DROP CHECK ck_reins_demo_generacion;
-ALTER TABLE Reinscripcion
-    ADD CONSTRAINT ck_reins_demo_generacion CHECK
-    ((anio_ingreso=2026 AND semestre_destino=2)
-      OR (anio_ingreso=2025 AND semestre_destino IN (2,3)));
+-- No se insertan alumnos predefinidos. Los datos se capturan en la ventana de Reinscripción.
+-- El número de control se valida por su FORMA y AÑO, no por existencia en Alumno.
+SELECT COUNT(*) AS 'Reinscripciones'
+FROM Reinscripcion;
 
 -- 3. Crear grupos de segundo semestre (sin inventar profesores ni horarios).
 DELIMITER $$
@@ -56,10 +67,3 @@ CALL ambar_grupos_segundo_2026() $$
 DROP PROCEDURE IF EXISTS ambar_grupos_segundo_2026 $$
 DELIMITER ;
 
--- 4. Comprobar grupos actuales y que se bloqueó la generación 2024.
-SELECT s.numero_semestre, g.nombre_grupo, g.turno, g.Capacidad
-FROM Grupo g JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
-JOIN Periodo_Escolar pe ON pe.ID_Periodo=g.ID_Periodo
-WHERE pe.nombre_periodo='Agosto-Diciembre 2026'
-  AND s.numero_semestre IN (1,2,3)
-ORDER BY s.numero_semestre,g.nombre_grupo;

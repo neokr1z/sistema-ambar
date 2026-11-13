@@ -1,3 +1,5 @@
+-- AMBAR | 06/08 | Unicamente los 14 docentes de los seis grupos.
+-- Ejecutar despues del 05.
 -- Instalacion final: SOLO 14 docentes de los horarios de grupos 1, 2 y 3.
 -- Ejecutar despues de 07, 18 y 20, cuando los seis grupos y sus horarios esten listos.
 -- Reejecutable: no reinicia contraseñas, no reactiva bajas ni cambia asignaciones existentes.

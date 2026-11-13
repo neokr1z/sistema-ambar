@@ -1,3 +1,5 @@
+-- AMBAR | 05/08 | Horarios de 1.º, 2.º y 3.º sin empalmes (14 docentes).
+-- Ejecutar despues del 04. Los docentes se insertan en el 06.
 -- AMBAR / Semana 6. Horarios completos de 1.º, 2.º y 3.º / 14 profesores sin empalmes.
 -- Aplicar tras 06, 07, 16, 18 y 19. Solo se modifica la asignación de docentes
 -- de seis materias preexistentes en primero/tercero y se carga el horario de segundo.
