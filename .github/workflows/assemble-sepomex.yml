@@ -1,0 +1,37 @@
+name: Ensamblar catálogo SEPOMEX adjunto
+on:
+  push:
+    branches: [upload/sepomex-nov2026]
+permissions:
+  contents: write
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Unificar archivo SQL y validar integridad
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            head -n -1 Sql/SEPOMEX/01_datos_postales.sql
+            cat Sql/SEPOMEX/02_fragmento.sql
+            cat Sql/SEPOMEX/03_fragmento.sql
+            cat Sql/SEPOMEX/04_fragmento.sql
+          } > Sql/09_catalogo_postal_datos_SEPOMEX.sql
+          test "$(wc -l < Sql/09_catalogo_postal_datos_SEPOMEX.sql)" = 159008
+          test "$(grep -c '^INSERT INTO Catalogo_Postal' Sql/09_catalogo_postal_datos_SEPOMEX.sql)" = 317
+          echo "0d7e3e1e2f753d55f5c38c171a9287a2792b9c6f51e83e71b95982fb634254d6  Sql/09_catalogo_postal_datos_SEPOMEX.sql" | sha256sum -c -
+      - name: Publicar archivo único y retirar fragmentos temporales
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Sql/09_catalogo_postal_datos_SEPOMEX.sql
+          git rm -r Sql/SEPOMEX
+          git rm .github/workflows/assemble-sepomex.yml
+          git commit -m "Consolidar catálogo SEPOMEX completo en un único script SQL"
+          git push origin "HEAD:refs/heads/upload/sepomex-nov2026"
