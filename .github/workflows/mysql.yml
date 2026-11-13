@@ -1,0 +1,55 @@
+name: Verificar instalación MySQL
+
+on:
+  push:
+    branches: [main, 'cleanup/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci_test_password_only
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -u root -pci_test_password_only"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar cliente MySQL
+        run: sudo apt-get update && sudo apt-get install -y default-mysql-client
+      - name: Ejecutar los ocho scripts en orden
+        env:
+          MYSQL_PWD: ci_test_password_only
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in Sql/0{1..8}_*.sql; do
+            echo "Ejecutando $file"
+            mysql --host=127.0.0.1 --port=3306 --user=root --default-character-set=utf8mb4 < "$file"
+          done
+          mysql --host=127.0.0.1 --port=3306 --user=root --database=AMBAR_Control_Escolar -N -B -e "
+            SELECT 'docentes', COUNT(*) FROM Docente
+            UNION ALL SELECT 'grupos', COUNT(*) FROM Grupo
+            UNION ALL SELECT 'bloques', COUNT(*) FROM Horario_Referencia
+            UNION ALL SELECT 'cortes', COUNT(*) FROM Calificacion_Corte;"
+      - name: Verificar cantidades del proyecto
+        env:
+          MYSQL_PWD: ci_test_password_only
+        shell: bash
+        run: |
+          set -euo pipefail
+          query() { mysql --host=127.0.0.1 --user=root --database=AMBAR_Control_Escolar -N -B -e "$1"; }
+          test "$(query 'SELECT COUNT(*) FROM Docente')" = "14"
+          test "$(query 'SELECT COUNT(*) FROM Grupo')" = "6"
+          test "$(query 'SELECT COUNT(*) FROM Horario_Referencia')" = "170"
+          test "$(query 'SELECT COUNT(*) FROM Reinscripcion')" = "0"
+          test "$(query 'SELECT COUNT(*) FROM Calificacion_Corte')" = "0"
+          echo "Instalación limpia: 14 docentes, 6 grupos y 170 bloques. OK."
