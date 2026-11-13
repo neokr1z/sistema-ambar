@@ -11,6 +11,9 @@ public partial class InscripcionForm : Form
     public InscripcionForm()
     {
         InitializeComponent();
+        NavegacionEnter.Instalar(this);
+        ConfigurarOrdenCaptura();
+        AgregarBotonGrupos();
         postal.TextChanged += PostalChanged;
         neighborhood.SelectedIndexChanged += ColoniaChanged;
         locality.ReadOnly = true;
@@ -19,6 +22,51 @@ public partial class InscripcionForm : Form
         // El diseñador usa pestañas normales para que los nombres siempre se vean.
         // El estilo azul personalizado se activa al abrir una sesión real.
 
+    }
+
+    private void ConfigurarOrdenCaptura()
+    {
+        Control[] personales = { ficha, find, name, paternal, maternal, curp, birthday, phone, emergency, personalMail, institutionalMail, nss, generateNss, allergies };
+        for(int i=0;i<personales.Length;i++) personales[i].TabIndex=i;
+        Control[] domicilio = { postal, neighborhood, street, exterior, interior };
+        for(int i=0;i<domicilio.Length;i++) domicilio[i].TabIndex=i;
+        plans.TabIndex=0; groups.TabIndex=1;
+    }
+
+    private void AgregarBotonGrupos()
+    {
+        var boton = new Button
+        {
+            Name = "verGrupos",
+            Text = "Grupos",
+            Size = new Size(170, 52),
+            Anchor = AnchorStyles.Top | AnchorStyles.Right,
+            BackColor = Color.FromArgb(6,55,99),
+            ForeColor = Color.White,
+            FlatStyle = FlatStyle.Flat,
+            Font = new Font("Segoe UI",10F,FontStyle.Bold),
+            Cursor = Cursors.Hand,
+            TabStop = false
+        };
+        boton.FlatAppearance.BorderSize=0;
+        boton.Click += (_,_) =>
+        {
+            if(actor is null) return;
+            using var ventana=new ConsultaGruposForm(actor);
+            ventana.ShowDialog(this);
+            LoadGroups(); // Actualiza cupos al regresar.
+        };
+        actions.Controls.Add(boton);
+        void Reacomodar()
+        {
+            int espacio=12;
+            submit.Left=Math.Max(0,actions.ClientSize.Width-submit.Width-35);
+            cancel.Left=Math.Max(0,submit.Left-cancel.Width-espacio);
+            boton.Left=Math.Max(0,cancel.Left-boton.Width-espacio);
+            boton.Top=submit.Top;
+        }
+        actions.Resize += (_,_) => Reacomodar();
+        Reacomodar();
     }
 
     private void ActivarEstiloPasos()

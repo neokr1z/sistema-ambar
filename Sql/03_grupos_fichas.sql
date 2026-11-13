@@ -1,5 +1,6 @@
--- Carga de las tres imágenes de horarios ISC, agosto-diciembre 2026.
--- Selección: grupos 1 y 2 de los semestres 1, 3 y 5. Capacidad solicitada: 25.
+-- AMBAR | 03/08 | Carrera, semestres 1 y 3, horarios iniciales y 50 fichas.
+-- Instalación operativa: horarios de primer y tercer semestre ISC, agosto-diciembre 2026.
+-- Segundo semestre se prepara en script 18; horarios finales de los seis grupos, en script 20. Capacidad: 25.
 -- Ejecutar después de 06. Reejecutable, transaccional; conserva fichas ya utilizadas.
 USE AMBAR_Control_Escolar;
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -223,96 +224,6 @@ BEGIN
         (grupo,'Cultura Empresarial','Jueves','18:00:00','19:00:00','R701','Miriam Janet Gallardo Santos')
     ON DUPLICATE KEY UPDATE id=Horario_Referencia.id;
 
-    INSERT INTO Semestre(numero_semestre,descripcion) VALUES(5,'Semestre 5')
-        ON DUPLICATE KEY UPDATE numero_semestre=5;
-    SELECT ID_Semestre INTO semestre FROM Semestre WHERE numero_semestre=5;
-    IF (SELECT COUNT(*) FROM Grupo WHERE nombre_grupo='5ISC1' AND ID_Carrera=carrera AND ID_Periodo=periodo)>1 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Grupo 5ISC1 duplicado; revisar antes de cargar.';
-    END IF;
-    INSERT INTO Grupo(nombre_grupo,ID_Carrera,ID_Semestre,ID_Periodo,Capacidad,Estatus,turno,habilitado_fichas)
-        SELECT '5ISC1',carrera,semestre,periodo,25,'ACTIVO','MATUTINO',0
-        WHERE NOT EXISTS(SELECT 1 FROM Grupo WHERE nombre_grupo='5ISC1' AND ID_Carrera=carrera AND ID_Periodo=periodo);
-    SELECT ID_grupo INTO grupo FROM Grupo WHERE nombre_grupo='5ISC1' AND ID_Carrera=carrera AND ID_Periodo=periodo;
-    IF (SELECT COUNT(*) FROM Inscripcion WHERE ID_grupo=grupo AND UPPER(estatus)='INSCRITO')>25 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El grupo 5ISC1 ya supera 25 inscritos; no se redujo el cupo.';
-    END IF;
-    IF (SELECT ID_Semestre FROM Grupo WHERE ID_grupo=grupo)<>semestre THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El grupo 5ISC1 existente pertenece a otro semestre.';
-    END IF;
-    UPDATE Grupo SET Capacidad=25,turno='MATUTINO',habilitado_fichas=0 WHERE ID_grupo=grupo;
-    INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
-        (grupo,'Gráficación','Lunes','10:00:00','11:00:00','R706',NULL),
-        (grupo,'Gráficación','Martes','10:00:00','11:00:00','R706',NULL),
-        (grupo,'Gráficación','Miércoles','10:00:00','11:00:00','R706',NULL),
-        (grupo,'Gráficación','Jueves','10:00:00','11:00:00','R706',NULL),
-        (grupo,'Fund. de Telecomunicaciones','Lunes','12:00:00','13:00:00','R706','Francisco Javier Gutierrez Mata'),
-        (grupo,'Fund. de Telecomunicaciones','Martes','12:00:00','13:00:00','R706','Francisco Javier Gutierrez Mata'),
-        (grupo,'Fund. de Telecomunicaciones','Miércoles','12:00:00','13:00:00','R706','Francisco Javier Gutierrez Mata'),
-        (grupo,'Fund. de Telecomunicaciones','Jueves','12:00:00','13:00:00','R706','Francisco Javier Gutierrez Mata'),
-        (grupo,'Taller de Bases de Datos','Lunes','09:00:00','10:00:00','R706',NULL),
-        (grupo,'Taller de Bases de Datos','Martes','09:00:00','10:00:00','R706',NULL),
-        (grupo,'Taller de Bases de Datos','Miércoles','09:00:00','10:00:00','R706',NULL),
-        (grupo,'Taller de Bases de Datos','Jueves','09:00:00','10:00:00','R706',NULL),
-        (grupo,'Fund. de Ingeniería de Software','Lunes','07:00:00','08:00:00','R706',NULL),
-        (grupo,'Fund. de Ingeniería de Software','Martes','07:00:00','08:00:00','R706',NULL),
-        (grupo,'Fund. de Ingeniería de Software','Miércoles','07:00:00','08:00:00','R706',NULL),
-        (grupo,'Fund. de Ingeniería de Software','Jueves','07:00:00','08:00:00','R706',NULL),
-        (grupo,'Arquitectura de Computadoras','Lunes','11:00:00','12:00:00','R706','Oscar Arzeta Armenta'),
-        (grupo,'Arquitectura de Computadoras','Martes','11:00:00','12:00:00','R706','Oscar Arzeta Armenta'),
-        (grupo,'Arquitectura de Computadoras','Miércoles','11:00:00','12:00:00','R706','Oscar Arzeta Armenta'),
-        (grupo,'Arquitectura de Computadoras','Jueves','11:00:00','12:00:00','R706','Oscar Arzeta Armenta'),
-        (grupo,'Arquitectura de Computadoras','Viernes','11:00:00','12:00:00','R706','Oscar Arzeta Armenta'),
-        (grupo,'Sistemas Operativos','Lunes','08:00:00','09:00:00','R711','Juan Baños Montes'),
-        (grupo,'Sistemas Operativos','Martes','08:00:00','09:00:00','R711','Juan Baños Montes'),
-        (grupo,'Sistemas Operativos','Miércoles','08:00:00','09:00:00','R711','Juan Baños Montes'),
-        (grupo,'Sistemas Operativos','Jueves','08:00:00','09:00:00','R711','Juan Baños Montes')
-    ON DUPLICATE KEY UPDATE id=Horario_Referencia.id;
-
-    INSERT INTO Semestre(numero_semestre,descripcion) VALUES(5,'Semestre 5')
-        ON DUPLICATE KEY UPDATE numero_semestre=5;
-    SELECT ID_Semestre INTO semestre FROM Semestre WHERE numero_semestre=5;
-    IF (SELECT COUNT(*) FROM Grupo WHERE nombre_grupo='5ISC2' AND ID_Carrera=carrera AND ID_Periodo=periodo)>1 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Grupo 5ISC2 duplicado; revisar antes de cargar.';
-    END IF;
-    INSERT INTO Grupo(nombre_grupo,ID_Carrera,ID_Semestre,ID_Periodo,Capacidad,Estatus,turno,habilitado_fichas)
-        SELECT '5ISC2',carrera,semestre,periodo,25,'ACTIVO','VESPERTINO',0
-        WHERE NOT EXISTS(SELECT 1 FROM Grupo WHERE nombre_grupo='5ISC2' AND ID_Carrera=carrera AND ID_Periodo=periodo);
-    SELECT ID_grupo INTO grupo FROM Grupo WHERE nombre_grupo='5ISC2' AND ID_Carrera=carrera AND ID_Periodo=periodo;
-    IF (SELECT COUNT(*) FROM Inscripcion WHERE ID_grupo=grupo AND UPPER(estatus)='INSCRITO')>25 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El grupo 5ISC2 ya supera 25 inscritos; no se redujo el cupo.';
-    END IF;
-    IF (SELECT ID_Semestre FROM Grupo WHERE ID_grupo=grupo)<>semestre THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El grupo 5ISC2 existente pertenece a otro semestre.';
-    END IF;
-    UPDATE Grupo SET Capacidad=25,turno='VESPERTINO',habilitado_fichas=0 WHERE ID_grupo=grupo;
-    INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
-        (grupo,'Gráficación','Lunes','15:00:00','16:00:00','R706','Juan Carlos Gómez Ramírez'),
-        (grupo,'Gráficación','Martes','15:00:00','16:00:00','R706','Juan Carlos Gómez Ramírez'),
-        (grupo,'Gráficación','Miércoles','15:00:00','16:00:00','R706','Juan Carlos Gómez Ramírez'),
-        (grupo,'Gráficación','Jueves','15:00:00','16:00:00','R706','Juan Carlos Gómez Ramírez'),
-        (grupo,'Fund. de Telecomunicaciones','Lunes','16:00:00','17:00:00','R706','Fernando Ríos Escalera'),
-        (grupo,'Fund. de Telecomunicaciones','Martes','16:00:00','17:00:00','R706','Fernando Ríos Escalera'),
-        (grupo,'Fund. de Telecomunicaciones','Miércoles','16:00:00','17:00:00','R706','Fernando Ríos Escalera'),
-        (grupo,'Fund. de Telecomunicaciones','Jueves','16:00:00','17:00:00','R706','Fernando Ríos Escalera'),
-        (grupo,'Taller de Bases de Datos','Lunes','13:00:00','14:00:00','R711','Eleazar Pacheco Salazar'),
-        (grupo,'Taller de Bases de Datos','Martes','13:00:00','14:00:00','R711','Eleazar Pacheco Salazar'),
-        (grupo,'Taller de Bases de Datos','Miércoles','13:00:00','14:00:00','R711','Eleazar Pacheco Salazar'),
-        (grupo,'Taller de Bases de Datos','Jueves','13:00:00','14:00:00','R711','Eleazar Pacheco Salazar'),
-        (grupo,'Fund. de Ingeniería de Software','Lunes','17:00:00','18:00:00','R706','Carolina Astudillo Hernández'),
-        (grupo,'Fund. de Ingeniería de Software','Martes','17:00:00','18:00:00','R706','Carolina Astudillo Hernández'),
-        (grupo,'Fund. de Ingeniería de Software','Miércoles','17:00:00','18:00:00','R706','Carolina Astudillo Hernández'),
-        (grupo,'Fund. de Ingeniería de Software','Jueves','17:00:00','18:00:00','R706','Carolina Astudillo Hernández'),
-        (grupo,'Arquitectura de Computadoras','Lunes','14:00:00','15:00:00','R706',NULL),
-        (grupo,'Arquitectura de Computadoras','Martes','14:00:00','15:00:00','R706',NULL),
-        (grupo,'Arquitectura de Computadoras','Miércoles','14:00:00','15:00:00','R706',NULL),
-        (grupo,'Arquitectura de Computadoras','Jueves','14:00:00','15:00:00','R706',NULL),
-        (grupo,'Arquitectura de Computadoras','Viernes','14:00:00','15:00:00','R706',NULL),
-        (grupo,'Sistemas Operativos','Lunes','12:00:00','13:00:00','LVS5','Adrián Morales Gálvez'),
-        (grupo,'Sistemas Operativos','Martes','12:00:00','13:00:00','LVS5','Adrián Morales Gálvez'),
-        (grupo,'Sistemas Operativos','Miércoles','12:00:00','13:00:00','LVS5','Adrián Morales Gálvez'),
-        (grupo,'Sistemas Operativos','Jueves','12:00:00','13:00:00','LVS5','Adrián Morales Gálvez')
-    ON DUPLICATE KEY UPDATE id=Horario_Referencia.id;
-
     WHILE n<=50 DO
         IF EXISTS(SELECT 1 FROM Aspirante WHERE numero_ficha=CONCAT('ISC26-',LPAD(n,3,'0'))
             AND (periodo_fichas IS NULL OR periodo_fichas<>periodo)) THEN
@@ -333,7 +244,7 @@ DROP PROCEDURE ambar_carga_2026;
 SELECT g.nombre_grupo,s.numero_semestre,g.turno,g.Capacidad,p.nombre_periodo
 FROM Grupo g JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
 JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
-WHERE p.nombre_periodo='Agosto-Diciembre 2026' AND g.nombre_grupo IN ('1ISC1','1ISC2','3ISC1','3ISC2','5ISC1','5ISC2')
+WHERE p.nombre_periodo='Agosto-Diciembre 2026' AND g.nombre_grupo IN ('1ISC1','1ISC2','3ISC1','3ISC2')
 ORDER BY g.nombre_grupo;
 SELECT numero_ficha,estatus,curp FROM Aspirante
 WHERE numero_ficha BETWEEN 'ISC26-001' AND 'ISC26-050' ORDER BY numero_ficha;

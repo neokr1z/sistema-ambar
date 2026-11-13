@@ -137,7 +137,10 @@ public partial class MainForm : Form
     private void RenewClick(object? sender, EventArgs e)
     {
         SelectMenu(renewButton);
-        Placeholder("Reinscripción");
+        Open(new ReinscripcionForm(session));
+        // El formulario guarda en MySQL; al cerrarlo refrescamos los indicadores.
+        SelectMenu(homeButton);
+        Home();
     }
 
     private void ReportsClick(object? sender, EventArgs e)
@@ -258,10 +261,19 @@ public partial class MainForm : Form
 
             // REINSCRIPCIONES
             renewals.Text = Count(
-                "SELECT COUNT(*) FROM Inscripcion " +
-                "WHERE UPPER(tipo_inscripcion) " +
-                "IN ('REINSCRIPCION','REINSCRIPCIÓN')"
+                "SELECT COUNT(DISTINCT i.Numero_control) " +
+                "FROM Inscripcion i " +
+                "JOIN Grupo g ON g.ID_grupo=i.ID_grupo " +
+                "JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo " +
+                "WHERE UPPER(i.tipo_inscripcion) IN ('REINSCRIPCION','REINSCRIPCIÓN') " +
+                "AND UPPER(i.estatus)='INSCRITO' " +
+                "AND p.nombre_periodo='Agosto-Diciembre 2026'"
             );
+            // Reinscripciones autónomas 2025/2026, independientes de los expedientes de Inscripción.
+            using (var inscritos=Db.Sql(c,
+                "SELECT COUNT(*) FROM Reinscripcion " +
+                "WHERE UPPER(estatus)='INSCRITO' AND periodo='Agosto-Diciembre 2026'"))
+                renewals.Text=(Convert.ToInt32(renewals.Text)+Convert.ToInt32(inscritos.ExecuteScalar())).ToString();
 
         }
         catch
@@ -426,10 +438,12 @@ public partial class MainForm : Form
                 g.ID_grupo,
                 g.nombre_grupo,
                 (
-                    SELECT COUNT(DISTINCT i.Numero_control)
-                    FROM Inscripcion i
-                    WHERE i.ID_grupo = g.ID_grupo
-                      AND UPPER(i.estatus) = 'INSCRITO'
+                    (SELECT COUNT(DISTINCT i.Numero_control)
+                     FROM Inscripcion i
+                     WHERE i.ID_grupo=g.ID_grupo AND UPPER(i.estatus)='INSCRITO')
+                    +
+                    (SELECT COUNT(*) FROM Reinscripcion r
+                     WHERE r.ID_grupo=g.ID_grupo AND UPPER(r.estatus)='INSCRITO')
                 )
             FROM Usuario u
             JOIN Asignacion_Docente ad
@@ -488,28 +502,21 @@ public partial class MainForm : Form
 
             using var latest = Db.Sql(db, """
             SELECT
-                CONCAT(
-                    a.apellido_paterno, ' ',
-                    a.apellido_materno, ' ',
-                    a.nombre
-                ),
+                COALESCE(
+                    (SELECT CONCAT_WS(' ',a.apellido_paterno,a.apellido_materno,a.nombre)
+                     FROM Alumno a WHERE a.Numero_control=c.numero_control),
+                    (SELECT CONCAT_WS(' ',r.apellido_paterno,r.apellido_materno,r.nombre)
+                     FROM Reinscripcion r WHERE r.numero_control=c.numero_control),
+                    c.numero_control),
                 m.nombre_materia,
-                ue.numero_unidad,
+                c.semana,
                 c.calificacion
-            FROM Calificacion c
-            JOIN Asignacion_Docente ad
-                ON ad.Id_asignacion = c.Id_asignacion
-            JOIN Usuario u
-                ON u.ID_docente = ad.ID_docente
-            JOIN Alumno a
-                ON a.Numero_control = c.numero_control
-            JOIN Materia m
-                ON m.ID_Materia = ad.ID_Materia
-            JOIN Unidad_Evaluacion ue
-                ON ue.ID_Unidad = c.ID_Unidad
-            WHERE u.Id_usuario = @id
-            ORDER BY c.fecha_registro DESC,
-                     c.Id_calificacion DESC
+            FROM Calificacion_Corte c
+            JOIN Asignacion_Docente ad ON ad.Id_asignacion=c.Id_asignacion
+            JOIN Usuario u ON u.ID_docente=ad.ID_docente
+            JOIN Materia m ON m.ID_Materia=ad.ID_Materia
+            WHERE u.Id_usuario=@id
+            ORDER BY c.fecha_actualizacion DESC, c.id_calificacion_corte DESC
             LIMIT 10
             """);
 

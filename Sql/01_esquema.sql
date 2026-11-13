@@ -1,3 +1,5 @@
+-- AMBAR | 01/08 | Esquema vigente (instalacion limpia)
+-- Usar SOLO sobre una base nueva. No contiene tablas de captura antigua ni permisos individuales.
 
 CREATE DATABASE IF NOT EXISTS AMBAR_Control_Escolar
 CHARACTER SET utf8mb4
@@ -284,72 +286,6 @@ CREATE TABLE Horario (
         ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
--- 16. UNIDAD DE EVALUACION
-CREATE TABLE Unidad_Evaluacion (
-    ID_Unidad INT AUTO_INCREMENT PRIMARY KEY,
-    ID_Materia INT NOT NULL,
-    numero_unidad TINYINT UNSIGNED NOT NULL,
-    descripcion VARCHAR(150) NOT NULL,
-    estatus VARCHAR(20) NOT NULL,
-
-    CONSTRAINT uq_unidad_materia_numero
-        UNIQUE (ID_Materia, numero_unidad),
-
-    CONSTRAINT fk_unidad_materia
-        FOREIGN KEY (ID_Materia)
-        REFERENCES Materia(ID_Materia)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
-
--- 17. CALIFICACION
-CREATE TABLE Calificacion (
-    Id_calificacion INT AUTO_INCREMENT PRIMARY KEY,
-    numero_control VARCHAR(20) NOT NULL,
-    Id_asignacion INT NOT NULL,
-    ID_Unidad INT NOT NULL,
-    calificacion DECIMAL(5,2) NOT NULL,
-    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT uq_calificacion_alumno_asignacion_unidad
-        UNIQUE (numero_control, Id_asignacion, ID_Unidad),
-
-    CONSTRAINT fk_calificacion_alumno
-        FOREIGN KEY (numero_control)
-        REFERENCES Alumno(Numero_control)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_calificacion_asignacion
-        FOREIGN KEY (Id_asignacion)
-        REFERENCES Asignacion_Docente(Id_asignacion)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_calificacion_unidad
-        FOREIGN KEY (ID_Unidad)
-        REFERENCES Unidad_Evaluacion(ID_Unidad)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
-
--- 18. PERIODO CAPTURA
-CREATE TABLE Periodo_Captura (
-    id_periodo_captura INT AUTO_INCREMENT PRIMARY KEY,
-    id_periodo INT NOT NULL,
-    nombre_captura VARCHAR(50) NOT NULL,
-    semana_programada TINYINT UNSIGNED NOT NULL,
-    fecha_inicio DATE NOT NULL,
-    fecha_limite DATE NOT NULL,
-    estatus VARCHAR(20) NOT NULL,
-
-    CONSTRAINT fk_captura_periodo
-        FOREIGN KEY (id_periodo)
-        REFERENCES Periodo_Escolar(ID_Periodo)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
-
 -- 19. ROL
 CREATE TABLE Rol (
     id_rol INT AUTO_INCREMENT PRIMARY KEY,
@@ -386,97 +322,6 @@ CREATE TABLE Usuario (
         ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
-
--- 21. PERMISO
-CREATE TABLE Permiso (
-    id_permiso INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_permiso VARCHAR(80) NOT NULL,
-    modulo VARCHAR(60) NOT NULL,
-    accion VARCHAR(30) NOT NULL,
-    descripcion VARCHAR(255),
-    estatus VARCHAR(20) NOT NULL
-) ENGINE = InnoDB;
-
--- 22. ROL PERMISO
-CREATE TABLE Rol_Permiso (
-    id_rol_permiso INT AUTO_INCREMENT PRIMARY KEY,
-    id_rol INT NOT NULL,
-    id_permiso INT NOT NULL,
-
-    CONSTRAINT uq_rol_permiso
-        UNIQUE (id_rol, id_permiso),
-
-    CONSTRAINT fk_rolpermiso_rol
-        FOREIGN KEY (id_rol)
-        REFERENCES Rol(id_rol)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_rolpermiso_permiso
-        FOREIGN KEY (id_permiso)
-        REFERENCES Permiso(id_permiso)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
-
--- 23. USUARIO PERMISO
-CREATE TABLE Usuario_Permiso (
-    id_usuario_permiso INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    id_permiso INT NOT NULL,
-    id_usuario_asignador INT NOT NULL,
-    estatus VARCHAR(20) NOT NULL,
-
-    CONSTRAINT uq_usuario_permiso
-        UNIQUE (id_usuario, id_permiso),
-
-    CONSTRAINT fk_usuariopermiso_usuario
-        FOREIGN KEY (id_usuario)
-        REFERENCES Usuario(Id_usuario)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_usuariopermiso_permiso
-        FOREIGN KEY (id_permiso)
-        REFERENCES Permiso(id_permiso)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_usuariopermiso_asignador
-        FOREIGN KEY (id_usuario_asignador)
-        REFERENCES Usuario(Id_usuario)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
-
--- 24. REGISTRO CAPTURA
-CREATE TABLE Registro_Captura (
-    id_registro_captura INT AUTO_INCREMENT PRIMARY KEY,
-    id_calificacion INT NOT NULL,
-    id_periodo_captura INT NOT NULL,
-    id_usuario INT NOT NULL,
-    valor_reportado DECIMAL(5,2) NOT NULL,
-    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    observaciones TEXT,
-
-    CONSTRAINT fk_registrocaptura_calificacion
-        FOREIGN KEY (id_calificacion)
-        REFERENCES Calificacion(Id_calificacion)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_registrocaptura_periodo
-        FOREIGN KEY (id_periodo_captura)
-        REFERENCES Periodo_Captura(id_periodo_captura)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_registrocaptura_usuario
-        FOREIGN KEY (id_usuario)
-        REFERENCES Usuario(Id_usuario)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
 
 -- 25. DOCUMENTO
 CREATE TABLE Documento (

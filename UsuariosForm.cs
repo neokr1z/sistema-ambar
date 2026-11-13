@@ -7,6 +7,7 @@ public partial class UsuariosForm : Form
     public UsuariosForm()
     {
         InitializeComponent();
+        NavegacionEnter.Instalar(this);
         Text = "Administrador | Alta de personal";
         cancel.Click += (_, _) => Close();
     }
