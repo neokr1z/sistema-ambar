@@ -134,8 +134,10 @@ internal static class RepositorioCortesDocente
         using var cmd=Db.Sql(c,"""
             SELECT n.numero_control AS Control,
                    COALESCE(
-                       MAX(CONCAT_WS(' ',a.apellido_paterno,a.apellido_materno,a.nombre)),
-                       MAX(CONCAT_WS(' ',r.apellido_paterno,r.apellido_materno,r.nombre)),
+                       MAX(CASE WHEN a.Numero_control IS NOT NULL
+                           THEN CONCAT_WS(' ',a.apellido_paterno,a.apellido_materno,a.nombre) END),
+                       MAX(CASE WHEN r.numero_control IS NOT NULL
+                           THEN CONCAT_WS(' ',r.apellido_paterno,r.apellido_materno,r.nombre) END),
                        'SIN EXPEDIENTE') AS Alumno,
                    MAX(CASE WHEN n.semana=5 THEN n.calificacion END) AS Semana5,
                    MAX(CASE WHEN n.semana=9 THEN n.calificacion END) AS Semana9,
@@ -173,9 +175,11 @@ internal static class RepositorioCortesDocente
         using var c=Db.Connect();Autorizar(c,null,actor,asignacion);
         using var cmd=Db.Sql(c,"""
             SELECT c.numero_control AS Control,
-                COALESCE(CONCAT_WS(' ',a.apellido_paterno,a.apellido_materno,a.nombre),
-                         CONCAT_WS(' ',r.apellido_paterno,r.apellido_materno,r.nombre),
-                         'SIN EXPEDIENTE ACTIVO') AS Alumno,
+                CASE WHEN a.Numero_control IS NOT NULL
+                     THEN CONCAT_WS(' ',a.apellido_paterno,a.apellido_materno,a.nombre)
+                     WHEN r.numero_control IS NOT NULL
+                     THEN CONCAT_WS(' ',r.apellido_paterno,r.apellido_materno,r.nombre)
+                     ELSE 'SIN EXPEDIENTE ACTIVO' END AS Alumno,
                 c.semana AS Semana,
                 c.calificacion AS Calificación,
                 c.fecha_actualizacion AS Actualización
