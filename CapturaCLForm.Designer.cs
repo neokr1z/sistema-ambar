@@ -161,7 +161,7 @@ partial class CapturaCLForm
         grid.Size = new Size(1312, 412);
         grid.TabIndex = 13;
         grid.CellValueChanged += ValueChanged;
-        grid.CurrentCellDirtyStateChanged += DirtyChanged;
+        grid.CellValidating += ValidateGrade;
         grid.DataError += GridError;
         // 
         // cancel

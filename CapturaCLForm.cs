@@ -127,7 +127,6 @@ public partial class CapturaCLForm : Form
                 originals[(string)row["Control"]]=row.IsNull("Nota")?null:
                     Convert.ToDecimal(row["Nota"]);
             grid.DataSource=data;
-            foreach(DataGridViewColumn col in grid.Columns)col.ReadOnly=col.Name!="Nota";
             grid.Columns["Nota"].HeaderText=selected.Id==17?
                 "Semana 17 · cierre":"Calificación (0 o 70–100)";
             grid.Columns["Nota"].DefaultCellStyle.Format="0.##";
@@ -138,6 +137,9 @@ public partial class CapturaCLForm : Form
             save.Enabled=estado.Habilitada && data.Rows.Count>0;
             imprimirFinal.Enabled=cerrada;
             grid.ReadOnly=!save.Enabled;
+            if(save.Enabled)
+                foreach(DataGridViewColumn column in grid.Columns)
+                    column.ReadOnly=column.DataPropertyName!="Nota";
             note.Text=estado.Aviso;
             if(cerrada && selected.Id==17)
             {
@@ -154,10 +156,17 @@ public partial class CapturaCLForm : Form
         finally{loading=false;}
     }
 
-    private void DirtyChanged(object? sender,EventArgs e)
+    private void ValidateGrade(object? sender,DataGridViewCellValidatingEventArgs e)
     {
-        if(grid.IsCurrentCellDirty)grid.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        if(!grid.IsCurrentCellDirty || grid.Columns[e.ColumnIndex].DataPropertyName!="Nota")return;
+        string? text=Convert.ToString(e.FormattedValue);
+        if(string.IsNullOrEmpty(text))return;
+        if(int.TryParse(text,NumberStyles.None,CultureInfo.CurrentCulture,out int value) &&
+            value>=0 && value<=100)return;
+        e.Cancel=true;
+        MessageBox.Show(this,"Escribe una calificación entera de 0 a 100.","Calificación inválida");
     }
+
     private void ValueChanged(object? sender,DataGridViewCellEventArgs e)
     {
         if(!loading && e.RowIndex>=0){dirty=true;UpdateSummary();}
@@ -195,11 +204,8 @@ public partial class CapturaCLForm : Form
                         throw new ArgumentException("No puedes borrar una calificación. Escribe el valor corregido.");
                     continue;
                 }
-                if(!decimal.TryParse(Convert.ToString(raw),
-                    NumberStyles.AllowDecimalPoint,CultureInfo.CurrentCulture,out decimal value))
-                    throw new ArgumentException("La calificación debe ser un número válido.");
-                if(value<0 || value>100 || decimal.Truncate(value*100)!=value*100)
-                    throw new ArgumentException("El rango permitido es 0 a 100 con hasta dos decimales.");
+                decimal value=Convert.ToDecimal(raw);
+                if(value==originals[control])continue;
                 decimal stored=value<70?0:value;
                 if(originals[control]!=stored)
                     changes.Add(new NotaCambio(control,value,originals[control]));
@@ -259,7 +265,7 @@ public partial class CapturaCLForm : Form
     private void GridError(object? sender,DataGridViewDataErrorEventArgs e)
     {
         e.ThrowException=false;e.Cancel=true;
-        MessageBox.Show("Escribe una calificación numérica válida entre 0 y 100.",
+        MessageBox.Show("Escribe una calificación entera entre 0 y 100.",
             "Calificación inválida");
     }
 }
