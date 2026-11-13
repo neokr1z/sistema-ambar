@@ -106,7 +106,7 @@ internal sealed class ModificarReinscripcionForm : Form
     {
         try
         {
-            var (anio,_) = RepositorioReinscripcionDemo.Inferir(numero.Text.Trim());
+            var (anio,_) = RepositorioReinscripcion.Inferir(numero.Text.Trim());
             int actual=(semestre.SelectedItem as Choice)?.Id??original.Semestre;
             semestre.Items.Clear();
             semestre.Items.Add(new Choice(2,
