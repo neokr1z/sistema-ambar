@@ -1,0 +1,21 @@
+name: Compilar AMBAR WinForms
+
+on:
+  push:
+    branches: [main, 'cleanup/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restaurar dependencias
+        run: dotnet restore AMBAR.Semana4.sln
+      - name: Compilar Release
+        run: dotnet build AMBAR.Semana4.sln --configuration Release --no-restore
