@@ -20,7 +20,7 @@ Se mantienen solo **semestres 1.º, 2.º y 3.º**, con **dos grupos de 25 plazas
 
 ## Instalación de la base de datos desde cero
 
-**Antes de recrear la base, exporta un respaldo de los datos actuales.** Los 8 archivos SQL de la carpeta \`Sql/\` deben ejecutarse **completos y en orden** en MySQL Workbench:
+**Antes de recrear la base, exporta un respaldo de los datos actuales.** Ejecuta los **8 scripts de estructura y configuración** de \`Sql/\` en orden. Después importa el noveno archivo de datos SEPOMEX:
 
 | Paso | Script | Contenido |
 |---|---|---|
@@ -33,7 +33,7 @@ Se mantienen solo **semestres 1.º, 2.º y 3.º**, con **dos grupos de 25 plazas
 | 7 | \`07_vistas.sql\` | Vistas de consulta para 1.º, 2.º y 3.º |
 | 8 | \`08_calificaciones.sql\` | Tabla Calificacion_Corte y protección de cierre final |
 
-**El catálogo postal requiere un paso adicional:** el paso 2 crea \`Catalogo_Postal\`, pero NO inserta todos los códigos postales. Descarga el TXT oficial SEPOMEX y conviértelo con \`Tools/importar_sepomex.py\`, luego ejecuta el SQL generado. Sin los datos de CEPOMEX, la inscripción no podrá validar domicilios.
+**Catálogo postal incluido:** \`Sql/09_catalogo_postal_datos_SEPOMEX.sql\` contiene los **158,370 registros** adjuntados (11.7 MB). Ejecútalo después del paso 2 (o después del paso 8), usando MySQL Workbench. Puede volver a ejecutarse para incorporar cambios porque utiliza \`ON DUPLICATE KEY UPDATE\`; no crea ni elimina tablas. Ya no necesitas descargar el TXT SEPOMEX para instalar esta versión.
 
 No ejecutar sobre una instalación vieja sin migración o respaldo: estos archivos están diseñados para instalar la versión final **desde cero**, no para alterar arbitrariamente una base existente.
 
@@ -49,7 +49,7 @@ Copy-Item appsettings.example.json appsettings.json
 
 Después abre \`AMBAR.Semana4.sln\` en Visual Studio, restaura paquetes y recompila. El usuario administrador inicial se crea en el script 02 con una contraseña temporal establecida por el proyecto; cámbiala en el primer inicio. Nunca subas ese secreto a GitHub. Si utilizaste contraseñas antiguas compartidas en commits anteriores, **cámbialas también en MySQL**.
 
-Para crear tu SQL de códigos postales:
+El archivo \`Sql/09_catalogo_postal_datos_SEPOMEX.sql\` ya está incluido en GitHub. Si en el futuro necesitas generar un catálogo nuevo desde un TXT oficial, puedes usar el script auxiliar:
 
 \`\`\`powershell
 python Tools/importar_sepomex.py CPdescarga.txt catalogo_postal_datos.sql
@@ -71,8 +71,8 @@ SELECT COUNT(*) AS calificaciones FROM Calificacion_Corte; -- 0 inicialmente
 
 - \`*.cs\`, \`*.Designer.cs\`, \`*.resx\`: aplicación y formularios de WinForms.
 - \`Assets/\`, \`Properties/\`: recursos visuales y compilados.
-- \`Sql/\`: **8 scripts de instalación vigente**; sin pruebas, respaldos ni migraciones históricas.
-- \`Tools/importar_sepomex.py\`: importación del catálogo postal externo.
+- \`Sql/\`: **8 scripts de estructura** y **1 script de datos SEPOMEX**, sin respaldos ni migraciones históricas.
+- \`Tools/importar_sepomex.py\`: utilidad opcional para reconstruir el catálogo desde un TXT SEPOMEX actualizado.
 - \`Docs/\`: arquitectura de datos, alcance y decisiones de limpieza.
 - \`.github/workflows/\`: validación de compilación .NET.
 
