@@ -162,7 +162,7 @@ internal static class RepositorioCortesDocente
                 Convert.ToDecimal(fila["Semana9"])+
                 Convert.ToDecimal(fila["Semana13"])+
                 Convert.ToDecimal(fila["Semana17"]);
-            decimal promedio=decimal.Truncate(total/4m*100m)/100m;
+            decimal promedio=decimal.Truncate(total/4m);
             fila["Final"]=promedio<70m?0m:promedio;
         }
         return result;
@@ -224,8 +224,8 @@ internal static class RepositorioCortesDocente
         if(cambios.Select(x=>x.Control).Distinct().Count()!=cambios.Count)
             throw new ArgumentException("La lista tiene números de control repetidos.");
         foreach(var x in cambios)
-            if(x.Valor<0 || x.Valor>100 || decimal.Truncate(x.Valor*100)!=x.Valor*100)
-                throw new ArgumentException("Escribe valores de 0 a 100, con máximo dos decimales.");
+            if(x.Valor<0 || x.Valor>100 || decimal.Truncate(x.Valor)!=x.Valor)
+                throw new ArgumentException("Escribe calificaciones enteras de 0 a 100.");
 
         using var c=Db.Connect();
         using var tx=c.BeginTransaction(IsolationLevel.ReadCommitted);
