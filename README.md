@@ -67,16 +67,29 @@ SELECT COUNT(*) AS reinscripciones FROM Reinscripcion; -- 0 inicialmente
 SELECT COUNT(*) AS calificaciones FROM Calificacion_Corte; -- 0 inicialmente
 \`\`\`
 
-## Estructura
+## Estructura de carpetas
 
-- \`*.cs\`, \`*.Designer.cs\`, \`*.resx\`: aplicación y formularios de WinForms.
-- \`Assets/\`, \`Properties/\`: recursos visuales y compilados.
-- \`Sql/\`: **8 scripts de estructura** y **1 script de datos SEPOMEX**, sin respaldos ni migraciones históricas.
-- \`Tools/importar_sepomex.py\`: utilidad opcional para reconstruir el catálogo desde un TXT SEPOMEX actualizado.
-- \`Docs/\`: arquitectura de datos, alcance y decisiones de limpieza.
-- \`.github/workflows/\`: validación de compilación .NET.
+La aplicación se organiza por responsabilidad sin cambiar los espacios de nombres (`AMBAR.Semana4`) ni combinar clases. Los archivos `.cs`, `.Designer.cs` y `.resx` de un mismo formulario permanecen juntos.
 
-Los archivos históricos fueron eliminados de la rama limpia; siguen disponibles en el historial de Git, no en la versión distribuida.
+| Carpeta | Contenido |
+|---|---|
+| `Nucleo/` | Conexión MySQL, sesiones, autenticación y seguridad de identidad |
+| `Formularios/Acceso/` | Inicio de sesión y contraseñas |
+| `Formularios/Principal/` | Panel y navegación principal |
+| `Formularios/Alumnos/` | Inscripción, reinscripción, consultas, expedientes y listas |
+| `Formularios/Docentes/` | Materias, horarios, captura e historial de calificaciones |
+| `Formularios/Administracion/` | Cuentas, personal y bitácora |
+| `Formularios/Documentos/` | Formularios de documentos |
+| `Repositorios/` | Acceso y consultas de MySQL por módulo |
+| `Modelos/` | Clases de datos compartidas |
+| `Servicios/` | Validación, correo, NSS y catálogo postal |
+| `Interfaz/` | Tema, controles y navegación visual reutilizable |
+| `PDF/` | Generación de documentos y reportes en PDF |
+| `Assets/`, `Properties/` | Recursos visuales y recursos .NET |
+| `Sql/` | Scripts oficiales de instalación y catálogo SEPOMEX |
+| `Docs/`, `Tools/`, `.github/` | Documentación, herramientas y verificaciones automáticas |
+
+`Program.cs`, el proyecto `.csproj`, la solución `.sln` y `appsettings.example.json` permanecen en la raíz. En `AMBAR.Semana4.csproj` se actualizaron las rutas de archivos dependientes para que Visual Studio reconozca los formularios y sus recursos. Más detalles: [guía de carpetas](Docs/ESTRUCTURA_CARPETAS.md).
 
 ## Estado de validación
 
