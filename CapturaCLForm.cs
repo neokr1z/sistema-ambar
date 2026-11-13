@@ -16,6 +16,8 @@ public partial class CapturaCLForm : Form
     public CapturaCLForm()
     {
         InitializeComponent();
+        grid.EditMode=DataGridViewEditMode.EditOnEnter;
+        grid.CellPainting+=PaintGradeField;
         FormClosing+=CheckClosing;
         unit.Visible=false;
         label3.Visible=false;
@@ -154,6 +156,35 @@ public partial class CapturaCLForm : Form
         }
         catch(Exception ex){Problems.Show(ex);}
         finally{loading=false;}
+    }
+
+    private void PaintGradeField(object? sender,DataGridViewCellPaintingEventArgs e)
+    {
+        if(e.RowIndex<0 || e.ColumnIndex<0 || grid.ReadOnly ||
+            grid.Columns[e.ColumnIndex].DataPropertyName!="Nota" ||
+            grid.Columns[e.ColumnIndex].ReadOnly)return;
+
+        e.PaintBackground(e.ClipBounds,true);
+        var field=e.CellBounds;
+        field.Inflate(-5,-3);
+        if(field.Width>2 && field.Height>2)
+        {
+            var graphics=e.Graphics!;
+            graphics.FillRectangle(SystemBrushes.Window,field);
+            ControlPaint.DrawBorder(graphics,field,
+                SystemInformation.HighContrast?SystemColors.WindowText:Color.SteelBlue,
+                ButtonBorderStyle.Solid);
+            bool empty=e.Value is null || e.Value==DBNull.Value;
+            field.Inflate(-5,0);
+            TextRenderer.DrawText(graphics,empty?"Capturar calificación…":Convert.ToString(e.FormattedValue),
+                e.CellStyle!.Font,field,empty && !SystemInformation.HighContrast?
+                    Color.FromArgb(66,88,108):SystemColors.WindowText,
+                TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis|
+                TextFormatFlags.SingleLine|TextFormatFlags.PreserveGraphicsClipping);
+        }
+        e.Paint(e.ClipBounds,DataGridViewPaintParts.Border|DataGridViewPaintParts.Focus|
+            DataGridViewPaintParts.ErrorIcon);
+        e.Handled=true;
     }
 
     private void ValidateGrade(object? sender,DataGridViewCellValidatingEventArgs e)
