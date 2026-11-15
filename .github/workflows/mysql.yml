@@ -2,7 +2,7 @@ name: Verificar instalación MySQL
 
 on:
   push:
-    branches: [main, 'cleanup/**']
+    branches: [main, 'cleanup/**', 'refactor/**']
   pull_request:
     branches: [main]
 
