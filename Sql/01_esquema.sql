@@ -1,5 +1,6 @@
 -- AMBAR | 01/08 | Esquema vigente (instalacion limpia)
--- Usar SOLO sobre una base nueva. No contiene tablas de captura antigua ni permisos individuales.
+-- Usar SOLO sobre una base nueva. No contiene tablas de captura antigua, permisos individuales
+-- ni tablas de documentos (se crearán cuando exista ese módulo).
 
 CREATE DATABASE IF NOT EXISTS AMBAR_Control_Escolar
 CHARACTER SET utf8mb4
@@ -12,8 +13,6 @@ CREATE TABLE Aspirante (
     ID_Aspirante INT AUTO_INCREMENT PRIMARY KEY,
     numero_ficha VARCHAR(20) NOT NULL UNIQUE,
     curp CHAR(18) NOT NULL,
-    promedio_preparatoria DECIMAL(4,2) NOT NULL,
-    nombre_preparatoria VARCHAR(120) NOT NULL,
     resultado_examen VARCHAR(30) NOT NULL,
     fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     estatus VARCHAR(20) NOT NULL
@@ -63,7 +62,6 @@ CREATE TABLE Personal_Administrativo (
     apellido_materno VARCHAR(50) NOT NULL,
     correo_institucional VARCHAR(120) NOT NULL UNIQUE,
     telefono VARCHAR(20),
-    puesto VARCHAR(80) NOT NULL,
     estatus VARCHAR(20) NOT NULL
 ) ENGINE = InnoDB;
 
@@ -73,9 +71,6 @@ CREATE TABLE Plan_Estudio (
     clave_carrera VARCHAR(20) NOT NULL,
     nombre_plan VARCHAR(120) NOT NULL,
     version VARCHAR(20) NOT NULL,
-    especialidad VARCHAR(100),
-    fecha_inicio_vigencia DATE NOT NULL,
-    fecha_fin_vigencia DATE,
     estatus VARCHAR(20) NOT NULL,
 
     CONSTRAINT fk_plan_carrera
@@ -91,9 +86,6 @@ CREATE TABLE Materia (
     ID_Carrera INT NOT NULL,
     clave_materia VARCHAR(20) NOT NULL,
     nombre_materia VARCHAR(120) NOT NULL,
-    creditos TINYINT UNSIGNED NOT NULL,
-    horas_teoricas TINYINT UNSIGNED NOT NULL,
-    horas_practicas TINYINT UNSIGNED NOT NULL,
     estatus VARCHAR(20) NOT NULL,
 
     CONSTRAINT uq_materia_carrera_clave
@@ -185,38 +177,7 @@ CREATE TABLE Domicilio (
         ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
--- 12. PLAN MATERIA
-CREATE TABLE Plan_Materia (
-    id_plan_materia INT AUTO_INCREMENT PRIMARY KEY,
-    id_plan INT NOT NULL,
-    ID_Materia INT NOT NULL,
-    id_semestre INT NOT NULL,
-    obligatoriedad VARCHAR(20) NOT NULL,
-    estatus VARCHAR(20) NOT NULL,
-
-    CONSTRAINT uq_plan_materia_semestre
-        UNIQUE (id_plan, ID_Materia, id_semestre),
-
-    CONSTRAINT fk_planmateria_plan
-        FOREIGN KEY (id_plan)
-        REFERENCES Plan_Estudio(id_plan)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_planmateria_materia
-        FOREIGN KEY (ID_Materia)
-        REFERENCES Materia(ID_Materia)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_planmateria_semestre
-        FOREIGN KEY (id_semestre)
-        REFERENCES Semestre(ID_Semestre)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
-
--- 13. INSCRIPCION
+-- 12. INSCRIPCION
 CREATE TABLE Inscripcion (
     Id_inscripcion INT AUTO_INCREMENT PRIMARY KEY,
     Numero_control VARCHAR(20) NOT NULL,
@@ -242,7 +203,7 @@ CREATE TABLE Inscripcion (
 ) ENGINE = InnoDB;
 
 -- ============================================================
--- 14. ASIGNACION DOCENTE
+-- 13. ASIGNACION DOCENTE
 -- ============================================================
 
 CREATE TABLE Asignacion_Docente (
@@ -270,30 +231,16 @@ CREATE TABLE Asignacion_Docente (
         ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
--- 15. HORARIO
-CREATE TABLE Horario (
-    Id_horario INT AUTO_INCREMENT PRIMARY KEY,
-    Id_asignacion INT NOT NULL,
-    dia VARCHAR(15) NOT NULL,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
-    aula VARCHAR(20) NOT NULL,
+-- 14. HORARIO se crea en 02_configuracion.sql después de Asignacion_Docente.
+-- Contiene una sola fuente de bloques, con asignación docente opcional.
 
-    CONSTRAINT fk_horario_asignacion
-        FOREIGN KEY (Id_asignacion)
-        REFERENCES Asignacion_Docente(Id_asignacion)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
-
--- 19. ROL
+-- 15. ROL
 CREATE TABLE Rol (
     id_rol INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL UNIQUE,
-    descripcion VARCHAR(255)
+    nombre VARCHAR(50) NOT NULL UNIQUE
 ) ENGINE = InnoDB;
 
--- 20. Usuario
+-- 16. Usuario
 CREATE TABLE Usuario (
     Id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nombre_usuario VARCHAR(50) NOT NULL UNIQUE,
@@ -302,6 +249,9 @@ CREATE TABLE Usuario (
     estatus VARCHAR(20) NOT NULL,
     ID_docente INT UNIQUE,
     num_administrativo VARCHAR(20) UNIQUE,
+    debe_cambiar_password TINYINT(1) NOT NULL DEFAULT 0,
+    intentos_fallidos TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    bloqueado_hasta DATETIME NULL,
 
     CONSTRAINT fk_usuario_rol
         FOREIGN KEY (Id_rol)
@@ -323,46 +273,7 @@ CREATE TABLE Usuario (
 ) ENGINE = InnoDB;
 
 
--- 25. DOCUMENTO
-CREATE TABLE Documento (
-    Id_documento INT AUTO_INCREMENT PRIMARY KEY,
-    numero_control VARCHAR(20) NOT NULL,
-    tipo_documento VARCHAR(50) NOT NULL,
-    nombre_archivo VARCHAR(255) NOT NULL,
-    ruta_archivo VARCHAR(500) NOT NULL,
-    fecha_carga DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    estatus VARCHAR(20) NOT NULL,
-
-    CONSTRAINT fk_documento_alumno
-        FOREIGN KEY (numero_control)
-        REFERENCES Alumno(Numero_control)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
-
--- 26. ENVIO DOCUMENTO
-CREATE TABLE Envio_Documento (
-    Id_envio INT AUTO_INCREMENT PRIMARY KEY,
-    Id_documento INT NOT NULL,
-    fecha_envio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    correo_destino VARCHAR(150) NOT NULL,
-    estado_envio VARCHAR(30) NOT NULL,
-    Id_usuario INT NOT NULL,
-
-    CONSTRAINT fk_enviodocumento_documento
-        FOREIGN KEY (Id_documento)
-        REFERENCES Documento(Id_documento)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_enviodocumento_usuario
-        FOREIGN KEY (Id_usuario)
-        REFERENCES Usuario(Id_usuario)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE = InnoDB;
-
--- 27. BITACORA
+-- 17. BITACORA
 CREATE TABLE Bitacora (
     Id_bitacora BIGINT AUTO_INCREMENT PRIMARY KEY,
     Id_usuario INT NOT NULL,

@@ -19,70 +19,70 @@
     <Content Include="Assets\*.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="CambiarPasswordForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="CambiarPasswordForm.Designer.cs"><DependentUpon>CambiarPasswordForm.cs</DependentUpon></Compile>
+    <Compile Update="Formularios\Acceso\CambiarPasswordForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Acceso\CambiarPasswordForm.Designer.cs"><DependentUpon>CambiarPasswordForm.cs</DependentUpon></Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Update="CambiarPasswordForm.resx"><DependentUpon>CambiarPasswordForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="ConsultaDForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="ConsultaDForm.Designer.cs"><DependentUpon>ConsultaDForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="ConsultaDForm.resx"><DependentUpon>ConsultaDForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="ExpedienteMForm.cs" />
-    <Compile Update="ExpedienteMForm.Designer.cs"><DependentUpon>ExpedienteMForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="ExpedienteMForm.resx"><DependentUpon>ExpedienteMForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="InscripcionForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="InscripcionForm.Designer.cs"><DependentUpon>InscripcionForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="InscripcionForm.resx"><DependentUpon>InscripcionForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="HistorialdocForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="HistorialdocForm.Designer.cs"><DependentUpon>HistorialdocForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="HistorialdocForm.resx"><DependentUpon>HistorialdocForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="CapturaCLForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="CapturaCLForm.Designer.cs"><DependentUpon>CapturaCLForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="CapturaCLForm.resx"><DependentUpon>CapturaCLForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="LoginForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="LoginForm.Designer.cs"><DependentUpon>LoginForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="LoginForm.resx"><DependentUpon>LoginForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="MainForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="MainForm.Designer.cs"><DependentUpon>MainForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="MainForm.resx"><DependentUpon>MainForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="ConsultaA.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="ConsultaA.Designer.cs"><DependentUpon>ConsultaA.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Acceso\CambiarPasswordForm.resx"><DependentUpon>CambiarPasswordForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Documentos\ConsultaDForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Documentos\ConsultaDForm.Designer.cs"><DependentUpon>ConsultaDForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Documentos\ConsultaDForm.resx"><DependentUpon>ConsultaDForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Alumnos\ExpedienteMForm.cs" />
+    <Compile Update="Formularios\Alumnos\ExpedienteMForm.Designer.cs"><DependentUpon>ExpedienteMForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Alumnos\ExpedienteMForm.resx"><DependentUpon>ExpedienteMForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Alumnos\InscripcionForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Alumnos\InscripcionForm.Designer.cs"><DependentUpon>InscripcionForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Alumnos\InscripcionForm.resx"><DependentUpon>InscripcionForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Docentes\HistorialdocForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Docentes\HistorialdocForm.Designer.cs"><DependentUpon>HistorialdocForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Docentes\HistorialdocForm.resx"><DependentUpon>HistorialdocForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Docentes\CapturaCLForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Docentes\CapturaCLForm.Designer.cs"><DependentUpon>CapturaCLForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Docentes\CapturaCLForm.resx"><DependentUpon>CapturaCLForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Acceso\LoginForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Acceso\LoginForm.Designer.cs"><DependentUpon>LoginForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Acceso\LoginForm.resx"><DependentUpon>LoginForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Principal\MainForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Principal\MainForm.Designer.cs"><DependentUpon>MainForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Principal\MainForm.resx"><DependentUpon>MainForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Alumnos\ConsultaA.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Alumnos\ConsultaA.Designer.cs"><DependentUpon>ConsultaA.cs</DependentUpon></Compile>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="ConsultaA.resx"><DependentUpon>ConsultaA.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="ConfirmarPasswordForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="ConfirmarPasswordForm.Designer.cs"><DependentUpon>ConfirmarPasswordForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="ConfirmarPasswordForm.resx"><DependentUpon>ConfirmarPasswordForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="BitacoraForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="BitacoraForm.Designer.cs"><DependentUpon>BitacoraForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="BitacoraForm.resx"><DependentUpon>BitacoraForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="MateriasDocenteForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="MateriasDocenteForm.Designer.cs"><DependentUpon>MateriasDocenteForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="MateriasDocenteForm.resx"><DependentUpon>MateriasDocenteForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="DetalleCapturaForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="DetalleCapturaForm.Designer.cs"><DependentUpon>DetalleCapturaForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="DetalleCapturaForm.resx"><DependentUpon>DetalleCapturaForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="PersonalForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="PersonalForm.Designer.cs"><DependentUpon>PersonalForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="PersonalForm.resx"><DependentUpon>PersonalForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="UsuariosForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="UsuariosForm.Designer.cs"><DependentUpon>UsuariosForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="UsuariosForm.resx"><DependentUpon>UsuariosForm.cs</DependentUpon></EmbeddedResource>
+    <EmbeddedResource Update="Formularios\Alumnos\ConsultaA.resx"><DependentUpon>ConsultaA.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Acceso\ConfirmarPasswordForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Acceso\ConfirmarPasswordForm.Designer.cs"><DependentUpon>ConfirmarPasswordForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Acceso\ConfirmarPasswordForm.resx"><DependentUpon>ConfirmarPasswordForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Administracion\BitacoraForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Administracion\BitacoraForm.Designer.cs"><DependentUpon>BitacoraForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Administracion\BitacoraForm.resx"><DependentUpon>BitacoraForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Docentes\MateriasDocenteForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Docentes\MateriasDocenteForm.Designer.cs"><DependentUpon>MateriasDocenteForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Docentes\MateriasDocenteForm.resx"><DependentUpon>MateriasDocenteForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Docentes\DetalleCapturaForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Docentes\DetalleCapturaForm.Designer.cs"><DependentUpon>DetalleCapturaForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Docentes\DetalleCapturaForm.resx"><DependentUpon>DetalleCapturaForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Administracion\PersonalForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Administracion\PersonalForm.Designer.cs"><DependentUpon>PersonalForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Administracion\PersonalForm.resx"><DependentUpon>PersonalForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Administracion\UsuariosForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Administracion\UsuariosForm.Designer.cs"><DependentUpon>UsuariosForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Administracion\UsuariosForm.resx"><DependentUpon>UsuariosForm.cs</DependentUpon></EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="ListaGrupoForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="ListaGrupoForm.Designer.cs"><DependentUpon>ListaGrupoForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="ListaGrupoForm.resx"><DependentUpon>ListaGrupoForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="InscripcionResultadoForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="InscripcionResultadoForm.Designer.cs"><DependentUpon>InscripcionResultadoForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="InscripcionResultadoForm.resx"><DependentUpon>InscripcionResultadoForm.cs</DependentUpon></EmbeddedResource>
-    <Compile Update="HorarioAlumnoForm.cs"><SubType>Form</SubType></Compile>
-    <Compile Update="HorarioAlumnoForm.Designer.cs"><DependentUpon>HorarioAlumnoForm.cs</DependentUpon></Compile>
-    <EmbeddedResource Update="HorarioAlumnoForm.resx"><DependentUpon>HorarioAlumnoForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Alumnos\ListaGrupoForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Alumnos\ListaGrupoForm.Designer.cs"><DependentUpon>ListaGrupoForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Alumnos\ListaGrupoForm.resx"><DependentUpon>ListaGrupoForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Alumnos\InscripcionResultadoForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Alumnos\InscripcionResultadoForm.Designer.cs"><DependentUpon>InscripcionResultadoForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Alumnos\InscripcionResultadoForm.resx"><DependentUpon>InscripcionResultadoForm.cs</DependentUpon></EmbeddedResource>
+    <Compile Update="Formularios\Alumnos\HorarioAlumnoForm.cs"><SubType>Form</SubType></Compile>
+    <Compile Update="Formularios\Alumnos\HorarioAlumnoForm.Designer.cs"><DependentUpon>HorarioAlumnoForm.cs</DependentUpon></Compile>
+    <EmbeddedResource Update="Formularios\Alumnos\HorarioAlumnoForm.resx"><DependentUpon>HorarioAlumnoForm.cs</DependentUpon></EmbeddedResource>
   </ItemGroup>
 </Project>

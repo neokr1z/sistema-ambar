@@ -40,7 +40,7 @@ BEGIN
  DECLARE internal_key VARCHAR(20);
  DECLARE teachers CURSOR FOR SELECT completo,nombre,ap,am,usuario,correo_base,hash_clave FROM ambar_docentes_carga ORDER BY completo;
  DECLARE subjects CURSOR FOR
-  SELECT DISTINCT h.ID_grupo,h.asignatura,h.profesor FROM Horario_Referencia h
+  SELECT DISTINCT h.ID_grupo,h.asignatura,h.profesor FROM Horario h
   JOIN Grupo g ON g.ID_grupo=h.ID_grupo
   WHERE g.ID_Carrera=carrera AND g.ID_Periodo=periodo
    AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2')
@@ -57,10 +57,10 @@ BEGIN
   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Faltan catálogo, administrador o carga 06/07. Ejecutar los scripts previos.';
  END IF;
  IF (SELECT COUNT(*) FROM Grupo WHERE ID_Carrera=carrera AND ID_Periodo=periodo AND nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2'))<>6
- OR (SELECT COUNT(*) FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo WHERE g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2'))<>170 THEN
+ OR (SELECT COUNT(*) FROM Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo WHERE g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2'))<>170 THEN
   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La carga de horarios no coincide con los seis grupos y 170 bloques de la configuracion final 07 + 20.';
  END IF;
- IF EXISTS(SELECT 1 FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+ IF EXISTS(SELECT 1 FROM Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
   LEFT JOIN ambar_docentes_carga t ON t.completo=h.profesor
   WHERE g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2') AND h.profesor IS NOT NULL AND t.completo IS NULL) THEN
   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Un profesor del horario no está en el mapa de nombres. Revisar antes de importar.';
@@ -69,7 +69,7 @@ BEGIN
  teacher_loop: LOOP
   FETCH teachers INTO full_name,given_name,ap_name,am_name,user_base,email_base,hash_value;
   IF done=1 THEN LEAVE teacher_loop; END IF;
-  IF NOT EXISTS(SELECT 1 FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo WHERE h.profesor=full_name AND g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2')) THEN ITERATE teacher_loop; END IF;
+  IF NOT EXISTS(SELECT 1 FROM Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo WHERE h.profesor=full_name AND g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2')) THEN ITERATE teacher_loop; END IF;
   IF (SELECT COUNT(*) FROM Docente WHERE REGEXP_REPLACE(TRIM(CONCAT_WS(' ',nombre,apellido_paterno,apellido_materno)),'[[:space:]]+',' ')=full_name)>1 THEN
    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Hay docentes homónimos duplicados; resolver antes de importar.';
   END IF;
@@ -121,8 +121,8 @@ BEGIN
    IF EXISTS(SELECT 1 FROM Materia WHERE ID_Carrera=carrera AND clave_materia=internal_key) THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Colisión de clave interna de materia; revisar catálogo.';
    END IF;
-   INSERT INTO Materia(ID_Carrera,clave_materia,nombre_materia,creditos,horas_teoricas,horas_practicas,estatus)
-    VALUES(carrera,internal_key,subject_name,NULL,NULL,NULL,'ACTIVO');
+   INSERT INTO Materia(ID_Carrera,clave_materia,nombre_materia,estatus)
+    VALUES(carrera,internal_key,subject_name,'ACTIVO');
    SET mat=LAST_INSERT_ID();
   ELSEIF (SELECT UPPER(estatus) FROM Materia WHERE ID_Materia=mat)<>'ACTIVO' THEN
    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Una materia del horario está inactiva; no se reactivó.';
@@ -139,15 +139,15 @@ BEGIN
     VALUES(actor,'ASIGNACION_DOCENTE','DOCENTES',CONCAT(full_name,' / ',subject_name),CAST(grp AS CHAR));
   END IF;
   SET asign=(SELECT Id_asignacion FROM Asignacion_Docente WHERE ID_grupo=grp AND ID_Materia=mat);
-  IF EXISTS(SELECT 1 FROM Horario x WHERE x.Id_asignacion=asign AND NOT EXISTS(
-   SELECT 1 FROM Horario_Referencia h WHERE h.ID_grupo=grp AND h.asignatura=subject_name AND h.profesor=full_name
-    AND x.dia=h.dia AND x.hora_inicio=h.hora_inicio AND x.hora_fin=h.hora_fin AND x.aula<=>h.aula)) THEN
-   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Horario operativo distinto de la referencia; resolver antes de importar.';
+  -- El mismo bloque de Horario sirve para consulta de grupos y para captura docente.
+  IF EXISTS(SELECT 1 FROM Horario h
+      WHERE h.ID_grupo=grp AND h.asignatura=subject_name AND h.profesor=full_name
+      AND h.Id_asignacion IS NOT NULL AND h.Id_asignacion<>asign) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Horario asociado a otra asignación; revisar antes de importar.';
   END IF;
-  INSERT INTO Horario(Id_asignacion,dia,hora_inicio,hora_fin,aula)
-   SELECT asign,h.dia,h.hora_inicio,h.hora_fin,h.aula FROM Horario_Referencia h
+  UPDATE Horario h SET h.Id_asignacion=asign
    WHERE h.ID_grupo=grp AND h.asignatura=subject_name AND h.profesor=full_name
-    AND NOT EXISTS(SELECT 1 FROM Horario x WHERE x.Id_asignacion=asign AND x.dia=h.dia AND x.hora_inicio=h.hora_inicio AND x.hora_fin=h.hora_fin AND x.aula<=>h.aula);
+     AND h.Id_asignacion IS NULL;
  END LOOP;
  CLOSE subjects;
  COMMIT;
@@ -161,7 +161,7 @@ SELECT t.completo AS Docente,u.nombre_usuario AS Usuario,d.correo_institucional 
  FROM ambar_docentes_carga t JOIN Docente d ON CONCAT_WS(' ',d.nombre,d.apellido_paterno,d.apellido_materno)=t.completo
  JOIN Usuario u ON u.ID_docente=d.ID_docente ORDER BY t.completo;
 SELECT g.nombre_grupo AS Grupo,h.asignatura AS Materia,COALESCE(h.profesor,'Por asignar') AS Docente
- FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+ FROM Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
  JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo JOIN Carrera c ON c.ID_Carrera=g.ID_Carrera
  WHERE c.clave_carrera='ISC' AND p.nombre_periodo='Agosto-Diciembre 2026'
  AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2')

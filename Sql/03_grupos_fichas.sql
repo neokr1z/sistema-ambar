@@ -30,8 +30,8 @@ BEGIN
         WHERE NOT EXISTS(SELECT 1 FROM Periodo_Escolar WHERE nombre_periodo='Agosto-Diciembre 2026');
     SELECT ID_Periodo INTO periodo FROM Periodo_Escolar WHERE nombre_periodo='Agosto-Diciembre 2026';
     -- Reutiliza un plan activo si ya existe. El plan auxiliar no representa una clave oficial.
-    INSERT INTO Plan_Estudio(clave_carrera,nombre_plan,version,fecha_inicio_vigencia,estatus)
-        SELECT 'ISC','Carga académica agosto-diciembre 2026','AMBAR-2026','2026-08-01','ACTIVO'
+    INSERT INTO Plan_Estudio(clave_carrera,nombre_plan,version,estatus)
+        SELECT 'ISC','Carga académica agosto-diciembre 2026','AMBAR-2026','ACTIVO'
         WHERE NOT EXISTS(SELECT 1 FROM Plan_Estudio WHERE clave_carrera='ISC' AND UPPER(estatus)='ACTIVO');
 
     INSERT INTO Semestre(numero_semestre,descripcion) VALUES(1,'Semestre 1')
@@ -51,7 +51,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El grupo 1ISC1 existente pertenece a otro semestre.';
     END IF;
     UPDATE Grupo SET Capacidad=25,turno='MATUTINO',habilitado_fichas=1 WHERE ID_grupo=grupo;
-    INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
+    INSERT INTO Horario(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
         (grupo,'Taller de Ética','Martes','07:00:00','08:00:00','G301','José Trinidad Quintana Castellanos'),
         (grupo,'Taller de Ética','Miércoles','07:00:00','08:00:00','G301','José Trinidad Quintana Castellanos'),
         (grupo,'Taller de Ética','Jueves','07:00:00','08:00:00','G301','José Trinidad Quintana Castellanos'),
@@ -79,7 +79,7 @@ BEGIN
         (grupo,'Fundamentos de Investigación','Martes','09:00:00','10:00:00','G301','José Trinidad Quintana Castellanos'),
         (grupo,'Fundamentos de Investigación','Jueves','09:00:00','10:00:00','G301','José Trinidad Quintana Castellanos'),
         (grupo,'Fundamentos de Investigación','Viernes','09:00:00','10:00:00','G301','José Trinidad Quintana Castellanos')
-    ON DUPLICATE KEY UPDATE id=Horario_Referencia.id;
+    ON DUPLICATE KEY UPDATE id=Horario.id;
 
     INSERT INTO Semestre(numero_semestre,descripcion) VALUES(1,'Semestre 1')
         ON DUPLICATE KEY UPDATE numero_semestre=1;
@@ -98,7 +98,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El grupo 1ISC2 existente pertenece a otro semestre.';
     END IF;
     UPDATE Grupo SET Capacidad=25,turno='VESPERTINO',habilitado_fichas=1 WHERE ID_grupo=grupo;
-    INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
+    INSERT INTO Horario(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
         (grupo,'Taller de Ética','Lunes','17:00:00','18:00:00','G301','Martha Hernández Najera'),
         (grupo,'Taller de Ética','Martes','17:00:00','18:00:00','G301','Martha Hernández Najera'),
         (grupo,'Taller de Ética','Miércoles','17:00:00','18:00:00','G301','Martha Hernández Najera'),
@@ -126,7 +126,7 @@ BEGIN
         (grupo,'Fundamentos de Investigación','Martes','16:00:00','17:00:00','G301','Silvestre Bedolla Solano'),
         (grupo,'Fundamentos de Investigación','Miércoles','16:00:00','17:00:00','G301','Silvestre Bedolla Solano'),
         (grupo,'Fundamentos de Investigación','Jueves','16:00:00','17:00:00','G301','Silvestre Bedolla Solano')
-    ON DUPLICATE KEY UPDATE id=Horario_Referencia.id;
+    ON DUPLICATE KEY UPDATE id=Horario.id;
 
     INSERT INTO Semestre(numero_semestre,descripcion) VALUES(3,'Semestre 3')
         ON DUPLICATE KEY UPDATE numero_semestre=3;
@@ -145,7 +145,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El grupo 3ISC1 existente pertenece a otro semestre.';
     END IF;
     UPDATE Grupo SET Capacidad=25,turno='MATUTINO',habilitado_fichas=0 WHERE ID_grupo=grupo;
-    INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
+    INSERT INTO Horario(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
         (grupo,'Física General','Lunes','07:00:00','08:00:00','R702','Miguel Ángel Cabello Quintero'),
         (grupo,'Física General','Martes','07:00:00','08:00:00','R702','Miguel Ángel Cabello Quintero'),
         (grupo,'Física General','Miércoles','07:00:00','08:00:00','R702','Miguel Ángel Cabello Quintero'),
@@ -174,7 +174,7 @@ BEGIN
         (grupo,'Cultura Empresarial','Martes','12:00:00','13:00:00','R702','Yaerd Zarate Liquidano'),
         (grupo,'Cultura Empresarial','Miércoles','12:00:00','13:00:00','R702','Yaerd Zarate Liquidano'),
         (grupo,'Cultura Empresarial','Jueves','12:00:00','13:00:00','R702','Yaerd Zarate Liquidano')
-    ON DUPLICATE KEY UPDATE id=Horario_Referencia.id;
+    ON DUPLICATE KEY UPDATE id=Horario.id;
 
     INSERT INTO Semestre(numero_semestre,descripcion) VALUES(3,'Semestre 3')
         ON DUPLICATE KEY UPDATE numero_semestre=3;
@@ -193,7 +193,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El grupo 3ISC2 existente pertenece a otro semestre.';
     END IF;
     UPDATE Grupo SET Capacidad=25,turno='VESPERTINO',habilitado_fichas=0 WHERE ID_grupo=grupo;
-    INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
+    INSERT INTO Horario(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
         (grupo,'Física General','Lunes','16:00:00','17:00:00','G306','Esther Gallardo Cabrera'),
         (grupo,'Física General','Martes','16:00:00','17:00:00','G306','Esther Gallardo Cabrera'),
         (grupo,'Física General','Miércoles','16:00:00','17:00:00','G306','Esther Gallardo Cabrera'),
@@ -222,16 +222,15 @@ BEGIN
         (grupo,'Cultura Empresarial','Martes','18:00:00','19:00:00','R701','Miriam Janet Gallardo Santos'),
         (grupo,'Cultura Empresarial','Miércoles','18:00:00','19:00:00','R701','Miriam Janet Gallardo Santos'),
         (grupo,'Cultura Empresarial','Jueves','18:00:00','19:00:00','R701','Miriam Janet Gallardo Santos')
-    ON DUPLICATE KEY UPDATE id=Horario_Referencia.id;
+    ON DUPLICATE KEY UPDATE id=Horario.id;
 
     WHILE n<=50 DO
         IF EXISTS(SELECT 1 FROM Aspirante WHERE numero_ficha=CONCAT('ISC26-',LPAD(n,3,'0'))
             AND (periodo_fichas IS NULL OR periodo_fichas<>periodo)) THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Un folio ISC26 ya existe fuera de esta carga; no se sobrescribió.';
         END IF;
-        INSERT INTO Aspirante(numero_ficha,curp,promedio_preparatoria,nombre_preparatoria,
-            resultado_examen,estatus,periodo_fichas)
-            SELECT CONCAT('ISC26-',LPAD(n,3,'0')),NULL,NULL,NULL,'APROBADO','ACTIVO',periodo
+        INSERT INTO Aspirante(numero_ficha,curp,resultado_examen,estatus,periodo_fichas)
+            SELECT CONCAT('ISC26-',LPAD(n,3,'0')),NULL,'APROBADO','ACTIVO',periodo
             WHERE NOT EXISTS(SELECT 1 FROM Aspirante WHERE numero_ficha=CONCAT('ISC26-',LPAD(n,3,'0')));
         SET n=n+1;
     END WHILE;

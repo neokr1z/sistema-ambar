@@ -29,31 +29,31 @@ BEGIN
     IF v_total_grupos<>6 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Faltan los seis grupos 1ISC1-3ISC2; ejecuta scripts 07 y 18.'; END IF;
 
     -- Profesores existentes, reutilizados según materias afines.
-    UPDATE Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+    UPDATE Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
       SET h.profesor='Juan Miguel Hernández Bravo'
       WHERE g.ID_Periodo=v_periodo AND g.nombre_grupo='1ISC1' AND h.asignatura='Fundamentos de Programación';
-    UPDATE Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+    UPDATE Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
       SET h.profesor='Raúl Rumbo Rojas'
       WHERE g.ID_Periodo=v_periodo AND g.nombre_grupo='1ISC1' AND h.asignatura='Matemáticas Discretas';
-    UPDATE Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+    UPDATE Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
       SET h.profesor='Daniel Solís Chávez'
       WHERE g.ID_Periodo=v_periodo AND g.nombre_grupo='1ISC2' AND h.asignatura='Fundamentos de Programación';
-    UPDATE Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+    UPDATE Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
       SET h.profesor='José Trinidad Quintana Castellanos'
       WHERE g.ID_Periodo=v_periodo AND g.nombre_grupo='1ISC2' AND h.asignatura='Fundamentos de Investigación';
-    UPDATE Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+    UPDATE Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
       SET h.profesor='Luis Alberto Bedolla Melendez'
       WHERE g.ID_Periodo=v_periodo AND g.nombre_grupo='3ISC2' AND h.asignatura='Cálculo Vectorial';
-    UPDATE Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+    UPDATE Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
       SET h.profesor='Yaerd Zarate Liquidano'
       WHERE g.ID_Periodo=v_periodo AND g.nombre_grupo='3ISC2' AND h.asignatura='Cultura Empresarial';
 
     -- Segundo semestre, los dos grupos creados por el script 18.
     -- Solo se reemplaza el horario de estos dos grupos, no el de primero o tercero.
-    DELETE h FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+    DELETE h FROM Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
       WHERE g.ID_Periodo=v_periodo AND g.nombre_grupo IN ('2ISC1','2ISC2');
     SELECT ID_grupo INTO v_grupo FROM Grupo WHERE ID_Periodo=v_periodo AND nombre_grupo='2ISC1' LIMIT 1;
-    INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
+    INSERT INTO Horario(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
       (v_grupo,'Cálculo Integral','Lunes','07:00:00','08:00:00','G302','Antonio Rodríguez Román'),
       (v_grupo,'Cálculo Integral','Martes','07:00:00','08:00:00','G302','Antonio Rodríguez Román'),
       (v_grupo,'Cálculo Integral','Miércoles','07:00:00','08:00:00','G302','Antonio Rodríguez Román'),
@@ -85,7 +85,7 @@ BEGIN
       (v_grupo,'Álgebra Lineal','Jueves','12:00:00','13:00:00','G302','Luis Alberto Bedolla Melendez'),
       (v_grupo,'Álgebra Lineal','Viernes','12:00:00','13:00:00','G302','Luis Alberto Bedolla Melendez');
     SELECT ID_grupo INTO v_grupo FROM Grupo WHERE ID_Periodo=v_periodo AND nombre_grupo='2ISC2' LIMIT 1;
-    INSERT INTO Horario_Referencia(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
+    INSERT INTO Horario(ID_grupo,asignatura,dia,hora_inicio,hora_fin,aula,profesor) VALUES
       (v_grupo,'Cálculo Integral','Lunes','14:00:00','15:00:00','G303','Antonio Rodríguez Román'),
       (v_grupo,'Cálculo Integral','Martes','14:00:00','15:00:00','G303','Antonio Rodríguez Román'),
       (v_grupo,'Cálculo Integral','Miércoles','14:00:00','15:00:00','G303','Antonio Rodríguez Román'),
@@ -118,19 +118,19 @@ BEGIN
       (v_grupo,'Álgebra Lineal','Viernes','18:00:00','19:00:00','G303','Luis Alberto Bedolla Melendez');
 
     SELECT COUNT(DISTINCT h.profesor) INTO v_docentes
-    FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+    FROM Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
     WHERE g.ID_Periodo=v_periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2');
     IF v_docentes<>14 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La asignación no tiene exactamente 14 docentes; operación cancelada.'; END IF;
 
     SELECT COUNT(DISTINCT CONCAT(s.numero_semestre,'/',h.asignatura)) INTO v_materias
-    FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+    FROM Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
     JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
     WHERE g.ID_Periodo=v_periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2');
     IF v_materias<>18 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='No hay exactamente 18 asignaturas repartidas entre los tres semestres.'; END IF;
 
     SELECT COUNT(*) INTO v_conflictos
-    FROM Horario_Referencia a JOIN Grupo ga ON ga.ID_grupo=a.ID_grupo
-    JOIN Horario_Referencia b ON b.id>a.id
+    FROM Horario a JOIN Grupo ga ON ga.ID_grupo=a.ID_grupo
+    JOIN Horario b ON b.id>a.id
         AND b.profesor=a.profesor AND b.dia=a.dia
         AND b.hora_inicio<a.hora_fin AND a.hora_inicio<b.hora_fin
     JOIN Grupo gb ON gb.ID_grupo=b.ID_grupo
@@ -148,7 +148,7 @@ DELIMITER ;
 -- Verificación: 14 docentes únicos, 18 materias y cero empalmes dentro de estos seis grupos.
 SELECT s.numero_semestre,g.nombre_grupo,h.asignatura,h.profesor,
        h.dia,h.hora_inicio,h.hora_fin
-FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
+FROM Horario h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
 JOIN Semestre s ON s.ID_Semestre=g.ID_Semestre
 JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo
 WHERE p.nombre_periodo='Agosto-Diciembre 2026'

@@ -33,11 +33,9 @@ PREPARE migration FROM @ddl;
 EXECUTE migration;
 DEALLOCATE PREPARE migration;
 
-INSERT INTO Rol(nombre,descripcion) VALUES
-    ('Administrador','Control total del sistema y recuperación de registros'),
-    ('Secretaria','Inscripción, consulta y mantenimiento de alumnos'),
-    ('Docente','Gestión académica y calificaciones')
-ON DUPLICATE KEY UPDATE descripcion=VALUES(descripcion);
+INSERT INTO Rol(nombre) VALUES
+    ('Administrador'),('Secretaria'),('Docente')
+ON DUPLICATE KEY UPDATE nombre=VALUES(nombre);
 
 -- La cuenta admin se precarga con contraseña PBKDF2-SHA256, no en texto plano.
 -- INSERT IGNORE conserva su contraseña cuando el script se vuelve a ejecutar.
@@ -95,13 +93,17 @@ CALL ambar_agregar_columna('Grupo','turno','VARCHAR(15) NULL');
 CALL ambar_agregar_columna('Grupo','habilitado_fichas','TINYINT(1) NOT NULL DEFAULT 0');
 DROP PROCEDURE ambar_agregar_columna;
 -- Las fichas disponibles no son personas ficticias. Su CURP se captura al inscribir.
-ALTER TABLE Aspirante MODIFY curp CHAR(18) NULL,
-    MODIFY promedio_preparatoria DECIMAL(4,2) NULL,
-    MODIFY nombre_preparatoria VARCHAR(120) NULL;
+ALTER TABLE Aspirante MODIFY curp CHAR(18) NULL;
+-- Las fichas pertenecen a un periodo escolar real; se mantiene NULL para datos antiguos.
+SET @ddl=IF((SELECT COUNT(*) FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+ WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='Aspirante'
+ AND COLUMN_NAME='periodo_fichas' AND REFERENCED_TABLE_NAME='Periodo_Escolar')=0,
+ 'ALTER TABLE Aspirante ADD CONSTRAINT fk_aspirante_periodo FOREIGN KEY (periodo_fichas) REFERENCES Periodo_Escolar(ID_Periodo)', 'SELECT 1');
+PREPARE migration FROM @ddl; EXECUTE migration; DEALLOCATE PREPARE migration;
 
 -- Referencia fiel de las imágenes: no crea docentes con RFC/credenciales inventados
 -- ni inventa créditos, claves de materias o distribución teórica/práctica.
-CREATE TABLE IF NOT EXISTS Horario_Referencia (
+CREATE TABLE IF NOT EXISTS Horario (
     id INT AUTO_INCREMENT PRIMARY KEY,
     ID_grupo INT NOT NULL,
     asignatura VARCHAR(120) NOT NULL,
@@ -110,8 +112,11 @@ CREATE TABLE IF NOT EXISTS Horario_Referencia (
     hora_fin TIME NOT NULL,
     aula VARCHAR(20) NOT NULL,
     profesor VARCHAR(160) NULL,
-    UNIQUE KEY uq_horario_referencia (ID_grupo,asignatura,dia,hora_inicio),
-    FOREIGN KEY (ID_grupo) REFERENCES Grupo(ID_grupo)
+    Id_asignacion INT NULL,
+    UNIQUE KEY uq_horario_grupo_materia_dia (ID_grupo,asignatura,dia,hora_inicio),
+    CONSTRAINT fk_horario_grupo FOREIGN KEY (ID_grupo) REFERENCES Grupo(ID_grupo),
+    CONSTRAINT fk_horario_asignacion FOREIGN KEY (Id_asignacion)
+        REFERENCES Asignacion_Docente(Id_asignacion)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- Los nombres se normalizan en Validation.Name al guardar desde AMBAR.
 -- Identidad.Check evita duplicados entre alumnos/docentes/secretarias (incluye bajas),
@@ -170,24 +175,15 @@ EXECUTE migration;
 DEALLOCATE PREPARE migration;
 -- NULL distingue información pendiente de datos falsos. El alta manual sigue exigiendo identidad.
 ALTER TABLE Docente MODIFY RFC CHAR(13) NULL;
-ALTER TABLE Materia MODIFY creditos TINYINT UNSIGNED NULL,
- MODIFY horas_teoricas TINYINT UNSIGNED NULL, MODIFY horas_practicas TINYINT UNSIGNED NULL;
+-- Materia conserva únicamente clave, nombre, carrera y estado. No hay horas/créditos inventados.
 
 
--- ====== 12_dominios_correo_local.sql ======
--- Ejecutar una sola vez en la base de datos AMBAR, sin requerir Internet.
-CREATE TABLE IF NOT EXISTS Dominio_Correo (
-    dominio VARCHAR(253) NOT NULL PRIMARY KEY,
-    activo TINYINT(1) NOT NULL DEFAULT 1
-);
-INSERT INTO Dominio_Correo (dominio,activo) VALUES
-('gmail.com',1),('googlemail.com',1),('outlook.com',1),('hotmail.com',1),
-('hotmail.com.mx',1),('live.com',1),('live.com.mx',1),('msn.com',1),
-('yahoo.com',1),('yahoo.com.mx',1),('ymail.com',1),('icloud.com',1),
-('me.com',1),('mac.com',1),('aol.com',1),('proton.me',1),('protonmail.com',1),
-('zoho.com',1),('mail.com',1),('gmx.com',1),('gmx.es',1),
-('acapulco.tecnm.mx',1),('tecnm.mx',1)
-ON DUPLICATE KEY UPDATE dominio=VALUES(dominio);
--- Para agregar un dominio legítimo:
--- INSERT INTO Dominio_Correo (dominio, activo) VALUES ('universidad.edu.mx',1)
--- ON DUPLICATE KEY UPDATE activo=1;
+-- Dominios admitidos: lista local mantenida en Servicios/CorreoDominio.cs.
+-- No se requiere tabla Dominio_Correo ni Internet para validar dominios.
+
+-- Relación de domicilio con el registro postal exacto usado al capturar datos.
+-- Se conserva el texto del domicilio como fotografía histórica para los PDF.
+ALTER TABLE Domicilio
+    ADD COLUMN id_catalogo_postal BIGINT NULL,
+    ADD CONSTRAINT fk_domicilio_catalogo_postal FOREIGN KEY (id_catalogo_postal)
+       REFERENCES Catalogo_Postal(id) ON UPDATE CASCADE ON DELETE RESTRICT;
