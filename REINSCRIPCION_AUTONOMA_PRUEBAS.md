@@ -27,7 +27,7 @@ Los registros de demostración se muestran con estatus `DEMO`. El horario viene 
 ## Alcance importante
 Esta funcionalidad es una **demostración autónoma**. La interpretación `2025 → 2.º o 3.º` y `2026 → 2.º` es una regla simplificada para el periodo agosto–diciembre 2026; no acredita identidad ni materias aprobadas. Los expedientes reales de `Alumno` y el flujo anterior de inscripción permanecen intactos. El contador principal incluye los registros de demostración, pero `Consulta de alumnos` continúa mostrando exclusivamente los expedientes reales.
 
-El script SQL crea la tabla nueva `Reinscripcion_Demostracion` para separar el flujo de pruebas.
+El script SQL crea la tabla nueva `Reinscripcion` para separar el flujo de pruebas.
 
 ## Regla importante de primer semestre
 Si un número tiene inscripción activa de primer semestre en `Agosto-Diciembre 2026`, el módulo lo rechaza tanto al validar como al guardar, aunque comience con 2026. El segundo semestre se crea con dos grupos sin horarios de referencia, hasta que se proporcionen horarios reales. No inventar horarios.

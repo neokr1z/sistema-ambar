@@ -171,7 +171,7 @@ internal sealed class ReinscripcionForm : Form
             if(anterior!=null)
             {
                 informacion.ForeColor=Color.DarkRed;
-                informacion.Text=$"El número {numero} ya se registró en la demostración.\nGrupo: {anterior.GrupoNombre} · {anterior.Semestre}.º semestre.";
+                informacion.Text=$"El número {numero} ya está reinscrito.\nGrupo: {anterior.GrupoNombre} · {anterior.Semestre}.º semestre.";
                 resultado.Text="No se permitirá volver a registrarlo.";
                 return;
             }
@@ -252,7 +252,7 @@ internal sealed class ReinscripcionForm : Form
         {
             guardar.Enabled=false;
             RepositorioReinscripcionDemo.Guardar(actor,controlValidado,nombre.Text,paterno.Text,materno.Text,grupo.Id,semestreValidado);
-            MessageBox.Show(this,$"Reinscripción de demostración guardada.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
+            MessageBox.Show(this,$"Reinscripción guardada correctamente.\nNúmero de control: {controlValidado}\nGrupo: {grupo.Name}",
                 "AMBAR",MessageBoxButtons.OK,MessageBoxIcon.Information);
             LimpiarCaptura();control.Clear();control.Focus();
         }

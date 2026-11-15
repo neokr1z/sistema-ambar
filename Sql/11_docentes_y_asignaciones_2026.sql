@@ -1,4 +1,5 @@
--- Docentes y asignaciones de los seis grupos de 07; ejecutar después de 10.
+-- Instalacion final: SOLO 14 docentes de los horarios de grupos 1, 2 y 3.
+-- Ejecutar despues de 07, 18 y 20, cuando los seis grupos y sus horarios esten listos.
 -- Reejecutable: no reinicia contraseñas, no reactiva bajas ni cambia asignaciones existentes.
 -- Nuevos usuarios: contraseña solicitada, almacenada como PBKDF2-SHA256 con sal individual.
 -- RFC/CURP/fecha/telefono pendientes: NULL. Claves HOR26-* internas, créditos/horas pendientes.
@@ -10,30 +11,19 @@ CREATE TEMPORARY TABLE ambar_docentes_carga(
  usuario VARCHAR(50),correo_base VARCHAR(64),hash_clave VARCHAR(255)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 INSERT INTO ambar_docentes_carga VALUES
-('Adrián Morales Gálvez','Adrián','Morales','Gálvez','adrian.morales.galvez','AdrianMG','AMBAR:250000:Xa57rPEC+ImrmX2WY70f1w==:kl5zI/d3wJBbGdIov3nlmnVJd3WO4AXterUJeEXVoB4='),
 ('Antonio Rodríguez Román','Antonio','Rodríguez','Román','antonio.rodriguez.roman','AntonioRR','AMBAR:250000:MDtyT/57OwoAg/mTZjnvGA==:KDTfjlvt/2R9jq7K+Pk/1l71j9CQlSYaV8nhOKrZ8yM='),
-('Carolina Astudillo Hernández','Carolina','Astudillo','Hernández','carolina.astudillo.hernandez','CarolinaAH','AMBAR:250000:CqQcxPKdM90lik8OpmGL2g==:wOHHVUvSuZ5tw7mYC1qAWx82/PAkp7zUibeEeBldK8Y='),
 ('Daniel Solís Chávez','Daniel','Solís','Chávez','daniel.solis.chavez','DanielSC','AMBAR:250000:7SK+E2fxLAIQhcjRgOVKVg==:hf2gye73HLYVyKrlEa/1EKq1Zx6zAwx/iXFXfFQjIis='),
 ('Diana Gozos Guadalupe Peña Guzmán','Diana Gozos Guadalupe','Peña','Guzmán','diana.pena.guzman','DianaGozosGuadalupePG','AMBAR:250000:hZ2kj+K2nb6p3Nr6+XcpAQ==:MdnEBDTS6saOoEfPyS683+x13HQtlLgXIBEfdxA0S0U='),
-('Diana Maritza Navarrete Rodríguez','Diana Maritza','Navarrete','Rodríguez','diana.navarrete.rodriguez','DianaMaritzaNR','AMBAR:250000:bQnHd/SIqKW5rtm7X/WpOQ==:QCba7tahYDHgtprQCIAC/iZbFcj/pzn0xHNrdrDkDr4='),
-('Eleazar Pacheco Salazar','Eleazar','Pacheco','Salazar','eleazar.pacheco.salazar','EleazarPS','AMBAR:250000:iOJhSQ0iXCZTwQQGUkP8nQ==:FKG2ik6JAsE+CNNJrecFdM8J4KOXwoZCpirc5l/2cho='),
 ('Esther Gallardo Cabrera','Esther','Gallardo','Cabrera','esther.gallardo.cabrera','EstherGC','AMBAR:250000:cH6dWIyLknPD7J3ysgOvhw==:gRWbT5ArdIzu7AcUCWs4hvJA/swfeHjiPufhsnzMCD0='),
-('Fernando Ríos Escalera','Fernando','Ríos','Escalera','fernando.rios.escalera','FernandoRE','AMBAR:250000:ATNKH4eP0aKGTJSya1zEoQ==:R6f1whEL7T2J3mrE/wM2kglY1UUQSD49xXsk+JqaGUU='),
-('Francisco Javier Gutierrez Mata','Francisco Javier','Gutierrez','Mata','francisco.gutierrez.mata','FranciscoJavierGM','AMBAR:250000:V2P4//eJhCwhfVc0mlJwZw==:Kx9ojrHYiB6gSoNWO3v5u3Go/jQXd6EmD4KyJASEq5w='),
 ('Gilberto Vales Ortiz','Gilberto','Vales','Ortiz','gilberto.vales.ortiz','GilbertoVO','AMBAR:250000:raK5/sKRXo2JqqSQL1y0bQ==:lnHMddabHTR0Y/Dpy6MqLdx8StRA3sGBGTaA29S/kLw='),
 ('José Luis Quiroz Cisneros','José Luis','Quiroz','Cisneros','jose.quiroz.cisneros','JoseLuisQC','AMBAR:250000:3Sc2S7vx5u9WknbkugYm4w==:g/lio2LnfnkFGdLFvDeb7cxmFvJvlWB+qTr0XRVWZGk='),
 ('José Trinidad Quintana Castellanos','José Trinidad','Quintana','Castellanos','jose.quintana.castellanos','JoseTrinidadQC','AMBAR:250000:rsP+AcghLolQHTzQ/yFOog==:dPkEVh0fpti8H5jnp0hKlEGTtJwS2wXmofHRwqRRu5c='),
-('Juan Baños Montes','Juan','Baños','Montes','juan.banos.montes','JuanBM','AMBAR:250000:QjkT3VCgyAKgdFl3KuYGqA==:9IvWJud03q/6HPOV9R/mHXfE4bP+rGUmyYxvJQm5KY0='),
-('Juan Carlos Gómez Ramírez','Juan Carlos','Gómez','Ramírez','juan.gomez.ramirez','JuanCarlosGR','AMBAR:250000:ZRKFqBSdLfFBq4mQYR+sYA==:B8Vd6lKNTUexWeVt3dK/Q2ihNEQ1CbguxZgO+EiaZao='),
 ('Juan Miguel Hernández Bravo','Juan Miguel','Hernández','Bravo','juan.hernandez.bravo','JuanMiguelHB','AMBAR:250000:tVVD5QNgE20PAhxhaI2HHg==:7O+AAqNiSCwxplRN3U8NkXczjeckEPtqnaJRTbBkZbI='),
 ('Lizeth Julieta Mendoza Vázquez','Lizeth Julieta','Mendoza','Vázquez','lizeth.mendoza.vazquez','LizethJulietaMV','AMBAR:250000:ejdVUynFSXdIhzQawCrzuQ==:JNOHGrJ7WDfO7Dwn9tvTQHQdvW5T4BC0agiIdeJPNhY='),
 ('Luis Alberto Bedolla Melendez','Luis Alberto','Bedolla','Melendez','luis.bedolla.melendez','LuisAlbertoBM','AMBAR:250000:W2LsaZBvxP+WNxff51omkg==:kuMPXjQ5Tl/hFvLZgksAnGNtGPQQ/KWQSRQ3oqTBSxs='),
 ('Martha Hernández Najera','Martha','Hernández','Najera','martha.hernandez.najera','MarthaHN','AMBAR:250000:1QOvGCXkQ5SsO+InuqdTrw==:BR2ctdi9VFJWpb0+hehh7xeRWdY+IOPpfpsBvNxog3M='),
 ('Miguel Ángel Cabello Quintero','Miguel Ángel','Cabello','Quintero','miguel.cabello.quintero','MiguelAngelCQ','AMBAR:250000:SH3PAZXEE2byu4eiVxbJBQ==:m6/W53IGUGQUD19RQH9ouHJU7NANjKG7L1tbxHBlN8g='),
-('Miriam Janet Gallardo Santos','Miriam Janet','Gallardo','Santos','miriam.gallardo.santos','MiriamJanetGS','AMBAR:250000:GlcTLPno8Jmsvi9SRNOxlg==:8Rj5e6CKz58dQhvNcVQPYsLxgzt5xJ85FzFF7QAprWY='),
-('Oscar Arzeta Armenta','Oscar','Arzeta','Armenta','oscar.arzeta.armenta','OscarAA','AMBAR:250000:jfRuCG6MAzmYZ0awoViHew==:/iDJ9ZC4yIG7spdakF9n5UvH0cy8bd5DEA362qsuNt0='),
 ('Raúl Rumbo Rojas','Raúl','Rumbo','Rojas','raul.rumbo.rojas','RaulRR','AMBAR:250000:Bk1RzRhLzZBBX4DbIgbKlw==:bC/VK0tFK0zFwPHGZSoKN8Zbb6ip3He4+SSwHf2dC+Q='),
-('Silvestre Bedolla Solano','Silvestre','Bedolla','Solano','silvestre.bedolla.solano','SilvestreBS','AMBAR:250000:z1BANiz0qk3k3NZ97nB/7w==:5X91b+TBKiijwTnrvbbLB9s7WDqmo6C/Wiy/ioXxhn8='),
 ('Yaerd Zarate Liquidano','Yaerd','Zarate','Liquidano','yaerd.zarate.liquidano','YaerdZL','AMBAR:250000:dRdmBdGnH1qxTqk3Snkbrw==:dm5OuMH9X8f05WTcx6WrmTrwCszlzzpK8V1TatBkRrw=');
 DELIMITER $$
 DROP PROCEDURE IF EXISTS ambar_asignar_docentes_2026$$
@@ -51,7 +41,7 @@ BEGIN
   SELECT DISTINCT h.ID_grupo,h.asignatura,h.profesor FROM Horario_Referencia h
   JOIN Grupo g ON g.ID_grupo=h.ID_grupo
   WHERE g.ID_Carrera=carrera AND g.ID_Periodo=periodo
-   AND g.nombre_grupo IN ('1ISC1','1ISC2','3ISC1','3ISC2','5ISC1','5ISC2')
+   AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2')
   ORDER BY h.asignatura,h.ID_grupo;
  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done=1;
  DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
@@ -64,20 +54,20 @@ BEGIN
  IF carrera IS NULL OR periodo IS NULL OR rol IS NULL OR gate IS NULL OR actor IS NULL THEN
   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Faltan catálogo, administrador o carga 06/07. Ejecutar los scripts previos.';
  END IF;
- IF (SELECT COUNT(*) FROM Grupo WHERE ID_Carrera=carrera AND ID_Periodo=periodo AND nombre_grupo IN ('1ISC1','1ISC2','3ISC1','3ISC2','5ISC1','5ISC2'))<>6
- OR (SELECT COUNT(*) FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo WHERE g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','3ISC1','3ISC2','5ISC1','5ISC2'))<>160 THEN
-  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La carga de horarios no coincide con los seis grupos y 160 bloques de 07.';
+ IF (SELECT COUNT(*) FROM Grupo WHERE ID_Carrera=carrera AND ID_Periodo=periodo AND nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2'))<>6
+ OR (SELECT COUNT(*) FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo WHERE g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2'))<>170 THEN
+  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La carga de horarios no coincide con los seis grupos y 170 bloques de la configuracion final 07 + 20.';
  END IF;
  IF EXISTS(SELECT 1 FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
   LEFT JOIN ambar_docentes_carga t ON t.completo=h.profesor
-  WHERE g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','3ISC1','3ISC2','5ISC1','5ISC2') AND h.profesor IS NOT NULL AND t.completo IS NULL) THEN
+  WHERE g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2') AND h.profesor IS NOT NULL AND t.completo IS NULL) THEN
   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Un profesor del horario no está en el mapa de nombres. Revisar antes de importar.';
  END IF;
  OPEN teachers;
  teacher_loop: LOOP
   FETCH teachers INTO full_name,given_name,ap_name,am_name,user_base,email_base,hash_value;
   IF done=1 THEN LEAVE teacher_loop; END IF;
-  IF NOT EXISTS(SELECT 1 FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo WHERE h.profesor=full_name AND g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','3ISC1','3ISC2','5ISC1','5ISC2')) THEN ITERATE teacher_loop; END IF;
+  IF NOT EXISTS(SELECT 1 FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo WHERE h.profesor=full_name AND g.ID_Carrera=carrera AND g.ID_Periodo=periodo AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2')) THEN ITERATE teacher_loop; END IF;
   IF (SELECT COUNT(*) FROM Docente WHERE REGEXP_REPLACE(TRIM(CONCAT_WS(' ',nombre,apellido_paterno,apellido_materno)),'[[:space:]]+',' ')=full_name)>1 THEN
    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Hay docentes homónimos duplicados; resolver antes de importar.';
   END IF;
@@ -172,6 +162,6 @@ SELECT g.nombre_grupo AS Grupo,h.asignatura AS Materia,COALESCE(h.profesor,'Por 
  FROM Horario_Referencia h JOIN Grupo g ON g.ID_grupo=h.ID_grupo
  JOIN Periodo_Escolar p ON p.ID_Periodo=g.ID_Periodo JOIN Carrera c ON c.ID_Carrera=g.ID_Carrera
  WHERE c.clave_carrera='ISC' AND p.nombre_periodo='Agosto-Diciembre 2026'
- AND g.nombre_grupo IN ('1ISC1','1ISC2','3ISC1','3ISC2','5ISC1','5ISC2')
+ AND g.nombre_grupo IN ('1ISC1','1ISC2','2ISC1','2ISC2','3ISC1','3ISC2')
  GROUP BY g.nombre_grupo,h.asignatura,h.profesor ORDER BY Grupo,Materia;
 DROP TEMPORARY TABLE ambar_docentes_carga;

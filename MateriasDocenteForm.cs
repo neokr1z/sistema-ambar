@@ -22,7 +22,7 @@ public partial class MateriasDocenteForm : Form
         if(assignment.SelectedItem is not Asignacion a)return;
         try
         {
-            grid.DataSource=RepositorioDocente.Roster(actor,a.Id);grid.Columns["Nota"].Visible=false;
+            grid.DataSource=RepositorioCortesDocente.Obtener(actor,a.Id,5);grid.Columns["Nota"].Visible=false;
             schedule.DataSource=RepositorioDocente.Schedule(actor,a.Id);
             note.Text=$"{grid.Rows.Count} alumnos inscritos. "+(schedule.Rows.Count==0?"Sin horario operativo registrado.":"");capture.Enabled=true;
         }catch(Exception ex){Problems.Show(ex);}

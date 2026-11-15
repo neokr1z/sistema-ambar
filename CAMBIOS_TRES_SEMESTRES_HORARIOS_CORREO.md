@@ -6,7 +6,7 @@ Se mantiene el módulo de Reinscripción autónoma con las reglas 2025 → 2.º 
 
 En una base AMBAR existente con Sql/06 y Sql/07 ejecutados:
 1. `Sql/16_reinscripcion_autonoma.sql` — tabla de demostración (si aún no existe).
-2. `Sql/18_reinscripcion_2026_semestres_1_2_3.sql` — crea **solo** los dos grupos de segundo, respaldando los antiguos registros de demo de 2024.
+2. `Sql/18_reinscripcion_2026_semestres_1_2_3.sql` — crea **solo** los dos grupos de segundo, sin volver a crear tablas de respaldo históricas.
 3. `Sql/19_reinscripcion_repetidores_2025.sql` — permite que generación 2025 seleccione 2.º o 3.º.
 4. **`Sql/20_horarios_tres_semestres_14_docentes.sql`** — completa los huecos docentes en primero y tercero y genera el horario de **2ISC1 y 2ISC2**.
 5. **`Sql/21_vistas_alumnos_tres_semestres.sql`** — crea las tres vistas de alumnado por semestre.
@@ -32,7 +32,7 @@ SELECT * FROM vw_AMBAR_Alumnos_Semestre_2 ORDER BY numero_control;
 SELECT * FROM vw_AMBAR_Alumnos_Semestre_3 ORDER BY numero_control;
 ```
 
-Son **vistas**, no tablas duplicadas; muestran la información actual de `Alumno/Inscripcion` y `Reinscripcion_Demostracion` sin copiar expedientes.
+Son **vistas**, no tablas duplicadas; muestran la información actual de `Alumno/Inscripcion` y `Reinscripcion` sin copiar expedientes.
 
 ## Horarios
 

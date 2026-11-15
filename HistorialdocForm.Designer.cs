@@ -129,7 +129,7 @@ partial class HistorialdocForm
         unitLabel.Name = "unitLabel";
         unitLabel.Size = new Size(375, 30);
         unitLabel.TabIndex = 8;
-        unitLabel.Text = "Unidad";
+        unitLabel.Text = "Semana";
         // 
         // unit
         // 
